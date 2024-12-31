@@ -1,0 +1,80 @@
+{
+  "Goblin": {
+    "name": "Goblin",
+    "maxHealth": 80,
+    "strength": 12,
+    "intelligence": 5,
+    "defense": 8,
+    "speed": 20,
+    "agility": 15,
+    "actionPoints": 25,
+    "characterClass": "Enemy",
+    "element": "SLASH",
+    "immunity": [],
+    "weakness": ["FIRE", "LIGHT"],
+    "abilities": [
+      {
+        "name": "Slash",
+        "cost": 10,
+        "effect": "Deal 10 damage to an enemy."
+      },
+      {
+        "name": "Evade",
+        "cost": 15,
+        "effect": "Increase agility by 10 for 2 turns."
+      }
+    ]
+  },
+  "Skeleton": {
+    "name": "Skeleton",
+    "maxHealth": 100,
+    "strength": 15,
+    "intelligence": 10,
+    "defense": 12,
+    "speed": 10,
+    "agility": 5,
+    "actionPoints": 20,
+    "characterClass": "Enemy",
+    "element": "PIERCE",
+    "immunity": ["DARK"],
+    "weakness": ["LIGHT", "SLASH"],
+    "abilities": [
+      {
+        "name": "Bone Throw",
+        "cost": 10,
+        "effect": "Deal 15 damage to an enemy."
+      },
+      {
+        "name": "Reassemble",
+        "cost": 20,
+        "effect": "Restore 20 health."
+      }
+    ]
+  },
+  "Flying_demon": {
+    "name": "Flying Demon",
+    "maxHealth": 150,
+    "strength": 20,
+    "intelligence": 15,
+    "defense": 10,
+    "speed": 25,
+    "agility": 20,
+    "actionPoints": 35,
+    "characterClass": "Enemy",
+    "element": ["FIRE", "WIND"],
+    "immunity": ["FIRE", "PIERCE", "DARK"],
+    "weakness": ["ICE", "LIGHT"],
+    "abilities": [
+      {
+        "name": "Fire Breath",
+        "cost": 20,
+        "effect": "Deal 25 fire damage to all enemies."
+      },
+      {
+        "name": "Wing Slash",
+        "cost": 15,
+        "effect": "Deal 20 damage to a single enemy."
+      }
+    ]
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "healer": {
+    "name": "Healer",
+    "maxHealth": 120,
+    "strength": 10,
+    "intelligence": 20,
+    "defense": 15,
+    "speed": 10,
+    "agility": 15,
+    "actionPoints": 50,
+    "characterClass": "Healer",
+    "element": ["LIGHT", "MAGIC"],
+    "immunity": ["MAGIC"],
+    "weakness": ["SLASH", "DARK"],
+    "abilities": [
+      {
+        "name": "Heal",
+        "cost": 15,
+        "effect": "Restore 30 health to an ally."
+      },
+      {
+        "name": "Purify",
+        "cost": 20,
+        "effect": "Remove a negative status effect from an ally."
+      }
+    ]
+  },
+  "wizard": {
+    "name": "Wizard",
+    "maxHealth": 100,
+    "strength": 8,
+    "intelligence": 25,
+    "defense": 10,
+    "speed": 10,
+    "agility": 10,
+    "actionPoints": 40,
+    "characterClass": "Wizard",
+    "element": ["MAGIC", "DARK"],
+    "immunity": ["FIRE"],
+    "weakness": ["PIERCE", "WIND"],
+    "abilities": [
+      {
+        "name": "Fireball",
+        "cost": 20,
+        "effect": "Deal 35 damage to an enemy."
+      },
+      {
+        "name": "Ice Shield",
+        "cost": 10,
+        "effect": "Increase defense by 10 for 2 turns."
+      }
+    ]
+  },
+  "warrior": {
+    "name": "Warrior",
+    "maxHealth": 200,
+    "strength": 25,
+    "intelligence": 5,
+    "defense": 25,
+    "speed": 10,
+    "agility": 5,
+    "actionPoints": 30,
+    "characterClass": "Warrior",
+    "element": "SLASH",
+    "immunity": ["SLASH", "ICE"],
+    "weakness": ["MAGIC", "PIERCE"],
+    "abilities": [
+      {
+        "name": "Shield Bash",
+        "cost": 10,
+        "effect": "Deal 15 damage and stun the enemy for 1 turn."
+      },
+      {
+        "name": "Berserk",
+        "cost": 25,
+        "effect": "Increase damage by 20 for 2 turns but reduce defense by 10."
+      }
+    ]
+  },
+  "archer": {
+    "name": "Archer",
+    "maxHealth": 150,
+    "strength": 15,
+    "intelligence": 10,
+    "defense": 10,
+    "speed": 10,
+    "agility": 20,
+    "actionPoints": 35,
+    "characterClass": "Archer",
+    "element": ["PIERCE", "WIND"],
+    "immunity": ["WIND"],
+    "weakness": ["ICE", "MAGIC"],
+    "abilities": [
+      {
+        "name": "Piercing Shot",
+        "cost": 15,
+        "effect": "Deal 20 damage and ignore 5 defense."
+      },
+      {
+        "name": "Rapid Fire",
+        "cost": 20,
+        "effect": "Attack twice for 10 damage each."
+      }
+    ]
+  }
+}
