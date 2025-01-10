@@ -27,6 +27,12 @@ def character_init_warrior(x:int, y:int):
     hit = ['turn_based_game/assets/Characters/Warrior/Individual Sprite/Hit/Warrior_Hit_' + str(i) + '.png' for i in range(1, 7)]
     dead = ['turn_based_game/assets/Characters/Warrior/Individual Sprite/Dead/Warrior_Death_' + str(i) + '.png' for i in range(1, 7)]
 
+    # Load UI images
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    profile_picture = resize_images([pygame.image.load('turn_based_game/assets/UI/Frames/Characters/Warrior_Profile.png')], (40, 43))[0]
+
+    # Resize the UI images
     move_right = resize_images([pygame.image.load(img) for img in move_right], size)
     idle = resize_images([pygame.image.load(img) for img in idle], size)
     attack = resize_images([pygame.image.load(img) for img in attack], size)
@@ -40,6 +46,7 @@ def character_init_warrior(x:int, y:int):
     character.loadDamageTakenAnimation(hit)
     character.loadDeathAnimation(dead)
     character.add_image(idle[0])
+    character.loadUI(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -61,7 +68,10 @@ def character_init_wizard():
     hit = resize_images([pygame.image.load(img) for img in hit], size)
     dead = resize_images([pygame.image.load(img) for img in dead], size)
 
-
+    # Load UI images
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    profile_picture = resize_images([pygame.image.load('turn_based_game/assets/UI/Frames/Characters/Wizard_Profile.png')], (40, 43))[0]
 
     character.loadWalkRightAnimation(move_right)
     character.loadWalkLeftAnimation(move_right)
@@ -70,6 +80,7 @@ def character_init_wizard():
     character.loadDamageTakenAnimation(hit)
     character.loadDeathAnimation(dead)
     character.add_image(idle[0])
+    character.loadUI(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -85,13 +96,11 @@ def character_init_healer():
     hit = ['turn_based_game/assets/Characters/Witch/Hit/Witch_Hit_' + str(i) + '.png' for i in range(1, 4)]
     dead = ['turn_based_game/assets/Characters/Witch/Dead/Witch_Dead_' + str(i) + '.png' for i in range(1, 13)]
 
-    # move_right = resize_images([pygame.image.load(img) for img in move_right], size)
-    # idle = resize_images([pygame.image.load(img) for img in idle], size)
-    # attack = resize_images([pygame.image.load(img) for img in attack], size)
-    # hit = resize_images([pygame.image.load(img) for img in hit], size)
-    # dead = resize_images([pygame.image.load(img) for img in dead], size)
+    # Load UI images
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    profile_picture = resize_images([pygame.image.load('turn_based_game/assets/UI/Frames/Characters/Witch_Profile.png')], (40, 43))[0]
 
-    #without resizing
     move_right = [pygame.image.load(img) for img in move_right]
     idle = [pygame.image.load(img) for img in idle]
     attack = [pygame.image.load(img) for img in attack]
@@ -105,6 +114,7 @@ def character_init_healer():
     character.loadDamageTakenAnimation(hit)
     character.loadDeathAnimation(dead)
     character.add_image(idle[0])
+    character.loadUI(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -116,9 +126,14 @@ def character_init_archer():
     # Load animations for the wizard character
     move_right = ['turn_based_game/assets/Characters/Archer/Run/Archer_Run_' + str(i) + '.png' for i in range(1, 9)]
     idle = ['turn_based_game/assets/Characters/Archer/Idle/Archer_Idle_' + str(i) + '.png' for i in range(1, 9)]
-    attack = ['turn_based_game/assets/Characters/Archer/Attack/Archer_Attack_' + str(i) + '.png' for i in range(1, 29)]
+    attack = ['turn_based_game/assets/Characters/Archer/Attack/Archer_Attack_' + str(i) + '.png' for i in range(1, 15)]
     hit = ['turn_based_game/assets/Characters/Archer/Hit/Archer_Hit_' + str(i) + '.png' for i in range(1, 4)]
     dead = ['turn_based_game/assets/Characters/Archer/Dead/Archer_Dead_' + str(i) + '.png' for i in range(1, 25)]
+
+    # Load UI images
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    profile_picture = resize_images([pygame.image.load('turn_based_game/assets/UI/Frames/Characters/Archer_Profile.png')], (40, 43))[0]
 
     move_right = [pygame.image.load(img) for img in move_right]
     idle = [pygame.image.load(img) for img in idle]
@@ -133,6 +148,7 @@ def character_init_archer():
     character.loadDamageTakenAnimation(hit)
     character.loadDeathAnimation(dead)
     character.add_image(idle[0])
+    character.loadUI(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -154,6 +170,9 @@ def character_init_enemy(enemy_name:str, x:int, y:int, main_character:Character)
     hit = [pygame.image.load(img) for img in hit]
     dead = [pygame.image.load(img) for img in dead]
 
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    profile_picture = resize_images([pygame.image.load('turn_based_game/assets/UI/Frames/Enemies/'+enemy_name+'_Profile.png')], (40, 43))[0]
 
     enemy.loadWalkRightAnimation(move_right)
     enemy.loadWalkLeftAnimation(move_right)
@@ -162,5 +181,7 @@ def character_init_enemy(enemy_name:str, x:int, y:int, main_character:Character)
     enemy.loadDamageTakenAnimation(hit)
     enemy.loadDeathAnimation(dead)
     enemy.add_image(idle[0])
+
+    enemy.loadUI(profile_picture, health_bar, action_points_bar)
 
     return enemy

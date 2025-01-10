@@ -85,7 +85,7 @@
     "defense": 10,
     "speed": 10,
     "agility": 20,
-    "actionPoints": 35,
+    "actionPoints": 50,
     "characterClass": "Archer",
     "element": ["PIERCE", "WIND"],
     "immunity": ["WIND"],

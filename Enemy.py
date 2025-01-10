@@ -18,18 +18,23 @@ class Enemy(Character):
         self.main_character = main_character
 
         self.trigger_time = None
+        self.in_battle = False
+
+
+
+    def set_main_character(self, main_character):
+        self.main_character = main_character
 
     def moveRight(self):
         self.x += 1
         self.moving_right_direction = True
-        self.moving_left_Direction = False
+        self.moving_left_direction = False
         self.idling = False
-
 
     def moveLeft(self):
         self.x -= 1
         self.moving_right_direction = False
-        self.moving_left_Direction = True
+        self.moving_left_direction = True
         self.idling = False
 
     def moveUp(self):
@@ -40,10 +45,9 @@ class Enemy(Character):
         self.y += 1
         self.idling = False
 
-    def set_main_character(self, main_character):
-        self.main_character = main_character
-
     def trigger(self):
+        distance = abs(self.x - self.main_character.x)**2 + abs(self.y - self.main_character.y)**2
+        looking_at_main_character = (self.x < self.main_character.x + 10) and self.moving_right_direction or (self.x > self.main_character.x - 10) and self.moving_left_direction
         if abs(self.x - self.main_character.x)**2 + abs(self.y - self.main_character.y)**2 < 25**2:
             if self.trigger_time is None:
                 self.trigger_time = pygame.time.get_ticks()  # Record the time when the enemy is triggered
@@ -51,7 +55,7 @@ class Enemy(Character):
                 self.attacking = True
                 self.main_character.collide()
                 self.trigger_time = None
-        elif abs(self.x - self.main_character.x)**2 + abs(self.y - self.main_character.y)**2 < 100**2:
+        elif distance < 100**2 and looking_at_main_character:
             self.is_triggered = True
             self.patrol_points[-1] = (self.main_character.x, self.main_character.y)
             self.current_patrol_point = 2
@@ -60,26 +64,33 @@ class Enemy(Character):
             self.current_patrol_point = 0
 
     def controller(self):
-        #patrol the area
+        if not self.in_battle:
+            # patrol the area
+            if not self.in_battle:
+                if not self.attacking:
+                    if self.x < self.patrol_points[self.current_patrol_point][0]:
+                        self.moveRight()
+                        if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
+                            self.moveDown()
+                        elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
+                            self.moveUp()
 
-        if not self.attacking:
-            if self.x < self.patrol_points[self.current_patrol_point][0]:
-                self.moveRight()
-                if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
-                    self.moveDown()
-                elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
-                    self.moveUp()
-
-            elif self.x > self.patrol_points[self.current_patrol_point][0]:
-                self.moveLeft()
-                if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
-                    self.moveDown()
-                elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
-                    self.moveUp()
+                    elif self.x > self.patrol_points[self.current_patrol_point][0]:
+                        self.moveLeft()
+                        if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
+                            self.moveDown()
+                        elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
+                            self.moveUp()
+                    else:
+                        self.current_patrol_point = (self.current_patrol_point + 1) % (len(self.patrol_points) - 1)
+                self.rect.topleft = (self.x, self.y)
+                self.trigger()
             else:
-                self.current_patrol_point = (self.current_patrol_point + 1) % (len(self.patrol_points) - 1)
-        self.rect.topleft = (self.x, self.y)
-        self.trigger()
+                self.moving_right_direction = False
+                self.moving_left_direction = True
+                self.idling = True
+        else:
+            pass
 
 #TODO: Attack animation when is closer than 25 pixels
 #TODO: Register collision with main character
