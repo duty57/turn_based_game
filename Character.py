@@ -1,7 +1,7 @@
 import json
 
 import pygame
-
+from Enums import CharacterBattleState
 
 class Character(pygame.sprite.Sprite):
 
@@ -29,7 +29,7 @@ class Character(pygame.sprite.Sprite):
         self.target = None
         self.going_to_enemy = False
         self.attacking_enemy = False
-
+        self.battle_state = CharacterBattleState.idle
         #Movement
         self.frameCount = 0
         self.attackFrameCount = 0
@@ -139,23 +139,23 @@ class Character(pygame.sprite.Sprite):
         self.is_hit = True
 
     def moveRight(self):
-        self.x += 2
+        self.x += 5
         self.moving_right_direction = True
         self.moving_left_direction = False
         self.idling = False
 
     def moveLeft(self):
-        self.x -= 2
+        self.x -= 5
         self.moving_right_direction = False
         self.moving_left_direction = True
         self.idling = False
 
     def moveUp(self):
-        self.y -= 2
+        self.y -= 5
         self.idling = False
 
     def moveDown(self):
-        self.y += 2
+        self.y += 5
         self.idling = False
 
     # Character controller
@@ -219,7 +219,8 @@ class Character(pygame.sprite.Sprite):
         attackAnimationLength = len(self.attack)
         hitAnimationLength = len(self.damageTaken)
 
-        adjusted_rect = adjusted_rect.move(-16, -10)
+        if not self.enemy:
+            adjusted_rect = adjusted_rect.move(-16, -10)
 
 
         if not self.in_battle:
@@ -227,7 +228,6 @@ class Character(pygame.sprite.Sprite):
             self.finished_hit = False#maybe here is the problem with hit animations
 
         if self.is_hit:  # hit animation if hit is true and idle is true
-            print("Hit")
             # counting the frames for the hit animation
             frame_index = (self.frameCount // (hitAnimationLength * 4 // hitAnimationLength)) % hitAnimationLength
             if self.moving_left_direction:
@@ -318,9 +318,9 @@ class Character(pygame.sprite.Sprite):
             self.moveRight()
         elif self.x > enemy.rect.x + 20:
             self.moveLeft()
-        if self.y < enemy.rect.y - 5:
+        if self.y < enemy.rect.center[1]:
             self.moveDown()
-        elif self.y > enemy.rect.y + 5:
+        elif self.y > enemy.rect.center[1]:
             self.moveUp()
 
         if self.rect.center == (self.x, self.y):
@@ -348,7 +348,8 @@ class Character(pygame.sprite.Sprite):
             self.finished_attack = False
             self.moving_right_direction = True
             self.moving_left_direction = False
+            self.battle_state = CharacterBattleState.init
 
-
-
+    def add(self, a):
+        a[0] += 1
 #TODO: Maybe resize the images(source) to a consistent size

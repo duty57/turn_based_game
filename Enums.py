@@ -12,3 +12,9 @@ class elements(Enum):
 class Initiative(Enum):
     player_initiative = 1
     enemy_initiative = 2
+
+class CharacterBattleState(Enum):
+    init = 0
+    idle = 1
+    attacking = 2
+    back_in_position = 3

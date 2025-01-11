@@ -78,20 +78,19 @@ class Game:
             for enemy in self.enemies:
                 turn_order.append(enemy)
         else:
-            for character in self.renderer.characters:
-                turn_order.append(character)
             for enemy in self.enemies:
                 turn_order.append(enemy)
+            for character in self.renderer.characters:
+                turn_order.append(character)
 
         self.battle = Battle(self.window, self.renderer.characters, self.enemies, initiative, turn_order)
-        self.battle.set_camera(self.camera)
         self.battle.start()
 
     def generate_enemy_team(self):
         skeleton = character_init_enemy('Skeleton', 0, 0, self.main_character)
         goblin = character_init_enemy('Goblin', 500, 360, self.main_character)
-        self.enemies.append(skeleton)
-        self.enemies.append(goblin)
+        # self.enemies.append(skeleton)
+        # self.enemies.append(goblin)
 
     def run(self, width, height, fullscreen=False):
         self.create_window(width, height, fullscreen)

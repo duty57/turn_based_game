@@ -4,6 +4,7 @@ from time import sleep
 import pygame
 
 from turn_based_game.Character import Character
+from turn_based_game.Enums import CharacterBattleState
 
 
 class Enemy(Character):
@@ -26,23 +27,23 @@ class Enemy(Character):
         self.main_character = main_character
 
     def moveRight(self):
-        self.x += 1
+        self.x += 1 if not self.in_battle else 2
         self.moving_right_direction = True
         self.moving_left_direction = False
         self.idling = False
 
     def moveLeft(self):
-        self.x -= 1
+        self.x -= 1 if not self.in_battle else 2
         self.moving_right_direction = False
         self.moving_left_direction = True
         self.idling = False
 
     def moveUp(self):
-        self.y -= 1
+        self.y -= 1 if not self.in_battle else 2
         self.idling = False
 
     def moveDown(self):
-        self.y += 1
+        self.y += 1 if not self.in_battle else 2
         self.idling = False
 
     def trigger(self):
@@ -90,7 +91,47 @@ class Enemy(Character):
                 self.moving_left_direction = True
                 self.idling = True
         else:
-            pass
+            if self.going_to_enemy:
+                self.go_to_enemy(self.target)
+            elif self.finished_attack:
+                self.go_back((self.battle_x, self.battle_y))
+
+            # change character position
+            self.rect.center = (self.x, self.y)
+
+    def go_to_enemy(self, enemy):
+        if self.x < enemy.rect.x - 40:
+            self.moveRight()
+        elif self.x > enemy.rect.x + 40:
+            self.moveLeft()
+        if self.y < enemy.rect.center[1]:
+            self.moveDown()
+        elif self.y > enemy.rect.center[1]:
+            self.moveUp()
+
+        if self.rect.center == (self.x, self.y):
+            self.going_to_enemy = False
+            self.attacking = True
+            self.idling = True
+
+    def go_back(self, position):
+        if self.x < position[0]:
+            self.moveRight()
+        if self.y < position[1]:
+            self.moveDown()
+        if self.x > position[0]:
+            self.moveLeft()
+        if self.y > position[1]:
+            self.moveUp()
+
+        if self.rect.center == (self.x, self.y):
+            self.in_action = False
+            self.attacking = False
+            self.idling = True
+            self.finished_attack = False
+            self.moving_right_direction = False
+            self.moving_left_direction = True
+            self.battle_state = CharacterBattleState.back_in_position
 
 #TODO: Attack animation when is closer than 25 pixels
 #TODO: Register collision with main character

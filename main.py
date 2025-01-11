@@ -11,10 +11,6 @@ from turn_based_game.LoadCharacters import character_init_wizard
 from turn_based_game.Renderer import Renderer
 
 
-if "PYGAME_HIDE_SUPPORT_PROMPT" not in os.environ:
-    os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
-
-sys.stderr = open(os.devnull, 'w')
 pygame.init()
 game = Game()
 camera = Camera(1280, 1000, 1280, 720)
@@ -30,7 +26,7 @@ Skeleton = character_init_enemy('Skeleton', 0, 0, Warrior)
 Goblin = character_init_enemy('Goblin', 500, 360, Warrior)
 
 game.add_main_character(Warrior)
-game.add_characters([Warrior, Healer, Wizard, Archer])
+game.add_characters([Warrior, Healer])
 enemy_objects = [Goblin]
 
 game.add_enemies(enemy_objects)
