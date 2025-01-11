@@ -297,8 +297,6 @@ class Battle:
             self.first_cycle = False
 
     def draw(self):
-        for character in self.turn_order:
-            print("Character:", character.battle_state)
         self.window.fill((255, 255, 255))
         self.draw_background()
         self.draw_characters_list()

@@ -4,12 +4,13 @@ from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.Renderer import Renderer
 from turn_based_game.Battle import Battle
 
-from Enums import Initiative
+from Enums import Initiative, CharacterState
 
 
 class Game:
 
     def __init__(self):
+        self.characters = None
         self.window = None
         self.renderer = Renderer()
         self.clock = pygame.time.Clock()
@@ -59,8 +60,7 @@ class Game:
                 self.start_battle(Initiative.player_initiative)
                 character.is_hit = False
 
-
-            elif obj != character and not character.attacking and character.finished_hit:
+            elif obj != character and obj.enemy and obj.finished_attack:
                 print("Collided with object")
                 self.start_battle(Initiative.enemy_initiative)
                 character.is_hit = False
@@ -73,17 +73,17 @@ class Game:
 
         #calculate turn order
         if initiative == Initiative.player_initiative:
-            for character in self.renderer.characters:
+            for character in self.characters:
                 turn_order.append(character)
             for enemy in self.enemies:
                 turn_order.append(enemy)
         else:
             for enemy in self.enemies:
                 turn_order.append(enemy)
-            for character in self.renderer.characters:
+            for character in self.characters:
                 turn_order.append(character)
 
-        self.battle = Battle(self.window, self.renderer.characters, self.enemies, initiative, turn_order)
+        self.battle = Battle(self.window, self.characters, self.enemies, initiative, turn_order)
         self.battle.start()
 
     def generate_enemy_team(self):

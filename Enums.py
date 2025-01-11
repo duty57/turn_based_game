@@ -13,6 +13,15 @@ class Initiative(Enum):
     player_initiative = 1
     enemy_initiative = 2
 
+
+class CharacterState(Enum):
+    idle = 1
+    moving = 2
+    attacking = 3
+    hit = 4
+    dead = 5
+
+
 class CharacterBattleState(Enum):
     init = 0
     idle = 1
