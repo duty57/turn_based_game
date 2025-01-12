@@ -20,6 +20,7 @@ class CharacterState(Enum):
     attacking = 3
     hit = 4
     dead = 5
+    inactive = 6
 
 
 class CharacterBattleState(Enum):

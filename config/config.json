@@ -1,6 +1,6 @@
 {
-  "healer": {
-    "name": "Healer",
+  "Witch": {
+    "name": "Witch",
     "maxHealth": 120,
     "strength": 10,
     "intelligence": 20,
@@ -8,7 +8,7 @@
     "speed": 10,
     "agility": 15,
     "actionPoints": 50,
-    "characterClass": "Healer",
+    "characterClass": "Witch",
     "element": ["LIGHT", "MAGIC"],
     "immunity": ["MAGIC"],
     "weakness": ["SLASH", "DARK"],
@@ -25,7 +25,7 @@
       }
     ]
   },
-  "wizard": {
+  "Wizard": {
     "name": "Wizard",
     "maxHealth": 100,
     "strength": 8,
@@ -51,7 +51,7 @@
       }
     ]
   },
-  "warrior": {
+  "Warrior": {
     "name": "Warrior",
     "maxHealth": 200,
     "strength": 25,
@@ -77,7 +77,7 @@
       }
     ]
   },
-  "archer": {
+  "Archer": {
     "name": "Archer",
     "maxHealth": 150,
     "strength": 15,

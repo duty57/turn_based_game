@@ -21,6 +21,7 @@ class Game:
         self.battle = None
 
         self.camera = None
+
     def add_objects(self, objects):
         self.objects.add(objects)
 
@@ -28,12 +29,10 @@ class Game:
         self.enemies = enemies
         self.objects.add(enemies)
 
-    def add_main_character(self, character):
-        self.main_character = character
-        self.objects.add(character)
-
     def add_characters(self, characters):
         self.characters = characters
+        self.main_character = characters[0]
+        self.objects.add(self.main_character)
         self.renderer.characters = characters
 
     def add_camera(self, camera):
@@ -41,14 +40,17 @@ class Game:
         self.renderer.set_camera(camera)
 
     def create_window(self, width, height, fullscreen=False):
-        self.window =  pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
-        self.renderer.create_window(self.window, width, height, fullscreen)
+        self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
+        self.renderer.create_window(self.window)
+
     def get_collision_rect(self):
         collision_rect = []
         for row_index, row in enumerate(self.renderer.tilemap):
             for col_index, tile in enumerate(row):
-                if tile > 20 and tile < 40:
-                    collision_rect.append(pygame.Rect(col_index * self.renderer.tile_width, row_index * self.renderer.tile_height, self.renderer.tile_width, self.renderer.tile_height))
+                if 20 < tile < 40:
+                    collision_rect.append(
+                        pygame.Rect(col_index * self.renderer.tile_width, row_index * self.renderer.tile_height,
+                                    self.renderer.tile_width, self.renderer.tile_height))
         return collision_rect
 
     def detect_collision(self, character):
@@ -65,13 +67,12 @@ class Game:
                 self.start_battle(Initiative.enemy_initiative)
                 character.is_hit = False
 
-
     def start_battle(self, initiative=Initiative.player_initiative):
         turn_order = []
         self.is_in_battle = True
         self.generate_enemy_team()
 
-        #calculate turn order
+        # calculate turn order
         if initiative == Initiative.player_initiative:
             for character in self.characters:
                 turn_order.append(character)
@@ -89,8 +90,8 @@ class Game:
     def generate_enemy_team(self):
         skeleton = character_init_enemy('Skeleton', 0, 0, self.main_character)
         goblin = character_init_enemy('Goblin', 500, 360, self.main_character)
-        # self.enemies.append(skeleton)
-        # self.enemies.append(goblin)
+        self.enemies.append(skeleton)
+        self.enemies.append(goblin)
 
     def run(self, width, height, fullscreen=False):
         self.create_window(width, height, fullscreen)
@@ -109,7 +110,7 @@ class Game:
                 for obj in self.objects:
                     if obj.enemy:
                         obj.controller()
-                self.renderer.draw(objects=self.objects) # Draw objects
+                self.renderer.draw(objects=self.objects)  # Draw objects
 
             else:
                 self.battle.draw()

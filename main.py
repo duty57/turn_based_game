@@ -6,8 +6,7 @@ import pygame
 
 from turn_based_game.Camera import Camera
 from turn_based_game.Game import Game
-from turn_based_game.LoadCharacters import character_init_warrior, character_init_healer, character_init_archer, character_init_enemy
-from turn_based_game.LoadCharacters import character_init_wizard
+from turn_based_game.LoadCharacters import init_character, character_init_enemy
 from turn_based_game.Renderer import Renderer
 
 
@@ -15,18 +14,15 @@ pygame.init()
 game = Game()
 camera = Camera(1280, 1000, 1280, 720)
 
-
-Warrior = character_init_warrior(200, 300)
-Wizard = character_init_wizard()
-Healer = character_init_healer()
-Archer = character_init_archer()
-
+Warrior = init_character('Warrior', 200, 300, True, (64, 48))
+Healer = init_character('Witch', 200, 300)
+Wizard = init_character('Wizard', 200, 300, True, (40, 40))
+Archer = init_character('Archer', 200, 300)
 
 Skeleton = character_init_enemy('Skeleton', 0, 0, Warrior)
 Goblin = character_init_enemy('Goblin', 500, 360, Warrior)
 
-game.add_main_character(Warrior)
-game.add_characters([Warrior, Healer])
+game.add_characters([Warrior, Healer, Wizard, Archer])
 enemy_objects = [Goblin]
 
 game.add_enemies(enemy_objects)

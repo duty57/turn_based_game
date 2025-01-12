@@ -3,7 +3,6 @@ import json
 import pygame
 from Enums import CharacterBattleState, CharacterState
 
-
 class Character(pygame.sprite.Sprite):
 
     def __init__(self, configFile: str, CharacterName: str, x: int = 200, y: int = 100):
@@ -27,11 +26,14 @@ class Character(pygame.sprite.Sprite):
         # battle states
         self.target = None
         self.going_to_enemy = False
-        self.attacking_enemy = False
-        # self.battle_state = CharacterBattleState.idle
+        self.previous_battle_state = CharacterBattleState.init
+        self.battle_state = CharacterBattleState.idle
+
         # Movement
         self.frameCount = 0
         self.attackFrameCount = 0
+        self.hit_frame_count = 0
+        self.deathFrameCount = 0
         self.x = x
         self.y = y
 
@@ -74,6 +76,7 @@ class Character(pygame.sprite.Sprite):
             self.level = 1
             self.experience = 0.0
             self.nextLevel = 100.0
+            self.damage = 0
 
             # Character equipment
             self.head_armor = None
@@ -90,8 +93,7 @@ class Character(pygame.sprite.Sprite):
             self.damageTaken = None
 
     # Add image to the character
-    def add_image(self, image):
-
+    def add_image(self):
         # Get the rect from the resized image
         self.rect = pygame.Rect(self.x, self.y, 30, 40)
 
@@ -103,24 +105,13 @@ class Character(pygame.sprite.Sprite):
         self.health_bar_width = self.health_bar.get_width()
         self.action_points_bar_height = self.action_points_bar.get_height()
 
-    # Load animations for the character
-    def loadIdleAnimation(self, idle):
-        self.idle = idle
-
-    def loadWalkRightAnimation(self, walkRight):
-        self.walkRight = walkRight
-
-    def loadWalkLeftAnimation(self, walkLeft):
-        self.walkLeft = walkLeft
-
-    def loadAttackAnimation(self, attack):
-        self.attack = attack
-
-    def loadDeathAnimation(self, death):
-        self.death = death
-
-    def loadDamageTakenAnimation(self, damageTaken):
-        self.damageTaken = damageTaken
+    def loadAnimations(self, animations: dict):
+        self.idle = animations['idle']
+        self.walkRight = animations['move_right']
+        self.walkLeft = animations['move_right']
+        self.attack = animations['attack']
+        self.death = animations['dead']
+        self.damageTaken = animations['hit']
 
     def level_up(self):
         self.level += 1
@@ -133,86 +124,88 @@ class Character(pygame.sprite.Sprite):
             self.nextLevel += 100 * self.level
 
     def take_damage(self, damage):
-        self.health -= damage
-        if self.health < 0:
-            self.health = 0
+        if self.character_state.value != CharacterState.inactive.value:
+            self.damage = damage
+            self.health -= damage
+            if self.health < 0:
+                self.health = 0
+                self.character_state = CharacterState.dead
 
     def collide(self):
         self.character_state = CharacterState.hit
 
     def moveRight(self):
-        self.x += 5
+        self.x += 1 if not self.in_battle else 5
         self.moving_right_direction = True
         self.moving_left_direction = False
         self.character_state = CharacterState.moving
 
     def moveLeft(self):
-        self.x -= 5
+        self.x -= 1 if not self.in_battle else 5
         self.moving_right_direction = False
         self.moving_left_direction = True
         self.character_state = CharacterState.moving
 
     def moveUp(self):
-        self.y -= 5
+        self.y -= 1 if not self.in_battle else 5
         self.character_state = CharacterState.moving
 
     def moveDown(self):
-        self.y += 5
+        self.y += 1 if not self.in_battle else 5
         self.character_state = CharacterState.moving
 
     # Character controller
     def controller(self, keys, collisions=[]):
+        if self.character_state != CharacterState.inactive:
+            move_x = 0
+            move_y = 0
+            if not self.in_battle:
 
-        move_x = 0
-        move_y = 0
-        if not self.in_battle:
+                if keys[pygame.K_SPACE] and self.character_class == 'Warrior' and not self.character_state == CharacterState.hit:
+                    self.character_state = CharacterState.attacking
+                elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
+                    self.character_state = CharacterState.idle
 
-            if keys[
-                pygame.K_SPACE] and self.character_class == 'Warrior' and not self.character_state == CharacterState.hit:
-                self.character_state = CharacterState.attacking
-            elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
-                self.character_state = CharacterState.idle
+                if keys[pygame.K_LEFT]:
+                    move_x = -1
+                    self.moving_left_direction = True
+                    self.moving_right_direction = False
+                    self.character_state = CharacterState.moving
+                elif keys[pygame.K_RIGHT]:
+                    move_x = 1
+                    self.moving_left_direction = False
+                    self.moving_right_direction = True
+                    self.character_state = CharacterState.moving
 
-            if keys[pygame.K_LEFT]:
-                move_x = -1
-                self.moving_left_direction = True
-                self.moving_right_direction = False
-                self.character_state = CharacterState.moving
-            elif keys[pygame.K_RIGHT]:
-                move_x = 1
-                self.moving_left_direction = False
-                self.moving_right_direction = True
-                self.character_state = CharacterState.moving
+                if keys[pygame.K_UP]:
+                    move_y = -1
+                    self.character_state = CharacterState.moving
+                elif keys[pygame.K_DOWN]:
+                    move_y = 1
+                    self.character_state = CharacterState.moving
 
-            if keys[pygame.K_UP]:
-                move_y = -1
-                self.character_state = CharacterState.moving
-            elif keys[pygame.K_DOWN]:
-                move_y = 1
-                self.character_state = CharacterState.moving
+                for obj in collisions:
+                    if obj.colliderect(self.rect.move(move_x * self.speed / 5, 0)):
+                        move_x = 0
+                    if obj.colliderect(self.rect.move(0, move_y * self.speed / 5)):
+                        move_y = 0
 
-            for obj in collisions:
-                if obj.colliderect(self.rect.move(move_x * self.speed / 5, 0)):
-                    move_x = 0
-                if obj.colliderect(self.rect.move(0, move_y * self.speed / 5)):
-                    move_y = 0
+                if move_x != 0 and move_y != 0:
+                    move_x *= 0.7071  # 1/sqrt(2)
+                    move_y *= 0.7071  # 1/sqrt(2)
 
-            if move_x != 0 and move_y != 0:
-                move_x *= 0.7071  # 1/sqrt(2)
-                move_y *= 0.7071  # 1/sqrt(2)
+                self.x += move_x * self.speed / 5
+                self.y += move_y * self.speed / 5
+                self.rect.center = (self.x, self.y)
 
-            self.x += move_x * self.speed / 5
-            self.y += move_y * self.speed / 5
-            self.rect.center = (self.x, self.y)
+            else:
+                if self.going_to_enemy:
+                    self.go_to_enemy(self.target)
+                elif self.finished_attack:
+                    self.go_back((self.battle_x, self.battle_y))
 
-        else:
-            if self.going_to_enemy:
-                self.go_to_enemy(self.target)
-            elif self.finished_attack:
-                self.go_back((self.battle_x, self.battle_y))
-
-            # change character position
-            self.rect.center = (self.x, self.y)
+                # change character position
+                self.rect.center = (self.x, self.y)
 
     # Draw the character
     def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
@@ -221,6 +214,7 @@ class Character(pygame.sprite.Sprite):
         idleAnimationLength = len(self.idle)
         attackAnimationLength = len(self.attack)
         hitAnimationLength = len(self.damageTaken)
+        deathAnimationLength = len(self.death)
 
         if not self.enemy:
             adjusted_rect = adjusted_rect.move(-16, -10)
@@ -254,29 +248,44 @@ class Character(pygame.sprite.Sprite):
                 else:
                     window.blit(self.attack[frame_index], adjusted_rect)
                 self.attackFrameCount += 1
-                if self.attackFrameCount >= attackAnimationLength * 2:
+                if self.attackFrameCount >= attackAnimationLength * (30//deathAnimationLength):
                     self.attackFrameCount = 0
                     self.finished_attack = True
                     self.character_state = CharacterState.idle
                     if self.target:
+                        self.previous_battle_state = self.battle_state
+                        self.battle_state = CharacterBattleState.attacking
                         self.target.collide()
-                        self.target.take_damage(5)
+                        self.target.take_damage(30)
             case CharacterState.hit:
-                frame_index = (self.frameCount // (hitAnimationLength * 4 // hitAnimationLength)) % hitAnimationLength
+                frame_index = (self.hit_frame_count // (hitAnimationLength * 4 // hitAnimationLength)) % hitAnimationLength
+                self.draw_damage(window)
                 if self.moving_left_direction:
                     window.blit(pygame.transform.flip(self.damageTaken[frame_index], True, False), adjusted_rect)
                 else:
                     window.blit(self.damageTaken[frame_index], adjusted_rect)
-                self.frameCount += 1
-                if self.frameCount >= hitAnimationLength * 5:
+                self.hit_frame_count += 1
+                if self.hit_frame_count >= hitAnimationLength * (30//deathAnimationLength):
                     self.character_state = CharacterState.idle
-                    self.frameCount = 0
+                    self.hit_frame_count = 0
                     self.finished_hit = True
+            case CharacterState.dead:
+                frame_index = (self.deathFrameCount // (deathAnimationLength * 4 // deathAnimationLength)) % deathAnimationLength
+                if self.moving_left_direction:
+                    window.blit(pygame.transform.flip(self.death[frame_index], True, False), adjusted_rect)
+                else:
+                    window.blit(self.death[frame_index], adjusted_rect)
+                self.deathFrameCount += 1
+                if self.deathFrameCount >= deathAnimationLength * (30//deathAnimationLength):
+                    self.character_state = CharacterState.inactive
+                    self.deathFrameCount = 0
 
         self.frameCount += 1
         pygame.draw.rect(window, (255, 0, 0), self.rect, 2)
 
-    def draw_ui(self, window, profile_frame, health_bar_frame, action_points_frame, offset):
+    def draw_ui(self, window, profile_frame, death_frame, health_bar_frame, action_points_frame, offset):
+
+
         # calculate the health and action points percentage
         health_percentage = self.health / self.max_health
         action_points_percentage = self.action_points / self.max_action_points
@@ -288,8 +297,10 @@ class Character(pygame.sprite.Sprite):
 
         adjust_action_points_bar = 0
 
+        # adjust the action points bar
         if (self.action_points_bar_height - self.action_points_bar.get_height()) > 0:
             adjust_action_points_bar = (self.action_points_bar_height - self.action_points_bar.get_height()) - 1
+
 
         window.blit(profile_frame, (offset, 0))  # profile frame
         window.blit(self.profile, (offset + 5, 0 + 5))  # profile
@@ -309,6 +320,13 @@ class Character(pygame.sprite.Sprite):
         action_points_text = font.render(str(self.action_points), True, (255, 200, 37))
         window.blit(action_points_text, (offset - 22, 35))
 
+        if self.character_state.value >= CharacterState.dead.value:
+            window.blit(death_frame, (offset, 0))
+
+    def draw_damage(self, window):
+        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
+        damage_text = font.render('-'+str(self.damage), True, (255, 0, 0))
+        window.blit(damage_text, (self.x, self.y-50))
         # Combat system
 
     def go_to_enemy(self, enemy):
@@ -341,8 +359,7 @@ class Character(pygame.sprite.Sprite):
             self.finished_attack = False
             self.moving_right_direction = True
             self.moving_left_direction = False
-            self.battle_state = CharacterBattleState.init
+            self.previous_battle_state = self.battle_state
+            self.battle_state = CharacterBattleState.back_in_position
 
-    def add(self, a):
-        a[0] += 1
 # TODO: Maybe resize the images(source) to a consistent size

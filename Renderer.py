@@ -1,30 +1,33 @@
 import pygame
-#[10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+
+
+# [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
 class Renderer:
 
     def __init__(self):
         self.window = None
         self.camera = None  # Camera reference
-        self.characters = [] # 1) main character 2) wizard 3) healer 4) archer
+        self.characters = []  # 1) main character 2) wizard 3) healer 4) archer
         self.tilemap = []
         self.tile_width = 64
         self.tile_height = 64
         self.profile_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Frame.png')
         self.profile_frame = pygame.transform.scale(self.profile_frame, (50, 50))
+        self.death_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Dead_Frame.png')
         self.health_bar_frame = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Frame.png')
-        self.action_points_bar_frame = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
+        self.action_points_bar_frame = pygame.image.load(
+            'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
         self.backpack = pygame.image.load('turn_based_game/assets/UI/Inventory/backpack_small.png')
 
-
-    def create_window(self, window, width:int, height:int, fullscreen:bool = False):
+    def create_window(self, window):
         pygame.init()
         self.window = window
-
 
     def set_camera(self, camera):
         """Set the camera to adjust rendering offsets."""
         self.camera = camera
+
     def draw_level(self):
         self.tilemap = [
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10],
@@ -48,12 +51,11 @@ class Renderer:
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 10, 32, 10, 10, 10, 10, 10]
         ]
 
-
-        #0-10 common tiles
-        #11-20 tiles with flowers
-        #21-30 horizontal walls
-        #31-40 vertical walls
-        #41-50 background tiles
+        # 0-10 common tiles
+        # 11-20 tiles with flowers
+        # 21-30 horizontal walls
+        # 31-40 vertical walls
+        # 41-50 background tiles
         tiles = {
             10: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_1.png'),
             21: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Horizontal_1.png'),
@@ -86,7 +88,8 @@ class Renderer:
         self.window.blit(self.profile_frame, (1230, 0))
         self.window.blit(self.backpack, (1230, -7))
         for i, character in enumerate(self.characters):
-            character.draw_ui(self.window, self.profile_frame, self.health_bar_frame, self.action_points_bar_frame, 85 * i + 25)
+            character.draw_ui(self.window, self.profile_frame, self.death_frame, self.health_bar_frame, self.action_points_bar_frame,
+                              85 * i + 25)
 
     def draw(self, objects: list):
         self.window.fill((114, 117, 27))
