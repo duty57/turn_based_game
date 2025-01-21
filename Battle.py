@@ -1,7 +1,7 @@
 from time import sleep
 
 import pygame
-from Enums import Initiative, CharacterBattleState, CharacterState
+from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
 
 
@@ -13,7 +13,7 @@ class Battle:
         self.player_team = player_team
         self.enemy_team = enemy_team
         self.turn_order = turn_order
-        self.player_team_highlight = player_team
+        self.player_team_highlight = copy.copy(player_team)
         self.enemy_team_highlight = copy.copy(enemy_team)
         self.initiative = initiative
         self.current_turn = 0
@@ -40,6 +40,7 @@ class Battle:
         self.up_key_released = None
         self.down_key_released = None
 
+        self.selection_mode = SelectionMode.enemy
         self.selection_index = 0
 
         self.first_cycle = True
@@ -211,6 +212,22 @@ class Battle:
             self.window.blit(self.list_image, (15, 100))
             text = font.render("Skills", True, (255, 255, 255))
             self.window.blit(text, (140, 75))
+            for i, skill in enumerate(self.turn_order[self.current_turn].skills):
+                font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
+                rect = pygame.Rect(50, 125 + 67 * i, 255, 65)
+                pygame.draw.rect(self.window, (0, 0, 0), rect, 2)
+
+                skill_text = font.render(skill['name']+':', True, (255, 255, 255))
+                self.window.blit(skill_text, (55, 130 + 67 * i))
+
+                skill_text = font.render(str(skill['cost']), True, (255, 255, 0))
+                self.window.blit(skill_text, (180, 130 + 67 * i))
+
+                font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 12)
+                for j, line in enumerate(skill['description'].split('\n')):
+                    skill_text = font.render(line, True, (255, 255, 255))
+                    self.window.blit(skill_text, (55, 150 + 67 * i + 12 * j))
+
 
     def draw_highlight(self):
         if self.enter_key_pressed:
@@ -338,11 +355,12 @@ class Battle:
         elif self.turn_order[self.current_turn % len(self.turn_order)].enemy and not self.turn_order[
             (self.current_turn - 1) % len(self.turn_order)].in_action:
 
-            self.turn_order[self.current_turn % len(self.turn_order)].target = self.player_team_highlight[0]
-            self.turn_order[self.current_turn % len(self.turn_order)].going_to_enemy = True
-            self.turn_order[self.current_turn % len(self.turn_order)].in_action = True
-            self.current_turn += 1
-            self.current_turn %= len(self.turn_order)
+            if self.player_team_highlight:
+                self.turn_order[self.current_turn % len(self.turn_order)].target = self.player_team_highlight[0]
+                self.turn_order[self.current_turn % len(self.turn_order)].going_to_enemy = True
+                self.turn_order[self.current_turn % len(self.turn_order)].in_action = True
+                self.current_turn += 1
+                self.current_turn %= len(self.turn_order)
 
             if not self.first_cycle:
                 print("Calculating turn order")

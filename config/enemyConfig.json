@@ -12,16 +12,16 @@
     "element": "SLASH",
     "immunity": [],
     "weakness": ["FIRE", "LIGHT"],
-    "abilities": [
+    "skills": [
       {
         "name": "Slash",
         "cost": 10,
-        "effect": "Deal 10 damage to an enemy."
+        "description": "Deal 10 damage to an enemy."
       },
       {
         "name": "Evade",
         "cost": 15,
-        "effect": "Increase agility by 10 for 2 turns."
+        "description": "Increase agility by 10 for 2 turns."
       }
     ]
   },
@@ -38,16 +38,16 @@
     "element": "PIERCE",
     "immunity": ["DARK"],
     "weakness": ["LIGHT", "SLASH"],
-    "abilities": [
+    "skills": [
       {
         "name": "Bone Throw",
         "cost": 10,
-        "effect": "Deal 15 damage to an enemy."
+        "description": "Deal 15 damage to an enemy."
       },
       {
         "name": "Reassemble",
         "cost": 20,
-        "effect": "Restore 20 health."
+        "description": "Restore 20 health."
       }
     ]
   },
@@ -64,16 +64,16 @@
     "element": ["FIRE", "WIND"],
     "immunity": ["FIRE", "PIERCE", "DARK"],
     "weakness": ["ICE", "LIGHT"],
-    "abilities": [
+    "skills": [
       {
         "name": "Fire Breath",
         "cost": 20,
-        "effect": "Deal 25 fire damage to all enemies."
+        "description": "Deal 25 fire damage to all enemies."
       },
       {
         "name": "Wing Slash",
         "cost": 15,
-        "effect": "Deal 20 damage to a single enemy."
+        "description": "Deal 20 damage to a single enemy."
       }
     ]
   }

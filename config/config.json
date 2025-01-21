@@ -12,16 +12,16 @@
     "element": ["LIGHT", "MAGIC"],
     "immunity": ["MAGIC"],
     "weakness": ["SLASH", "DARK"],
-    "abilities": [
+    "skills": [
       {
         "name": "Heal",
         "cost": 15,
-        "effect": "Restore 30 health to an ally."
+        "description": "Restore 30 health to an ally."
       },
       {
         "name": "Purify",
         "cost": 20,
-        "effect": "Remove a negative status effect from an ally."
+        "description": "Remove a negative status \neffect from an ally."
       }
     ]
   },
@@ -38,16 +38,16 @@
     "element": ["MAGIC", "DARK"],
     "immunity": ["FIRE"],
     "weakness": ["PIERCE", "WIND"],
-    "abilities": [
+    "skills": [
       {
         "name": "Fireball",
         "cost": 20,
-        "effect": "Deal 35 damage to an enemy."
+        "description": "Deal 35 damage to an enemy."
       },
       {
         "name": "Ice Shield",
         "cost": 10,
-        "effect": "Increase defense by 10 for 2 turns."
+        "description": "Increase defense by 10 for 2 turns."
       }
     ]
   },
@@ -64,16 +64,16 @@
     "element": "SLASH",
     "immunity": ["SLASH", "ICE"],
     "weakness": ["MAGIC", "PIERCE"],
-    "abilities": [
+    "skills": [
       {
         "name": "Shield Bash",
         "cost": 10,
-        "effect": "Deal 15 damage and stun the enemy for 1 turn."
+        "description": "Deal 15 damage and stun \nthe enemy for 1 turn."
       },
       {
         "name": "Berserk",
         "cost": 25,
-        "effect": "Increase damage by 20 for 2 turns but reduce defense by 10."
+        "description": "Increase damage by 20 for 2 \nturns but reduce defense by 10."
       }
     ]
   },
@@ -90,16 +90,16 @@
     "element": ["PIERCE", "WIND"],
     "immunity": ["WIND"],
     "weakness": ["ICE", "MAGIC"],
-    "abilities": [
+    "skills": [
       {
         "name": "Piercing Shot",
         "cost": 15,
-        "effect": "Deal 20 damage and ignore 5 defense."
+        "description": "Deal 20 damage and ignore \n5 defense."
       },
       {
         "name": "Rapid Fire",
         "cost": 20,
-        "effect": "Attack twice for 10 damage each."
+        "description": "Attack twice for 10 damage each."
       }
     ]
   }

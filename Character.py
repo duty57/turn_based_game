@@ -58,7 +58,7 @@ class Character(pygame.sprite.Sprite):
             self.immunity = data['immunity']
             self.weakness = data['weakness']
             self.element = data['element']
-            self.abilities = data.get('abilities', [])
+            self.skills = data.get('skills', [])
 
             self.max_health = data['maxHealth']
             self.strength = data['strength']
@@ -127,7 +127,7 @@ class Character(pygame.sprite.Sprite):
         if self.character_state.value != CharacterState.inactive.value:
             self.damage = damage
             self.health -= damage
-            if self.health < 0:
+            if self.health <= 0:
                 self.health = 0
                 self.character_state = CharacterState.dead
 
@@ -216,8 +216,7 @@ class Character(pygame.sprite.Sprite):
         hitAnimationLength = len(self.damageTaken)
         deathAnimationLength = len(self.death)
 
-        if not self.enemy:
-            adjusted_rect = adjusted_rect.move(-16, -10)
+        adjusted_rect = adjusted_rect.move(-16, -10)
 
         if not self.in_battle:
             self.finished_attack = False

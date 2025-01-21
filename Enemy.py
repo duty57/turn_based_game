@@ -31,13 +31,13 @@ class Enemy(Character):
         if abs(self.x - self.main_character.x) ** 2 + abs(self.y - self.main_character.y) ** 2 < 25 ** 2:
             if self.trigger_time is None:
                 self.trigger_time = pygame.time.get_ticks()  # Record the time when the enemy is triggered
-            elif pygame.time.get_ticks() - self.trigger_time > 500:  # If 1 second has passed since the enemy was triggered
+            elif pygame.time.get_ticks() - self.trigger_time > 1500:  # If 1 second has passed since the enemy was triggered
                 self.character_state = CharacterState.attacking
                 self.main_character.collide()
                 self.trigger_time = None
         elif distance < 100 ** 2 and looking_at_main_character:
             self.is_triggered = True
-            self.patrol_points[-1] = (self.main_character.x, self.main_character.y)
+            self.patrol_points[-1] = (self.main_character.x, self.main_character.y-25)
             self.current_patrol_point = 2
         elif self.is_triggered:
             self.is_triggered = False
@@ -53,7 +53,7 @@ class Enemy(Character):
                         self.moveRight()
                         if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
                             self.moveDown()
-                        elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
+                        elif self.y - 5 > self.patrol_points[self.current_patrol_point][1]:
                             self.moveUp()
 
 
@@ -61,7 +61,7 @@ class Enemy(Character):
                         self.moveLeft()
                         if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
                             self.moveDown()
-                        elif self.y - 10 > self.patrol_points[self.current_patrol_point][1]:
+                        elif self.y - 5 > self.patrol_points[self.current_patrol_point][1]:
                             self.moveUp()
                     else:
                         self.current_patrol_point = (self.current_patrol_point + 1) % (len(self.patrol_points) - 1)
@@ -84,8 +84,8 @@ class Enemy(Character):
             hitAnimationLength = len(self.damageTaken)
             deathAnimationLength = len(self.death)
 
-            if not self.enemy:
-                adjusted_rect = adjusted_rect.move(-16, -10)
+            if not self.in_battle:
+                adjusted_rect = adjusted_rect.move(10, 10)
 
             if not self.in_battle and self.character_state != CharacterState.hit:
                 self.finished_attack = False
@@ -125,7 +125,7 @@ class Enemy(Character):
                             self.previous_battle_state = self.battle_state
                             self.battle_state = CharacterBattleState.attacking
                             self.target.collide()
-                            self.target.take_damage(30)
+                            self.target.take_damage(150)
                 case CharacterState.hit.value:
                     frame_index = (self.hit_frame_count // (
                                 hitAnimationLength * 4 // hitAnimationLength)) % hitAnimationLength

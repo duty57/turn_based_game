@@ -22,9 +22,14 @@ class CharacterState(Enum):
     dead = 5
     inactive = 6
 
-
 class CharacterBattleState(Enum):
     init = 0
     idle = 1
     attacking = 2
     back_in_position = 3
+
+class SelectionMode(Enum):
+    enemy = 1
+    character = 2
+    items = 3
+    skills = 4
