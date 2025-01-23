@@ -3,12 +3,16 @@ from time import sleep
 import pygame
 from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
+from turn_based_game.GameUI import GameUI as UI
 
 
 class Battle:
 
-    def __init__(self, window, player_team, enemy_team, initiative, turn_order=[]):
+    def __init__(self, window: pygame.Surface, player_team: list, enemy_team: list, initiative: Initiative,
+                 turn_order: list = None):
 
+        if turn_order is None:
+            turn_order = []
         self.window = window
         self.player_team = player_team
         self.enemy_team = enemy_team
@@ -45,28 +49,6 @@ class Battle:
 
         self.first_cycle = True
 
-        self.profile_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Frame.png')
-        self.profile_frame = pygame.transform.scale(self.profile_frame, (50, 50))
-        self.death_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Dead_Frame.png')
-        self.health_bar_frame = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Frame.png')
-        self.action_points_bar_frame = pygame.image.load(
-            'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
-        self.list_image = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Lists/list_long.png'),
-                                                 (325, 522))
-        self.character_highlight = pygame.transform.scale(
-            pygame.image.load('turn_based_game/assets/VFX/Highlights/Character_highlight.png'), (48, 12))
-        self.enemy_highlight = pygame.transform.scale(
-            pygame.image.load('turn_based_game/assets/VFX/Highlights/Enemy_highlight.png'), (48, 12))
-        self.character_frame_highlight = pygame.transform.scale(
-            pygame.image.load('turn_based_game/assets/VFX/Highlights/Character_frame_highlight.png'), (50, 50))
-        self.enemy_frame_highlight = pygame.transform.scale(
-            pygame.image.load('turn_based_game/assets/VFX/Highlights/Enemy_frame_highlight.png'), (50, 50))
-
-        self.a_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/A.png'), (32, 32))
-        self.d_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/D.png'), (32, 32))
-        self.enter_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/ENTER.png'), (32, 32))
-        self.space_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/SPACE.png'), (64, 32))
-
     def start(self):
         sleep(0.5)
 
@@ -80,8 +62,8 @@ class Battle:
         pygame.display.update()
 
         # set up the battle elements
-        self.enemy_highlight.set_alpha(128)
-        self.character_highlight.set_alpha(128)
+        UI.enemy_highlight.set_alpha(128)
+        UI.character_highlight.set_alpha(128)
 
         # set character positions
         for i, character in enumerate(self.player_team):
@@ -121,6 +103,7 @@ class Battle:
         self.window.blit(text, text_rect)
         pygame.display.update()
         sleep(0.5)
+
     def calculate_turn_order(self):
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)
 
@@ -171,14 +154,14 @@ class Battle:
 
     def draw_characters_list(self):
         for i, character in enumerate(self.player_team):
-            character.draw_ui(self.window, self.profile_frame, self.death_frame, self.health_bar_frame,
-                              self.action_points_bar_frame,
+            character.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
+                              UI.action_points_bar_frame,
                               85 * i + 25)
 
     def draw_enemy_list(self):
         for i, enemy in enumerate(self.enemy_team):
-            enemy.draw_ui(self.window, self.profile_frame, self.death_frame, self.health_bar_frame,
-                          self.action_points_bar_frame,
+            enemy.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
+                          UI.action_points_bar_frame,
                           1220 - 85 * i)
 
     def draw_actions(self):
@@ -190,26 +173,26 @@ class Battle:
         select_text = font.render("Select", True, (182, 182, 182))
         use_text = font.render("Use", True, (182, 182, 182))
 
-        self.window.blit(self.a_key, (15, 685))
+        self.window.blit(UI.a_key, (15, 685))
         self.window.blit(item_text, (60, 690))
-        self.window.blit(self.d_key, (165, 685))
+        self.window.blit(UI.d_key, (165, 685))
         self.window.blit(skill_text, (210, 690))
-        self.window.blit(self.enter_key, (340, 685))
+        self.window.blit(UI.enter_key, (340, 685))
         self.window.blit(select_text, (385, 690))
-        self.window.blit(self.space_key, (510, 685))
+        self.window.blit(UI.space_key, (510, 685))
         self.window.blit(use_text, (590, 690))
 
     def draw_item_list(self):
         if self.a_key_pressed:
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
-            self.window.blit(self.list_image, (15, 100))
+            self.window.blit(UI.list_image, (15, 100))
             text = font.render("Items", True, (255, 255, 255))
             self.window.blit(text, (140, 75))
 
     def draw_skill_list(self):
         if self.d_key_pressed:
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
-            self.window.blit(self.list_image, (15, 100))
+            self.window.blit(UI.list_image, (15, 100))
             text = font.render("Skills", True, (255, 255, 255))
             self.window.blit(text, (140, 75))
             for i, skill in enumerate(self.turn_order[self.current_turn].skills):
@@ -217,7 +200,7 @@ class Battle:
                 rect = pygame.Rect(50, 125 + 67 * i, 255, 65)
                 pygame.draw.rect(self.window, (0, 0, 0), rect, 2)
 
-                skill_text = font.render(skill['name']+':', True, (255, 255, 255))
+                skill_text = font.render(skill['name'] + ':', True, (255, 255, 255))
                 self.window.blit(skill_text, (55, 130 + 67 * i))
 
                 skill_text = font.render(str(skill['cost']), True, (255, 255, 0))
@@ -228,7 +211,6 @@ class Battle:
                     skill_text = font.render(line, True, (255, 255, 255))
                     self.window.blit(skill_text, (55, 150 + 67 * i + 12 * j))
 
-
     def draw_highlight(self):
         if self.enter_key_pressed:
             # if self.player_team[self.current_character_index].character_class == 'Witch':
@@ -237,9 +219,9 @@ class Battle:
             # else:
             #     self.selection_index = self.enemy_team.index(self.enemy_team_highlight[len(self.enemy_team_highlight)-1]) if self.selection_index > len(self.enemy_team_highlight)-1\
             #         else (0 if self.enemy_team.index(self.enemy_team_highlight[self.selection_index]) < 0 else self.enemy_team.index(self.enemy_team_highlight[self.selection_index]))
-            self.window.blit(self.enemy_highlight, (1000 - 24, 500 + 5 - 80 * self.enemy_team.index(
+            self.window.blit(UI.enemy_highlight, (1000 - 24, 500 + 5 - 80 * self.enemy_team.index(
                 self.enemy_team_highlight[self.selection_index % len(self.enemy_team_highlight)])))
-            self.window.blit(self.enemy_frame_highlight, (1220 - 85 * self.enemy_team.index(
+            self.window.blit(UI.enemy_frame_highlight, (1220 - 85 * self.enemy_team.index(
                 self.enemy_team_highlight[self.selection_index % len(self.enemy_team_highlight)]), 0))
 
     def draw_turn_order(self):
@@ -248,17 +230,19 @@ class Battle:
         text_next = font.render("Next", True, (255, 255, 0))
         if self.turn_order[self.current_turn_ui % len(self.turn_order)].enemy:
             self.window.blit(text_now, (
-            1223 - 85 * self.enemy_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
+                1223 - 85 * self.enemy_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
         else:
             self.window.blit(text_now, (
-            28 + 85 * self.player_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
+                28 + 85 * self.player_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
 
         if self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)].enemy:
             self.window.blit(text_next, (
-            1223 - 85 * self.enemy_team.index(self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)]), 2))
+                1223 - 85 * self.enemy_team.index(self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)]),
+                2))
         else:
             self.window.blit(text_next, (
-            28 + 85 * self.player_team.index(self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)]), 2))
+                28 + 85 * self.player_team.index(self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)]),
+                2))
 
     def controler(self):
 
@@ -370,7 +354,7 @@ class Battle:
                 self.current_turn = self.turn_order.index(current_character) + 1
                 self.current_turn %= len(self.turn_order)
 
-        if self.current_turn_ui == len(self.turn_order)-1:
+        if self.current_turn_ui == len(self.turn_order) - 1:
             self.first_cycle = False
 
     def draw(self):

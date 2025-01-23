@@ -1,5 +1,5 @@
 import pygame
-
+from turn_based_game.GameUI import GameUI as UI
 
 # [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
@@ -9,16 +9,9 @@ class Renderer:
         self.window = None
         self.camera = None  # Camera reference
         self.characters = []  # 1) main character 2) wizard 3) healer 4) archer
-        self.tilemap = []
+        self.tile_map = []
         self.tile_width = 64
         self.tile_height = 64
-        self.profile_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Frame.png')
-        self.profile_frame = pygame.transform.scale(self.profile_frame, (50, 50))
-        self.death_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Dead_Frame.png')
-        self.health_bar_frame = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Frame.png')
-        self.action_points_bar_frame = pygame.image.load(
-            'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
-        self.backpack = pygame.image.load('turn_based_game/assets/UI/Inventory/backpack_small.png')
 
     def create_window(self, window):
         pygame.init()
@@ -29,7 +22,7 @@ class Renderer:
         self.camera = camera
 
     def draw_level(self):
-        self.tilemap = [
+        self.tile_map = [
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10],
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 10, 10, 10, 10, 32, 10, 10, 10, 10, 10],
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 11, 36, 22, 22, 10, 10, 10, 10, 10, 10],
@@ -73,7 +66,7 @@ class Renderer:
             40: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_6.png'),
         }
 
-        for y, row in enumerate(self.tilemap):
+        for y, row in enumerate(self.tile_map):
             for x, tile_id in enumerate(row):
                 tile = tiles[tile_id]
                 tile_rect = pygame.Rect(
@@ -85,10 +78,10 @@ class Renderer:
                 self.window.blit(tile, tile_rect)
 
     def draw_ui(self):
-        self.window.blit(self.profile_frame, (1230, 0))
-        self.window.blit(self.backpack, (1230, -7))
+        self.window.blit(UI.profile_frame, (1230, 0))
+        self.window.blit(UI.backpack, (1230, -7))
         for i, character in enumerate(self.characters):
-            character.draw_ui(self.window, self.profile_frame, self.death_frame, self.health_bar_frame, self.action_points_bar_frame,
+            character.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame, UI.action_points_bar_frame,
                               85 * i + 25)
 
     def draw(self, objects: list):

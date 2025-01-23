@@ -45,7 +45,7 @@ class Game:
 
     def get_collision_rect(self):
         collision_rect = []
-        for row_index, row in enumerate(self.renderer.tilemap):
+        for row_index, row in enumerate(self.renderer.tile_map):
             for col_index, tile in enumerate(row):
                 if 20 < tile < 40:
                     collision_rect.append(

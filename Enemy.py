@@ -3,13 +3,13 @@ from time import sleep
 
 import pygame
 
-from turn_based_game.Character import Character
+from turn_based_game.Actor import Actor
 from turn_based_game.Enums import CharacterBattleState, CharacterState
 
 
-class Enemy(Character):
-    def __init__(self, config, characterName, x, y, main_character=None):
-        super().__init__(config, characterName, x, y)
+class Enemy(Actor):
+    def __init__(self, config, character_name, x, y, main_character=None):
+        super().__init__(config, character_name, x, y)
         self.enemy = True
 
         self.patrol_points = [(x + 100, y), (x - 100, y), (x, y)]
@@ -153,42 +153,7 @@ class Enemy(Character):
             self.frameCount += 1
             pygame.draw.rect(window, (255, 0, 0), self.rect, 2)
 
-    def go_to_enemy(self, enemy):
-        if self.x < enemy.rect.x - 40:
-            self.moveRight()
-        elif self.x > enemy.rect.x + 40:
-            self.moveLeft()
-        if self.y < enemy.rect.center[1]:
-            self.moveDown()
-        elif self.y > enemy.rect.center[1]:
-            self.moveUp()
-
-        if self.rect.center == (self.x, self.y):
-            self.going_to_enemy = False
-            self.character_state = CharacterState.attacking
-
-    def go_back(self, position):
-        if self.x < position[0]:
-            self.moveRight()
-        if self.y < position[1]:
-            self.moveDown()
-        if self.x > position[0]:
-            self.moveLeft()
-        if self.y > position[1]:
-            self.moveUp()
-
-        if self.rect.center == (self.x, self.y):
-            print("Back in position")
-            self.in_action = False
-            self.character_state = CharacterState.idle
-            self.finished_attack = False
-            self.moving_right_direction = False
-            self.moving_left_direction = True
-            self.previous_battle_state = self.battle_state
-            self.battle_state = CharacterBattleState.back_in_position
-
 # TODO: Attack animation when is closer than 25 pixels
-# TODO: Register collision with main character
 #
 # else:
 #      self.moving_right_direction = False
