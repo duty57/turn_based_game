@@ -2,7 +2,6 @@ import json
 
 import pygame
 from Enums import CharacterBattleState, CharacterState
-from turn_based_game.GameUI import GameUI as UI
 
 
 # TODO formula for enemy leveling: player_level + 1 * (player_level // 5)
@@ -40,6 +39,9 @@ class Actor(pygame.sprite.Sprite):
         self.y = y
 
         self.profile = None
+        self.health_bar = None
+        self.action_points_bar = None
+
         self.health_bar_width = None
         self.action_points_bar_height = None
 
@@ -92,10 +94,12 @@ class Actor(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.x, self.y, 30, 40)
 
     # Load UI for the character
-    def loadUI(self, profile: pygame.Surface):
+    def loadUI(self, profile: pygame.Surface, health_bar: pygame.Surface, action_points: pygame.Surface):
         self.profile = profile
-        self.health_bar_width = UI.health_bar.get_width()
-        self.action_points_bar_height = UI.action_points_bar.get_height()
+        self.health_bar = health_bar
+        self.action_points_bar = action_points
+        self.health_bar_width = self.health_bar.get_width()
+        self.action_points_bar_height = self.action_points_bar.get_height()
         print(self.health_bar_width, self.action_points_bar_height)
 
     def loadAnimations(self, animations: dict):
@@ -143,23 +147,23 @@ class Actor(pygame.sprite.Sprite):
         health_percentage = self.health / self.max_health
         action_points_percentage = self.action_points / self.max_action_points
 
-        UI.health_bar = pygame.transform.scale(UI.health_bar, (
-            int(self.health_bar_width * health_percentage), UI.health_bar.get_height()))
-        UI.action_points_bar = pygame.transform.scale(UI.action_points_bar, (
-            UI.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
+        self.health_bar = pygame.transform.scale(self.health_bar, (
+            int(self.health_bar_width * health_percentage), self.health_bar.get_height()))
+        self.action_points_bar = pygame.transform.scale(self.action_points_bar, (
+            self.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
 
         adjust_action_points_bar = 0
 
         # adjust the action points bar
-        if (self.action_points_bar_height - UI.action_points_bar.get_height()) > 0:
-            adjust_action_points_bar = (self.action_points_bar_height - UI.action_points_bar.get_height()) - 1
+        if (self.action_points_bar_height - self.action_points_bar.get_height()) > 0:
+            adjust_action_points_bar = (self.action_points_bar_height - self.action_points_bar.get_height()) - 1
 
         window.blit(profile_frame, (offset, 0))  # profile frame
         window.blit(self.profile, (offset + 5, 0 + 5))  # profile
-        window.blit(UI.health_bar, (offset + 13, 50 + 3))  # health bar
+        window.blit(self.health_bar, (offset + 13, 50 + 3))  # health bar
         window.blit(health_bar_frame, (offset + 10, 50))  # health bar frame
         window.blit(action_points_frame, (offset - 12, 5))  # action points frame
-        window.blit(UI.action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
+        window.blit(self.action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
 
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 12)
 

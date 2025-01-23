@@ -66,7 +66,7 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
     }
     character.loadAnimations(animations_dict)
     character.add_image()
-    character.loadUI(profile_picture)
+    character.loadUI(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -109,6 +109,6 @@ def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Charac
     }
     enemy.loadAnimations(animations_dict)
     enemy.add_image()
-    enemy.loadUI(profile_picture)
+    enemy.loadUI(profile_picture, health_bar, action_points_bar)
 
     return enemy

@@ -4,9 +4,7 @@ import pygame
 @dataclass
 class GameUI:
     # Load all images for the UI
-    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
     health_bar_frame = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Frame.png')
-    action_points_bar: pygame.Surface = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
     action_points_bar_frame = pygame.image.load(
         'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
 

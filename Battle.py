@@ -4,7 +4,7 @@ import pygame
 from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
 from turn_based_game.GameUI import GameUI as UI
-
+from turn_based_game.Level import Level
 
 class Battle:
 
@@ -48,6 +48,7 @@ class Battle:
         self.selection_index = 0
 
         self.first_cycle = True
+        self.level = Level()
 
     def start(self):
         sleep(0.5)
@@ -108,30 +109,7 @@ class Battle:
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)
 
     def draw_background(self):
-        tilemap = [
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
-        ]
-
-        tiles = {
-            10: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_1.png'),
-        }
-
-        for y, row in enumerate(tilemap):
-            for x, tile in enumerate(row):
-                self.window.blit(tiles[tile], (x * 64, y * 64))
+        self.level.draw_battle_level(self.window)
 
     # combat logic
     def attack(self, attacker, target):

@@ -5,7 +5,7 @@ from turn_based_game.Renderer import Renderer
 from turn_based_game.Battle import Battle
 
 from Enums import Initiative, CharacterState
-
+from turn_based_game.Level import Level
 
 class Game:
 
@@ -21,6 +21,7 @@ class Game:
         self.battle = None
 
         self.camera = None
+        self.level = None
 
     def add_objects(self, objects):
         self.objects.add(objects)
@@ -39,18 +40,21 @@ class Game:
         self.camera = camera
         self.renderer.set_camera(camera)
 
+    def add_level(self, level):
+        self.level = level
+        self.renderer.set_level(level)
     def create_window(self, width, height, fullscreen=False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
 
     def get_collision_rect(self):
         collision_rect = []
-        for row_index, row in enumerate(self.renderer.tile_map):
+        for row_index, row in enumerate(self.level.tile_map_world):
             for col_index, tile in enumerate(row):
                 if 20 < tile < 40:
                     collision_rect.append(
-                        pygame.Rect(col_index * self.renderer.tile_width, row_index * self.renderer.tile_height,
-                                    self.renderer.tile_width, self.renderer.tile_height))
+                        pygame.Rect(col_index * self.level.tile_width, row_index * self.level.tile_height,
+                                    self.level.tile_width, self.level.tile_height))
         return collision_rect
 
     def detect_collision(self, character):

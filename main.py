@@ -6,12 +6,14 @@ import pygame
 
 from turn_based_game.Camera import Camera
 from turn_based_game.Game import Game
+from turn_based_game.Level import Level
 from turn_based_game.LoadCharacters import init_character, character_init_enemy
 from turn_based_game.Renderer import Renderer
 
 
 pygame.init()
 game = Game()
+level = Level()
 camera = Camera(1280, 1000, 1280, 720)
 
 Warrior = init_character('Warrior', 200, 300, True, (64, 48))
@@ -27,6 +29,7 @@ enemy_objects = [Goblin]
 
 game.add_enemies(enemy_objects)
 game.add_camera(camera)
+game.add_level(level)
 
 game.run(1280, 720, False)
 
