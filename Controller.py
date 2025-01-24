@@ -9,10 +9,10 @@ from turn_based_game.Enums import CharacterState, CharacterBattleState
 
 class Controller:
 
-    def __init__(self, actor, animations: dict, x: int = 200, y: int = 100):
+    def __init__(self, actor, update_rect_callback, x: int = 200, y: int = 100):
         self.actor = actor
 
-        self.rect = None
+        self.update_rect = update_rect_callback
 
         # world states
         self.moving_right_direction = True
@@ -51,6 +51,23 @@ class Controller:
         self.in_action = False
 
         # Character animations
+        self.idle = None
+        self.walkRight = None
+        self.walkLeft = None
+        self.attack = None
+        self.death = None
+        self.damageTaken = None
+
+    # Load UI for the character
+    def load_ui(self, profile: pygame.Surface, health_bar: pygame.Surface, action_points: pygame.Surface):
+        self.profile = profile
+        self.health_bar = health_bar
+        self.action_points_bar = action_points
+        self.health_bar_width = self.health_bar.get_width()
+        self.action_points_bar_height = self.action_points_bar.get_height()
+        print(self.health_bar_width, self.action_points_bar_height)
+
+    def load_animations(self, animations: dict):
         self.idle = animations['idle']
         self.walkRight = animations['move_right']
         self.walkLeft = animations['move_right']
@@ -58,7 +75,38 @@ class Controller:
         self.death = animations['dead']
         self.damageTaken = animations['hit']
 
-    def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
+    def take_damage(self, damage):
+        if self.character_state.value != CharacterState.inactive.value:
+            self.damage = damage
+            self.health -= damage
+            if self.health <= 0:
+                self.health = 0
+                self.character_state = CharacterState.dead
+
+    def collide(self):
+        self.character_state = CharacterState.hit
+
+    def moveRight(self):
+        self.x += 1 if not self.in_battle else 5
+        self.moving_right_direction = True
+        self.moving_left_direction = False
+        self.character_state = CharacterState.moving
+
+    def moveLeft(self):
+        self.x -= 1 if not self.in_battle else 5
+        self.moving_right_direction = False
+        self.moving_left_direction = True
+        self.character_state = CharacterState.moving
+
+    def moveUp(self):
+        self.y -= 1 if not self.in_battle else 5
+        self.character_state = CharacterState.moving
+
+    def moveDown(self):
+        self.y += 1 if not self.in_battle else 5
+        self.character_state = CharacterState.moving
+
+    def draw(self, window, rect, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
 
         walk_animation_length = len(self.walkRight)
         idle_animation_length = len(self.idle)
@@ -136,4 +184,87 @@ class Controller:
                     self.deathFrameCount = 0
 
         self.frameCount += 1
-        pygame.draw.rect(window, (255, 0, 0), self.rect, 2)
+        pygame.draw.rect(window, (255, 0, 0), rect, 2)
+
+    def draw_ui(self, window, profile_frame, death_frame, health_bar_frame, action_points_frame, offset):
+
+        # calculate the health and action points percentage
+        health_percentage = self.health / self.max_health
+        action_points_percentage = self.action_points / self.max_action_points
+
+        self.health_bar = pygame.transform.scale(self.health_bar, (
+            int(self.health_bar_width * health_percentage), self.health_bar.get_height()))
+        self.action_points_bar = pygame.transform.scale(self.action_points_bar, (
+            self.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
+
+        adjust_action_points_bar = 0
+
+        # adjust the action points bar
+        if (self.action_points_bar_height - self.action_points_bar.get_height()) > 0:
+            adjust_action_points_bar = (self.action_points_bar_height - self.action_points_bar.get_height()) - 1
+
+        window.blit(profile_frame, (offset, 0))  # profile frame
+        window.blit(self.profile, (offset + 5, 0 + 5))  # profile
+        window.blit(self.health_bar, (offset + 13, 50 + 3))  # health bar
+        window.blit(health_bar_frame, (offset + 10, 50))  # health bar frame
+        window.blit(action_points_frame, (offset - 12, 5))  # action points frame
+        window.blit(self.action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
+
+        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 12)
+
+        # Health value
+        health_text = font.render(str(self.health), True, (217, 15, 30))
+        # health_text = pygame.transform.rotate(health_text, 45)
+        window.blit(health_text, (offset - 15, 48))
+
+        # Action points value
+        action_points_text = font.render(str(self.action_points), True, (255, 200, 37))
+        window.blit(action_points_text, (offset - 22, 35))
+
+        if self.character_state.value >= CharacterState.dead.value:
+            window.blit(death_frame, (offset, 0))
+
+    def draw_damage(self, window):
+        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
+        damage_text = font.render('-' + str(self.damage), True, (255, 0, 0))
+        window.blit(damage_text, (self.x, self.y - 50))
+
+    def go_to_enemy(self, enemy, rect):
+
+        offset = 20
+
+        if self.__class__.__name__ == "Enemy":
+            offset = 40
+
+        if self.x < enemy.rect.x - offset:
+            self.moveRight()
+        elif self.x > enemy.rect.x + offset:
+            self.moveLeft()
+        if self.y < enemy.rect.center[1]:
+            self.moveDown()
+        elif self.y > enemy.rect.center[1]:
+            self.moveUp()
+
+        if rect.center == (self.x, self.y):
+            self.going_to_enemy = False
+            self.character_state = CharacterState.attacking
+
+    def go_back(self, position, rect):
+
+        if self.x < position[0]:
+            self.moveRight()
+        if self.y < position[1]:
+            self.moveDown()
+        if self.x > position[0]:
+            self.moveLeft()
+        if self.y > position[1]:
+            self.moveUp()
+
+        if rect.center == (self.x, self.y):
+            self.in_action = False
+            self.character_state = CharacterState.idle
+            self.finished_attack = False
+            self.moving_right_direction = self.__class__ != "Enemy"
+            self.moving_left_direction = self.__class__ == "Enemy"
+            self.previous_battle_state = self.battle_state
+            self.battle_state = CharacterBattleState.back_in_position

@@ -43,6 +43,7 @@ class Game:
     def add_level(self, level):
         self.level = level
         self.renderer.set_level(level)
+
     def create_window(self, width, height, fullscreen=False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
@@ -58,7 +59,7 @@ class Game:
         return collision_rect
 
     def detect_collision(self, character):
-        collided_objects = pygame.sprite.spritecollide(character, self.objects, False)
+        collided_objects = pygame.sprite.spritecollide(character.controller, self.objects, False)
         for obj in collided_objects:
             if obj != character and character.finished_attack:
                 obj.collide()
@@ -66,7 +67,7 @@ class Game:
                 self.start_battle(Initiative.player_initiative)
                 character.is_hit = False
 
-            elif obj != character and obj.enemy and obj.finished_attack:
+            elif obj != character and obj.is_enemy() and obj.finished_attack:
                 print("Collided with object")
                 self.start_battle(Initiative.enemy_initiative)
                 character.is_hit = False
@@ -107,13 +108,13 @@ class Game:
                     running = False
 
             if not self.is_in_battle:
-                self.main_character.controller(pygame.key.get_pressed(),
-                                               self.get_collision_rect())  # Character controller
+                self.main_character.play(self.window, pygame.key.get_pressed(),
+                                         self.get_collision_rect())  # Character controller
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:
                     if obj.is_enemy():
-                        obj.controller()
+                        obj.play()
                 self.renderer.draw(objects=self.objects)  # Draw objects
 
             else:

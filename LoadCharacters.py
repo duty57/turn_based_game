@@ -64,9 +64,8 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
         'hit': hit,
         'dead': dead
     }
-    character.loadAnimations(animations_dict)
-    character.add_image()
-    character.loadUI(profile_picture, health_bar, action_points_bar)
+    character.load_animations(animations_dict)
+    character.load_ui(profile_picture, health_bar, action_points_bar)
 
     return character
 
@@ -107,8 +106,7 @@ def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Charac
         'hit': hit,
         'dead': dead
     }
-    enemy.loadAnimations(animations_dict)
-    enemy.add_image()
-    enemy.loadUI(profile_picture, health_bar, action_points_bar)
+    enemy.load_animations(animations_dict)
+    enemy.load_ui(profile_picture, health_bar, action_points_bar)
 
     return enemy
