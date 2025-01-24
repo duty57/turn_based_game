@@ -5,7 +5,7 @@ from turn_based_game.Level import Level
 
 # [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
-class Renderer:
+class WorldRenderer:
 
     def __init__(self):
         self.window = None
@@ -31,7 +31,7 @@ class Renderer:
         self.window.blit(UI.profile_frame, (1230, 0))
         self.window.blit(UI.backpack, (1230, -7))
         for i, character in enumerate(self.characters):
-            character.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
+            character.controller.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
                               UI.action_points_bar_frame,
                               85 * i + 25)
 
@@ -42,5 +42,5 @@ class Renderer:
 
         for obj in objects:
             obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
-            obj.draw(self.window, obj_rect)
+            obj.controller.draw(self.window, adjusted_rect=obj_rect)
         pygame.display.update()

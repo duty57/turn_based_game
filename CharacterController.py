@@ -5,11 +5,12 @@ from turn_based_game.Enums import CharacterState
 
 class CharacterController(Controller):
 
-    def __init__(self, actor, update_rect_callback, x: int = 200, y: int = 100):
-        super().__init__(actor, update_rect_callback, x, y)
+    def __init__(self, actor, x: int = 200, y: int = 100):
+        super().__init__(actor, x, y)
 
     # Character controller
-    def controller(self, keys, rect, collisions=None):
+    def controller(self, window, adjusted_rect = None, collisions=None):
+        keys = pygame.key.get_pressed()
         if collisions is None:
             collisions = []
         if self.character_state != CharacterState.inactive:
@@ -18,7 +19,7 @@ class CharacterController(Controller):
             if not self.in_battle:
 
                 if keys[
-                    pygame.K_SPACE] and self.character_class == 'Warrior' and not self.character_state == CharacterState.hit:#maybe ignore character_class
+                    pygame.K_SPACE] and not self.character_state == CharacterState.hit:
                     self.character_state = CharacterState.attacking
                 elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
                     self.character_state = CharacterState.idle
@@ -42,9 +43,9 @@ class CharacterController(Controller):
                     self.character_state = CharacterState.moving
 
                 for obj in collisions:
-                    if obj.colliderect(rect.move(move_x * 2, 0)):
+                    if obj.colliderect(self.actor.rect.move(move_x * 2, 0)):
                         move_x = 0
-                    if obj.colliderect(rect.move(0, move_y * 2)):
+                    if obj.colliderect(self.actor.rect.move(0, move_y * 2)):
                         move_y = 0
 
                 if move_x != 0 and move_y != 0:
@@ -53,7 +54,7 @@ class CharacterController(Controller):
 
                 self.x += move_x * 2
                 self.y += move_y * 2
-                rect.center = (self.x, self.y)
+                self.actor.rect.center = (self.x, self.y)
                 return self.x, self.y
 
             else:
@@ -63,5 +64,5 @@ class CharacterController(Controller):
                     self.go_back((self.battle_x, self.battle_y))
 
                 # change character position
-                rect.center = (self.x, self.y)
-                self.update_rect
+                self.actor.rect.center = (self.x, self.y)
+        self.draw(window, adjusted_rect)

@@ -1,18 +1,17 @@
 import pygame
 
 from turn_based_game.LoadCharacters import character_init_enemy
-from turn_based_game.Renderer import Renderer
+from turn_based_game.World_Renderer import WorldRenderer
 from turn_based_game.Battle import Battle
 
 from Enums import Initiative
-
 
 class Game:
 
     def __init__(self):
         self.characters = None
         self.window = None
-        self.renderer = Renderer()
+        self.renderer = WorldRenderer()
         self.clock = pygame.time.Clock()
         self.objects = pygame.sprite.Group()
         self.main_character = None
@@ -43,7 +42,6 @@ class Game:
     def add_level(self, level):
         self.level = level
         self.renderer.set_level(level)
-
     def create_window(self, width, height, fullscreen=False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
@@ -59,18 +57,18 @@ class Game:
         return collision_rect
 
     def detect_collision(self, character):
-        collided_objects = pygame.sprite.spritecollide(character.controller, self.objects, False)
+        collided_objects = pygame.sprite.spritecollide(character, self.objects, False)
         for obj in collided_objects:
-            if obj != character and character.finished_attack:
-                obj.collide()
+            if obj != character and character.controller.finished_attack:
+                obj.controller.collide()
                 print("Collided with object")
                 self.start_battle(Initiative.player_initiative)
-                character.is_hit = False
+                character.controller.is_hit = False
 
-            elif obj != character and obj.is_enemy() and obj.finished_attack:
+            elif obj != character and obj.is_enemy() and obj.controller.finished_attack:
                 print("Collided with object")
                 self.start_battle(Initiative.enemy_initiative)
-                character.is_hit = False
+                character.controller.is_hit = False
 
     def start_battle(self, initiative=Initiative.player_initiative):
         turn_order = []
@@ -108,13 +106,12 @@ class Game:
                     running = False
 
             if not self.is_in_battle:
-                self.main_character.play(self.window, pygame.key.get_pressed(),
-                                         self.get_collision_rect())  # Character controller
+                self.main_character.play(window=self.window, collisions=self.get_collision_rect())  # Character controller
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:
                     if obj.is_enemy():
-                        obj.play()
+                        obj.play(window=self.window, adjusted_rect=pygame.Rect(0, 0, 1280, 720))
                 self.renderer.draw(objects=self.objects)  # Draw objects
 
             else:

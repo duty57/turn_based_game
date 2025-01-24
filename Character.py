@@ -1,5 +1,3 @@
-import pygame
-from Enums import CharacterBattleState, CharacterState
 from turn_based_game.Actor import Actor
 from turn_based_game.CharacterController import CharacterController
 
@@ -21,5 +19,5 @@ class Character(Actor):
             self.experience = 0
             self.nextLevel += 100 * self.level
 
-    def play(self, window, keys, adjusted_rect=None, collisions=None):
-        self.controller.controller(window, keys, self.rect, adjusted_rect, collisions)
+    def play(self, window, adjusted_rect=None, collisions=None):
+        self.controller.controller(window, adjusted_rect, collisions)

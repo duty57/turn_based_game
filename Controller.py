@@ -9,10 +9,8 @@ from turn_based_game.Enums import CharacterState, CharacterBattleState
 
 class Controller:
 
-    def __init__(self, actor, update_rect_callback, x: int = 200, y: int = 100):
+    def __init__(self, actor, x: int = 200, y: int = 100):
         self.actor = actor
-
-        self.update_rect = update_rect_callback
 
         # world states
         self.moving_right_direction = True
@@ -65,7 +63,6 @@ class Controller:
         self.action_points_bar = action_points
         self.health_bar_width = self.health_bar.get_width()
         self.action_points_bar_height = self.action_points_bar.get_height()
-        print(self.health_bar_width, self.action_points_bar_height)
 
     def load_animations(self, animations: dict):
         self.idle = animations['idle']
@@ -77,10 +74,10 @@ class Controller:
 
     def take_damage(self, damage):
         if self.character_state.value != CharacterState.inactive.value:
-            self.damage = damage
-            self.health -= damage
-            if self.health <= 0:
-                self.health = 0
+            self.actor.damage = damage
+            self.actor.health -= damage
+            if self.actor.health <= 0:
+                self.actor.health = 0
                 self.character_state = CharacterState.dead
 
     def collide(self):
@@ -106,7 +103,7 @@ class Controller:
         self.y += 1 if not self.in_battle else 5
         self.character_state = CharacterState.moving
 
-    def draw(self, window, rect, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
+    def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
 
         walk_animation_length = len(self.walkRight)
         idle_animation_length = len(self.idle)
@@ -156,8 +153,8 @@ class Controller:
                     if self.target:
                         self.previous_battle_state = self.battle_state
                         self.battle_state = CharacterBattleState.attacking
-                        self.target.collide()
-                        self.target.take_damage(30)
+                        self.target.controller.collide()
+                        self.target.controller.take_damage(30)
             case CharacterState.hit.value:
                 frame_index = (self.hit_frame_count // (
                         hit_animation_length * 4 // hit_animation_length)) % hit_animation_length
@@ -184,13 +181,13 @@ class Controller:
                     self.deathFrameCount = 0
 
         self.frameCount += 1
-        pygame.draw.rect(window, (255, 0, 0), rect, 2)
+        pygame.draw.rect(window, (255, 0, 0), self.actor.rect, 2)
 
     def draw_ui(self, window, profile_frame, death_frame, health_bar_frame, action_points_frame, offset):
 
         # calculate the health and action points percentage
-        health_percentage = self.health / self.max_health
-        action_points_percentage = self.action_points / self.max_action_points
+        health_percentage = self.actor.health / self.actor.max_health
+        action_points_percentage = self.actor.action_points / self.actor.max_action_points
 
         self.health_bar = pygame.transform.scale(self.health_bar, (
             int(self.health_bar_width * health_percentage), self.health_bar.get_height()))
@@ -213,12 +210,12 @@ class Controller:
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 12)
 
         # Health value
-        health_text = font.render(str(self.health), True, (217, 15, 30))
+        health_text = font.render(str(self.actor.health), True, (217, 15, 30))
         # health_text = pygame.transform.rotate(health_text, 45)
         window.blit(health_text, (offset - 15, 48))
 
         # Action points value
-        action_points_text = font.render(str(self.action_points), True, (255, 200, 37))
+        action_points_text = font.render(str(self.actor.action_points), True, (255, 200, 37))
         window.blit(action_points_text, (offset - 22, 35))
 
         if self.character_state.value >= CharacterState.dead.value:
@@ -226,10 +223,10 @@ class Controller:
 
     def draw_damage(self, window):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
-        damage_text = font.render('-' + str(self.damage), True, (255, 0, 0))
+        damage_text = font.render('-' + str(self.actor.damage), True, (255, 0, 0))
         window.blit(damage_text, (self.x, self.y - 50))
 
-    def go_to_enemy(self, enemy, rect):
+    def go_to_enemy(self, enemy):
 
         offset = 20
 
@@ -245,11 +242,11 @@ class Controller:
         elif self.y > enemy.rect.center[1]:
             self.moveUp()
 
-        if rect.center == (self.x, self.y):
+        if self.actor.rect.center == (self.x, self.y):
             self.going_to_enemy = False
             self.character_state = CharacterState.attacking
 
-    def go_back(self, position, rect):
+    def go_back(self, position):
 
         if self.x < position[0]:
             self.moveRight()
@@ -260,11 +257,11 @@ class Controller:
         if self.y > position[1]:
             self.moveUp()
 
-        if rect.center == (self.x, self.y):
+        if self.actor.rect.center == (self.x, self.y):
             self.in_action = False
             self.character_state = CharacterState.idle
             self.finished_attack = False
-            self.moving_right_direction = self.__class__ != "Enemy"
-            self.moving_left_direction = self.__class__ == "Enemy"
+            self.moving_right_direction = self.__class__.__name__ != "Enemy"
+            self.moving_left_direction = self.__class__.__name__ == "Enemy"
             self.previous_battle_state = self.battle_state
             self.battle_state = CharacterBattleState.back_in_position

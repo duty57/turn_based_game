@@ -1,5 +1,3 @@
-import pygame
-
 from turn_based_game.Actor import Actor
 from turn_based_game.EnemyController import EnemyController
 
@@ -10,4 +8,4 @@ class Enemy(Actor):
         self.controller = EnemyController(self, x, y, main_character)
 
     def play(self, window, adjusted_rect=None):
-        self.controller.controller(window, self.rect, adjusted_rect)
+        self.controller.controller(window, adjusted_rect)

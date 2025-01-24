@@ -13,3 +13,4 @@ class Item:
 
     def set_image(self, image):
         self.image = image
+

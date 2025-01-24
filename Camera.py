@@ -15,7 +15,7 @@ class Camera:
 
     def update(self, target):
         # Center the camera on the target
-        self.camera_rect.center = target.controller.rect.center
+        self.camera_rect.center = target.rect.center
 
         # Clamp the camera position within the level bounds
         self.camera_rect.x = max(0, min(self.camera_rect.x, self.level_width - self.screen_width))
