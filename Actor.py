@@ -45,8 +45,6 @@ class Actor(pygame.sprite.Sprite):
         self.health_bar_width = None
         self.action_points_bar_height = None
 
-        self.enemy = False
-
         self.in_battle = False
         self.in_action = False
 
@@ -87,6 +85,10 @@ class Actor(pygame.sprite.Sprite):
             self.experience = 0.0
             self.nextLevel = 100.0
             self.damage = 0
+
+
+    def is_enemy(self):
+        return self.__class__.__name__ == "Enemy"
 
     # Add image to the character
     def add_image(self):

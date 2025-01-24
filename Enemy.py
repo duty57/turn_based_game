@@ -1,6 +1,3 @@
-from math import sqrt
-from time import sleep
-
 import pygame
 
 from turn_based_game.Actor import Actor
@@ -92,7 +89,6 @@ class Enemy(Actor):
                 self.finished_hit = False
 
             match self.character_state.value:
-
                 case CharacterState.idle.value:
                     frame_index = (self.frameCount // (
                             idleAnimationLength * 4 // idleAnimationLength)) % idleAnimationLength
@@ -117,7 +113,7 @@ class Enemy(Actor):
                     else:
                         window.blit(self.attack[frame_index], adjusted_rect)
                     self.attackFrameCount += 1
-                    if self.attackFrameCount >= attackAnimationLength * 2:
+                    if self.attackFrameCount >= attackAnimationLength * (30 // attackAnimationLength):
                         self.attackFrameCount = 0
                         self.finished_attack = True
                         self.character_state = CharacterState.idle

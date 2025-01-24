@@ -4,8 +4,8 @@ from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.Renderer import Renderer
 from turn_based_game.Battle import Battle
 
-from Enums import Initiative, CharacterState
-from turn_based_game.Level import Level
+from Enums import Initiative
+
 
 class Game:
 
@@ -112,7 +112,7 @@ class Game:
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:
-                    if obj.enemy:
+                    if obj.is_enemy():
                         obj.controller()
                 self.renderer.draw(objects=self.objects)  # Draw objects
 

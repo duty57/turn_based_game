@@ -206,14 +206,14 @@ class Battle:
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
         text_now = font.render("Now", True, (255, 255, 0))
         text_next = font.render("Next", True, (255, 255, 0))
-        if self.turn_order[self.current_turn_ui % len(self.turn_order)].enemy:
+        if self.turn_order[self.current_turn_ui % len(self.turn_order)].is_enemy():
             self.window.blit(text_now, (
                 1223 - 85 * self.enemy_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
         else:
             self.window.blit(text_now, (
                 28 + 85 * self.player_team.index(self.turn_order[self.current_turn_ui % len(self.turn_order)]), 2))
 
-        if self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)].enemy:
+        if self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)].is_enemy():
             self.window.blit(text_next, (
                 1223 - 85 * self.enemy_team.index(self.turn_order[(self.current_turn_ui + 1) % len(self.turn_order)]),
                 2))
@@ -237,7 +237,7 @@ class Battle:
                 print(self.enemy_team)
                 self.turn_order.remove(current_character.target)
                 self.enemy_team_highlight.remove(
-                    current_character.target) if current_character.target.enemy else self.player_team_highlight.remove(
+                    current_character.target) if current_character.target.is_enemy() else self.player_team_highlight.remove(
                     current_character.target)
 
             self.turn_order[(self.current_turn - 1) % len(self.turn_order)].previous_battle_state = self.turn_order[
@@ -250,7 +250,7 @@ class Battle:
         # send current character info via list
 
         if not self.turn_order[(self.current_turn - 1) % len(self.turn_order)].in_action and not self.turn_order[
-            self.current_turn % len(self.turn_order)].enemy:
+            self.current_turn % len(self.turn_order)].is_enemy():
 
             keys = pygame.key.get_pressed()
             # Handle items key toggling
@@ -314,7 +314,7 @@ class Battle:
             elif not keys[pygame.K_SPACE]:
                 self.space_key_released = True
 
-        elif self.turn_order[self.current_turn % len(self.turn_order)].enemy and not self.turn_order[
+        elif self.turn_order[self.current_turn % len(self.turn_order)].is_enemy() and not self.turn_order[
             (self.current_turn - 1) % len(self.turn_order)].in_action:
 
             if self.player_team_highlight:

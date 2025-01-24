@@ -1,4 +1,3 @@
-
 import pygame
 from Enums import CharacterBattleState, CharacterState
 from turn_based_game.Actor import Actor
@@ -88,7 +87,7 @@ class Character(Actor):
 
         adjusted_rect = adjusted_rect.move(-16, -10)
 
-        if not self.in_battle:
+        if not self.in_battle and self.character_state != CharacterState.hit:
             self.finished_attack = False
             self.finished_hit = False  # maybe here is the problem with hit animations
 
@@ -117,7 +116,7 @@ class Character(Actor):
                 else:
                     window.blit(self.attack[frame_index], adjusted_rect)
                 self.attackFrameCount += 1
-                if self.attackFrameCount >= attackAnimationLength * (30 // deathAnimationLength):
+                if self.attackFrameCount >= attackAnimationLength * (30 // attackAnimationLength):
                     self.attackFrameCount = 0
                     self.finished_attack = True
                     self.character_state = CharacterState.idle
