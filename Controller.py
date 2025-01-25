@@ -1,12 +1,10 @@
+import random
+
 import pygame
 
 from turn_based_game.Enums import CharacterState, CharacterBattleState
 from turn_based_game.VFX import VFX
 
-
-# TODO: remove draw/controllers from Actor, Character, and Enemy classes
-# TODO: remove load_animations from Actor class
-# TODO: remove states from Actor class
 
 def get_frame_index(frame_count, k, vfx_animation):
     return (frame_count // (len(vfx_animation) * k // len(vfx_animation))) % len(vfx_animation)
@@ -64,6 +62,8 @@ class Controller:
         self.death = None
         self.damage_taken = None
 
+        self.is_weak = False
+
     # Load UI for the character
     def load_ui(self, profile: pygame.Surface, health_bar: pygame.Surface, action_points: pygame.Surface):
         self.profile = profile
@@ -85,15 +85,31 @@ class Controller:
             self.actor.health = self.actor.max_health
 
     def take_damage(self, damage, element):
+        self.collide()
+        chance = random.randint(1, 100)
+        if chance <= self.actor.agility:
+            self.actor.damage = -1
+            return
+
         if self.character_state.value != CharacterState.inactive.value:
-            self.actor.damage = damage
-            self.actor.health -= damage
+            if element in self.actor.immunity:
+                self.actor.damage = 0
+                self.actor.is_weak = False
+            elif element in self.actor.weakness:
+                self.actor.damage = int(damage * 2)
+                self.actor.is_weak = True
+            else:
+                self.actor.damage = int(damage)
+                self.actor.is_weak = False
+
+            self.actor.health -= self.actor.damage
             if self.actor.health <= 0:
                 self.actor.health = 0
                 self.character_state = CharacterState.dead
 
     def collide(self):
-        self.character_state = CharacterState.hit
+        if self.in_battle:
+            self.character_state = CharacterState.hit
 
     def moveRight(self):
         self.x += 1 if not self.in_battle else 5
@@ -119,13 +135,10 @@ class Controller:
         if self.skill:
             if self.skill['targets'] == 'all':
                 for enemy in self.enemy_team:
-                    enemy.controller.collide()
                     enemy.controller.take_damage(self.skill['value'], self.skill['element'])
             else:
-                self.target.controller.collide()
                 self.target.controller.take_damage(self.skill['value'], self.skill['element'])
         else:
-            self.target.controller.collide()
             self.target.controller.take_damage(self.actor.damage, self.actor.element)
 
         self.skill = None
@@ -271,7 +284,15 @@ class Controller:
 
     def draw_damage(self, window):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
-        damage_text = font.render('-' + str(self.actor.damage), True, (255, 0, 0))
+        if self.actor.damage > 0:
+            damage_text = f"WEAK: {self.actor.damage}" if self.actor.is_weak else str(self.actor.damage)
+            self.is_weak = False
+            damage_text = font.render(damage_text, True, (255, 0, 0))
+        elif self.actor.damage < 0:
+            damage_text = font.render("Miss", True, (255, 255, 255))
+        else:
+            damage_text = font.render("Immune", True, (178, 178, 172))
+
         window.blit(damage_text, (self.x, self.y - 50))
 
     def go_to_enemy(self, enemy):
