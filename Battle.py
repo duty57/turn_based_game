@@ -6,6 +6,8 @@ import copy
 from turn_based_game.GameUI import GameUI as UI
 from turn_based_game.Level import Level
 from turn_based_game.BattleRenderer import BattleRenderer
+
+
 class Battle:
 
     def __init__(self, window: pygame.Surface, player_team: list, enemy_team: list, initiative: Initiative,
@@ -13,16 +15,20 @@ class Battle:
 
         if turn_order is None:
             turn_order = []
+
         self.window = window
         self.player_team = player_team
         self.enemy_team = enemy_team
         self.turn_order = turn_order
         self.player_team_highlight = copy.copy(player_team)
         self.enemy_team_highlight = copy.copy(enemy_team)
-        self.initiative = initiative
+        self.initiative = initiative  # player_initiative or enemy_initiative
+
+        # Turn order variables
         self.current_turn = 0
         self.current_turn_ui = 0
         self.current_character_index = 0
+        self.first_cycle = True
 
         # Key press booleans
         self.a_key_pressed = False
@@ -44,10 +50,12 @@ class Battle:
         self.up_key_released = None
         self.down_key_released = None
 
+        # Selection variables
         self.selection_mode = SelectionMode.enemy
         self.selection_index = 0
+        self.skill_selection_index = 0
+        self.item_selection_index = 0
 
-        self.first_cycle = True
         self.level = Level()
         self.battle_renderer = BattleRenderer(window, self.level)
 
@@ -68,29 +76,11 @@ class Battle:
 
         # set character positions
         for i, character in enumerate(self.player_team):
-            character.controller.x = 600
-            character.controller.y = 500 - 80 * i
-            character.controller.battle_x = 600
-            character.controller.battle_y = 500 - 80 * i
-            character.rect.center = (character.controller.x, character.controller.y)
-            character.controller.moving_right_direction = True
-            character.controller.moving_left_direction = False
-            character.controller.idling = True
-            character.controller.in_battle = True
+            character.controller.battle_start(i)
 
         # set enemy positions
         for i, enemy in enumerate(self.enemy_team):
-            enemy.controller.x = 1000
-            enemy.controller.y = 500 - 80 * i
-            enemy.controller.battle_x = 1000
-            enemy.controller.battle_y = 500 - 80 * i
-            enemy.rect.center = (enemy.controller.x, enemy.controller.y)
-            enemy.controller.moving_right_direction = False
-            enemy.controller.moving_left_direction = True
-            enemy.controller.idling = True
-            enemy.controller.in_battle = True
-            enemy.controller.attackFrameCount = 0
-            enemy.controller.frameCount = 0
+            enemy.controller.battle_start(i)
         sleep(0.5)
 
     def end(self):
@@ -108,52 +98,50 @@ class Battle:
     def calculate_turn_order(self):
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)
 
-
     # combat logic
     def attack(self, attacker, target):
         if self.space_key_pressed:
             attacker.go_to_enemy(target)
 
+    # TODO create 3 paths: common attack, item, skill (select, use, back)
     def controler(self):
 
-        if not (self.enemy_team_highlight and self.player_team_highlight):
+        previous_character = self.turn_order[(self.current_turn - 1) % len(self.turn_order)]
+        current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
+        if not (self.enemy_team_highlight and self.player_team_highlight):  # if one of the teams is empty
             self.end()
 
-        elif self.turn_order[(self.current_turn - 1) % len(
-                self.turn_order)].controller.battle_state.value == CharacterBattleState.back_in_position.value \
-                and self.turn_order[(self.current_turn - 1) % len(
-            self.turn_order)].controller.previous_battle_state.value == CharacterBattleState.attacking.value:
+        elif previous_character.controller.battle_state.value == CharacterBattleState.back_in_position.value \
+                and previous_character.controller.previous_battle_state.value == CharacterBattleState.attacking.value:
 
-            current_character = self.turn_order[(self.current_turn - 1) % len(self.turn_order)]
-            if current_character.controller.target.controller.character_state.value >= CharacterState.dead.value:
+            if previous_character.controller.target.controller.character_state.value >= CharacterState.dead.value:
                 print(self.enemy_team)
-                self.turn_order.remove(current_character.controller.target)
+                self.turn_order.remove(previous_character.controller.target)
                 self.enemy_team_highlight.remove(
-                    current_character.controller.target) if current_character.controller.target.is_enemy() else self.player_team_highlight.remove(
-                    current_character.controller.target)
+                    previous_character.controller.target) if previous_character.controller.target.is_enemy() else self.player_team_highlight.remove(
+                    previous_character.controller.target)
 
-            self.turn_order[(self.current_turn - 1) % len(self.turn_order)].controller.previous_battle_state = self.turn_order[
+            previous_character.controller.previous_battle_state = self.turn_order[
                 (self.current_turn - 1) % len(self.turn_order)].controller.battle_state
-            self.turn_order[(self.current_turn - 1) % len(self.turn_order)].controller.battle_state = CharacterBattleState.idle
+            previous_character.controller.battle_state = CharacterBattleState.idle
             print("Character back in position")
             self.current_turn_ui = self.current_turn
             self.current_turn_ui %= len(self.turn_order)
 
         # send current character info via list
 
-        if not self.turn_order[(self.current_turn - 1) % len(self.turn_order)].controller.in_action and not self.turn_order[
-            self.current_turn % len(self.turn_order)].is_enemy():
+        if not previous_character.controller.in_action and not current_character_controller.actor.is_enemy():
 
             keys = pygame.key.get_pressed()
             # Handle items key toggling
-            if keys[pygame.K_a] and self.a_key_released:
+            if keys[pygame.K_a] and self.a_key_released:  # open items
                 self.a_key_pressed = not self.a_key_pressed
                 self.d_key_pressed = False
                 self.a_key_released = False
             elif not keys[pygame.K_a]:
                 self.a_key_released = True
             # Handle skills key toggling
-            if keys[pygame.K_d] and self.d_key_released:
+            if keys[pygame.K_d] and self.d_key_released:  # open skills
                 self.d_key_pressed = not self.d_key_pressed
                 self.a_key_pressed = False
                 self.d_key_released = False
@@ -161,76 +149,120 @@ class Battle:
                 self.d_key_released = True
 
             # Common attack key toggling
-            if keys[pygame.K_RETURN] and self.enter_key_released:
+            if keys[pygame.K_RETURN] and self.enter_key_released:  # attack
                 self.enter_key_pressed = not self.enter_key_pressed
                 self.enter_key_released = False
 
+                if self.a_key_pressed:
+                    print("Item selected")
+                elif self.d_key_pressed:
+                    skill = current_character_controller.actor.skills[
+                        self.skill_selection_index % len(current_character_controller.actor.skills)]
+                    current_character_controller.is_skill_selected = True
+
             # Back key toggling
-            if keys[pygame.K_ESCAPE]:
+            if keys[pygame.K_ESCAPE]:  # back
                 self.a_key_pressed = False
                 self.d_key_pressed = False
                 self.enter_key_pressed = False
                 self.enter_key_released = True
+                current_character_controller.is_skill_selected = False
 
-            if keys[pygame.K_UP] and self.up_key_released and self.enter_key_pressed:
-                self.selection_index += 1
+            if keys[pygame.K_UP] and self.up_key_released:  # select target
+                if self.d_key_pressed and self.enter_key_released:
+                    self.skill_selection_index += 1
+                elif self.a_key_pressed and self.enter_key_released:
+                    self.item_selection_index += 1
+                elif self.enter_key_pressed:
+                    self.selection_index += 1
+
                 self.up_key_released = False
             elif not keys[pygame.K_UP]:
                 self.up_key_released = True
 
-            if keys[pygame.K_DOWN] and self.down_key_released and self.enter_key_pressed:
-                self.selection_index -= 1
+            if keys[pygame.K_DOWN] and self.down_key_released:  # select target
+                if self.d_key_pressed and self.enter_key_released:
+                    self.skill_selection_index -= 1
+                elif self.a_key_pressed and self.enter_key_released:
+                    self.item_selection_index -= 1
+                elif self.enter_key_pressed:
+                    self.selection_index -= 1
                 self.down_key_released = False
             elif not keys[pygame.K_DOWN]:
                 self.down_key_released = True
 
-            if keys[pygame.K_SPACE] and self.enter_key_pressed and self.space_key_released:
+            if keys[pygame.K_SPACE] and self.enter_key_pressed and self.space_key_released:  # accept target
                 self.space_key_pressed = True
                 self.space_key_released = False
                 self.enter_key_pressed = False
                 self.enter_key_released = True
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.target = self.enemy_team_highlight[
-                    self.selection_index % len(self.enemy_team_highlight)]
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.going_to_enemy = True
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.in_action = True
+                if current_character_controller.is_skill_selected:
+                    skill = current_character_controller.actor.skills[
+                        self.skill_selection_index % len(current_character_controller.actor.skills)]
+                    if skill['type'] == 'attack':
+                        current_character_controller.target = self.enemy_team_highlight[
+                            self.selection_index % len(self.enemy_team_highlight)]
+                        if current_character_controller.actor.action_points >= skill['cost']:#TODO: draw some warning if not enough AP
+                            current_character_controller.attack_skill(skill, enemy_team=self.enemy_team)
+                        current_character_controller.is_skill_selected = False
+                    else:
+                        current_character_controller.target = self.player_team_highlight[
+                            self.selection_index % len(self.player_team_highlight)]
+                        if current_character_controller.actor.action_points >= skill['cost']:
+                            current_character_controller.heal_skill(skill, player_team=self.player_team)
+                        current_character_controller.is_skill_selected = False
+                else:
+                    current_character_controller.target = self.enemy_team_highlight[
+                        self.selection_index % len(self.enemy_team_highlight)]
+                    current_character_controller.going_to_enemy = True
+                    current_character_controller.in_action = True
                 self.current_turn += 1
                 self.current_turn %= len(self.turn_order)
 
                 if not self.first_cycle:
-                    print("Calculating turn order")
-                    current_character = self.turn_order[self.current_turn - 1]
+                    previous_character = self.turn_order[self.current_turn - 1]
+                    current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
                     self.calculate_turn_order()
-                    print(self.turn_order)
-                    self.current_turn = self.turn_order.index(current_character) + 1
+                    self.current_turn = self.turn_order.index(previous_character) + 1
                     self.current_turn %= len(self.turn_order)
+
+                self.a_key_pressed = False
+                self.d_key_pressed = False
+                self.enter_key_pressed = False
             elif not keys[pygame.K_SPACE]:
                 self.space_key_released = True
 
-        elif self.turn_order[self.current_turn % len(self.turn_order)].is_enemy() and not self.turn_order[
-            (self.current_turn - 1) % len(self.turn_order)].controller.in_action:
+        elif current_character_controller.actor.is_enemy() and not previous_character.controller.in_action:
 
             if self.player_team_highlight:
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.target = self.player_team_highlight[0]
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.going_to_enemy = True
-                self.turn_order[self.current_turn % len(self.turn_order)].controller.in_action = True
+                current_character_controller.target = self.player_team_highlight[0]
+                current_character_controller.going_to_enemy = True
+                current_character_controller.in_action = True
                 self.current_turn += 1
                 self.current_turn %= len(self.turn_order)
 
             if not self.first_cycle:
-                print("Calculating turn order")
-                current_character = self.turn_order[self.current_turn - 1]
+                previous_character = self.turn_order[self.current_turn - 1]
+                current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
                 self.calculate_turn_order()
                 print(self.turn_order)
-                self.current_turn = self.turn_order.index(current_character) + 1
+                self.current_turn = self.turn_order.index(previous_character) + 1
                 self.current_turn %= len(self.turn_order)
 
         if self.current_turn_ui == len(self.turn_order) - 1:
             self.first_cycle = False
-
-        self.battle_renderer.draw(self.player_team, self.enemy_team, self.turn_order, self.current_turn_ui, self.a_key_pressed, self.d_key_pressed, self.enter_key_pressed, self.enemy_team_highlight, self.selection_index)
+        is_attack = True
+        if not current_character_controller.actor.is_enemy():
+            skill = current_character_controller.actor.skills[
+                self.skill_selection_index % len(current_character_controller.actor.skills)]
+            is_attack = skill['type'] == 'attack' if current_character_controller.is_skill_selected else True
+        self.battle_renderer.draw(self.player_team, self.enemy_team, self.turn_order, self.current_turn_ui,
+                                  self.a_key_pressed, self.d_key_pressed, self.enter_key_pressed,
+                                  self.enemy_team_highlight, self.player_team_highlight, self.selection_index,
+                                  self.skill_selection_index, self.item_selection_index, is_attack)
 
     def draw(self):
         self.controler()
 # TODO: maybe move calculate_turn_order call to character death event
 # TODO: implement enemy AI to attack player characters
-# TODO: enemy hit animation not always working
+# TODO: order calculation could be broken

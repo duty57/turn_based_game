@@ -7,9 +7,12 @@ class CharacterController(Controller):
 
     def __init__(self, actor, x: int = 200, y: int = 100):
         super().__init__(actor, x, y)
+        # battle variables
+        self.is_skill_selected = False
+        self.is_healing = False
 
     # Character controller
-    def controller(self, window, adjusted_rect = None, collisions=None):
+    def controller(self, window, adjusted_rect=None, collisions=None):
         keys = pygame.key.get_pressed()
         if collisions is None:
             collisions = []
@@ -66,3 +69,31 @@ class CharacterController(Controller):
                 # change character position
                 self.actor.rect.center = (self.x, self.y)
         self.draw(window, adjusted_rect)
+        print(self.is_skill_selected)
+
+    def battle_start(self, i: int):
+        self.x = 600
+        self.y = 500 - 80 * i
+        self.battle_x = 600
+        self.battle_y = 500 - 80 * i
+        self.actor.rect.center = (self.x, self.y)
+        self.moving_right_direction = True
+        self.moving_left_direction = False
+        self.in_battle = True
+
+    def attack_skill(self, skill, enemy_team):  # may need to refactor this
+        # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx
+        self.skill = skill
+        self.actor.action_points -= skill['cost']
+        self.actor.health -= skill['hp_cost']
+        self.going_to_enemy = True
+        self.in_action = True
+        self.enemy_team = enemy_team
+
+    def healing_skill(self, skill, player_team):  # may need to refactor this
+        self.skill = skill
+        self.in_action = True
+        self.player_team = player_team
+        if self.skill.target == "self":
+            self.controller.draw_vfx()
+            self.heal(self.skill)

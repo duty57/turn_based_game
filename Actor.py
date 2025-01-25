@@ -38,7 +38,7 @@ class Actor(pygame.sprite.Sprite):
             self.level = 1
             self.experience = 0.0
             self.nextLevel = 100.0
-            self.damage = 0
+            self.damage = self.strength
 
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'

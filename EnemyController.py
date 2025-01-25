@@ -73,3 +73,15 @@ class EnemyController(Controller):
                 self.actor.rect.center = (self.x, self.y)
 
         self.draw(window, adjusted_rect)
+
+    def battle_start(self, i:int):
+        self.x = 1000
+        self.y = 500 - 80 * i
+        self.battle_x = 1000
+        self.battle_y = 500 - 80 * i
+        self.actor.rect.center = (self.x, self.y)
+        self.moving_right_direction = False
+        self.moving_left_direction = True
+        self.in_battle = True
+        self.attackFrameCount = 0
+        self.frameCount = 0

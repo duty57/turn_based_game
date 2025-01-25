@@ -6,22 +6,34 @@
     "intelligence": 20,
     "defense": 15,
     "speed": 10,
-    "agility": 15,
+    "agility": 2,
     "actionPoints": 50,
     "characterClass": "Witch",
-    "element": ["LIGHT", "MAGIC"],
-    "immunity": ["MAGIC"],
-    "weakness": ["SLASH", "DARK"],
+    "element": "ICE",
+    "immunity": ["ICE", "LIGHT"],
+    "weakness": ["SLASH", "FIRE"],
     "skills": [
       {
         "name": "Heal",
+        "type": "heal",
         "cost": 15,
-        "description": "Restore 30 health to an ally."
+        "description": "Restore 30 health to an ally.",
+        "value": 30,
+        "element": "MAGIC",
+        "targets": "one",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       },
       {
-        "name": "Purify",
+        "name": "Judgment",
+        "type": "attack",
         "cost": 20,
-        "description": "Remove a negative status \neffect from an ally."
+        "description": "Attempt to instantly kill one enemy with a 25% chance.",
+        "value": 0,
+        "element": "LIGHT",
+        "targets": "one",
+        "instant_kill_chance": 25,
+        "hp_cost": 0
       }
     ]
   },
@@ -32,22 +44,34 @@
     "intelligence": 25,
     "defense": 10,
     "speed": 10,
-    "agility": 10,
+    "agility": 2,
     "actionPoints": 40,
     "characterClass": "Wizard",
-    "element": ["MAGIC", "DARK"],
+    "element": "FIRE",
     "immunity": ["FIRE"],
     "weakness": ["PIERCE", "WIND"],
     "skills": [
       {
         "name": "Fireball",
+        "type": "attack",
         "cost": 20,
-        "description": "Deal 35 damage to an enemy."
+        "description": "Deal 15 damage to all enemies.",
+        "value": 15,
+        "element": "FIRE",
+        "targets": "all",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       },
       {
-        "name": "Ice Shield",
+        "name": "Dark Pulse",
+        "type": "attack",
         "cost": 10,
-        "description": "Increase defense by 10 for 2 turns."
+        "description": "Deal dark damage to all enemies.",
+        "value": 15,
+        "element": "DARK",
+        "targets": "all",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       }
     ]
   },
@@ -67,13 +91,25 @@
     "skills": [
       {
         "name": "Shield Bash",
+        "type": "attack",
         "cost": 10,
-        "description": "Deal 15 damage and stun \nthe enemy for 1 turn."
+        "description": "Deal 15 damage and stun the enemy for 1 turn.",
+        "value": 15,
+        "element": "SLASH",
+        "targets": "one",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       },
       {
         "name": "Berserk",
+        "type": "buff",
         "cost": 25,
-        "description": "Increase damage by 20 for 2 \nturns but reduce defense by 10."
+        "description": "Triple the damage of your next attack but lose 30 HP.",
+        "value": 3,
+        "element": "NONE",
+        "targets": "self",
+        "instant_kill_chance": 0,
+        "hp_cost": 30
       }
     ]
   },
@@ -84,22 +120,34 @@
     "intelligence": 10,
     "defense": 10,
     "speed": 10,
-    "agility": 20,
+    "agility": 10,
     "actionPoints": 50,
     "characterClass": "Archer",
-    "element": ["PIERCE", "WIND"],
+    "element": "SLASH",
     "immunity": ["WIND"],
-    "weakness": ["ICE", "MAGIC"],
+    "weakness": ["ICE", "SLASH"],
     "skills": [
       {
-        "name": "Piercing Shot",
-        "cost": 15,
-        "description": "Deal 20 damage and ignore \n5 defense."
+        "name": "Dual Strike",
+        "type": "attack",
+        "cost": 20,
+        "description": "Deliver a single powerful slash attack \nto one foe, dealing 30 damage.",
+        "value": 30,
+        "element": "SLASH",
+        "targets": "one",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       },
       {
-        "name": "Rapid Fire",
-        "cost": 20,
-        "description": "Attack twice for 10 damage each."
+        "name": "Gale Strike",
+        "type": "attack",
+        "cost": 25,
+        "description": "Deliver a single powerful wind attack \nto one foe, dealing 30 damage.",
+        "value": 30,
+        "element": "WIND",
+        "targets": "one",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       }
     ]
   }

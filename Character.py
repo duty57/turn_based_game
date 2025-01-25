@@ -8,6 +8,11 @@ class Character(Actor):
         # Character States
         super().__init__(config_file, character_name, x, y)
         self.controller = CharacterController(self, x, y)
+        self.weapon = None
+        self.helmet = None
+        self.breastplate = None
+        self.boots = None
+
 
     def level_up(self):
         self.level += 1

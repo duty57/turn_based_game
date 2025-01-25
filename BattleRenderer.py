@@ -58,14 +58,15 @@ class BattleRenderer:
         self.window.blit(UI.space_key, (510, 685))
         self.window.blit(use_text, (590, 690))
 
-    def draw_item_list(self, a_key_pressed):
+    def draw_item_list(self, a_key_pressed, item_selection_index=0):
         if a_key_pressed:
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
             self.window.blit(UI.list_image, (15, 100))
             text = font.render("Items", True, (255, 255, 255))
             self.window.blit(text, (140, 75))
 
-    def draw_skill_list(self, d_key_pressed, turn_order, current_turn):
+    def draw_skill_list(self, d_key_pressed, turn_order, current_turn, skill_selection_index=0):
+        skill_selection_index %= len(turn_order[current_turn].skills)
         if d_key_pressed:
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
             self.window.blit(UI.list_image, (15, 100))
@@ -74,7 +75,8 @@ class BattleRenderer:
             for i, skill in enumerate(turn_order[current_turn].skills):
                 font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
                 rect = pygame.Rect(50, 125 + 67 * i, 255, 65)
-                pygame.draw.rect(self.window, (0, 0, 0), rect, 2)
+                if i == skill_selection_index:
+                    pygame.draw.rect(self.window, (255, 0, 0), rect, 2)
 
                 skill_text = font.render(skill['name'] + ':', True, (255, 255, 255))
                 self.window.blit(skill_text, (55, 130 + 67 * i))
@@ -87,18 +89,17 @@ class BattleRenderer:
                     skill_text = font.render(line, True, (255, 255, 255))
                     self.window.blit(skill_text, (55, 150 + 67 * i + 12 * j))
 
-    def draw_highlight(self, enter_key_pressed, enemy_team, enemy_team_highlight, selection_index):
+    def draw_highlight(self, enter_key_pressed, enemy_team, enemy_team_highlight, player_team, player_team_highlight, selection_index, is_attack=True):
         if enter_key_pressed:
-            # if player_team[current_character_index].character_class == 'Witch':
-            #     selection_index = len(player_team)-1 if selection_index > len(player_team)-1 else (0 if selection_index < 0 else selection_index)
-            #     self.window.blit(character_highlight, (600-24, 500 + 8 - 80 * selection_index))
-            # else:
-            #     selection_index = enemy_team.index(enemy_team_highlight[len(enemy_team_highlight)-1]) if selection_index > len(enemy_team_highlight)-1\
-            #         else (0 if enemy_team.index(enemy_team_highlight[selection_index]) < 0 else enemy_team.index(enemy_team_highlight[selection_index]))
-            self.window.blit(UI.enemy_highlight, (1000 - 24, 500 + 5 - 80 * enemy_team.index(
-                enemy_team_highlight[selection_index % len(enemy_team_highlight)])))
-            self.window.blit(UI.enemy_frame_highlight, (1220 - 85 * enemy_team.index(
-                enemy_team_highlight[selection_index % len(enemy_team_highlight)]), 0))
+            if is_attack:
+                self.window.blit(UI.enemy_highlight, (1000 - 24, 500 + 5 - 80 * enemy_team.index(
+                    enemy_team_highlight[selection_index % len(enemy_team_highlight)])))
+                self.window.blit(UI.enemy_frame_highlight, (1220 - 85 * enemy_team.index(
+                    enemy_team_highlight[selection_index % len(enemy_team_highlight)]), 0))
+            else:
+                self.window.blit(UI.character_highlight, (600 - 24, 500 + 8 - 80 * player_team.index(player_team_highlight[selection_index % len(player_team_highlight)])))
+                self.window.blit(UI.character_frame_highlight, (85 * player_team.index(player_team_highlight[selection_index % len(player_team_highlight)]) + 25, 0))
+
 
     def draw_turn_order(self, turn_order, current_turn_ui, player_team, enemy_team):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
@@ -120,7 +121,7 @@ class BattleRenderer:
                 28 + 85 * player_team.index(turn_order[(current_turn_ui + 1) % len(turn_order)]),
                 2))
 
-    def draw(self, player_team, enemy_team, turn_order, current_turn_ui, a_key_pressed, d_key_pressed, enter_key_pressed, enemy_team_highlight, selection_index):
+    def draw(self, player_team, enemy_team, turn_order, current_turn_ui, a_key_pressed, d_key_pressed, enter_key_pressed, enemy_team_highlight, player_team_highlight, selection_index, skill_selection_index, item_selection_index, is_attack=True):
         self.window.fill((255, 255, 255))
         self.draw_background()
         self.draw_characters_list(player_team)
@@ -128,8 +129,8 @@ class BattleRenderer:
         self.draw_enemies(enemy_team)
         self.draw_enemy_list(enemy_team)
         self.draw_actions()
-        self.draw_item_list(a_key_pressed)
-        self.draw_skill_list(d_key_pressed, turn_order, current_turn_ui)
-        self.draw_highlight(enter_key_pressed, enemy_team, enemy_team_highlight, selection_index)
+        self.draw_item_list(a_key_pressed, item_selection_index)
+        self.draw_skill_list(d_key_pressed, turn_order, current_turn_ui, skill_selection_index)
+        self.draw_highlight(enter_key_pressed, enemy_team, enemy_team_highlight, player_team, player_team_highlight, selection_index, is_attack)
         self.draw_turn_order(turn_order, current_turn_ui, player_team, enemy_team)
         pygame.display.update()

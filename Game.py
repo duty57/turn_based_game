@@ -22,6 +22,8 @@ class Game:
         self.camera = None
         self.level = None
 
+        self.inventory = None
+
     def add_objects(self, objects):
         self.objects.add(objects)
 
