@@ -6,7 +6,10 @@ import copy
 from turn_based_game.GameUI import GameUI as UI
 from turn_based_game.Level import Level
 from turn_based_game.BattleRenderer import BattleRenderer
+from turn_based_game.BattleRenderer import draw_message
 
+pygame.mixer.init()
+ambient_music = pygame.mixer.Sound('turn_based_game/audio/ambient_battle.mp3')
 
 class Battle:
 
@@ -82,18 +85,34 @@ class Battle:
         for i, enemy in enumerate(self.enemy_team):
             enemy.controller.battle_start(i)
         sleep(0.5)
+        # ambient_music.play(10)
+        # ambient_music.set_volume(0.1)
 
     def end(self):
         sleep(0.5)
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
-        text_value = "VICTORY!" if not self.enemy_team_highlight else "GAME OVER!"
-        color = (0, 255, 0) if not self.enemy_team_highlight else (255, 0, 0)
-        text = font.render(text_value, True, color)
-        text_rect = text.get_rect(center=(640, 360))
-        self.window.fill((0, 0, 0))
-        self.window.blit(text, text_rect)
-        pygame.display.update()
-        sleep(0.5)
+        if self.enemy_team_highlight:
+            text_value = "GAME OVER!"
+            color = (255, 0, 0)
+            text = font.render(text_value, True, color)
+            text_rect = text.get_rect(center=(640, 360))
+            self.window.fill((0, 0, 0))
+            self.window.blit(text, text_rect)
+            pygame.display.update()
+            sleep(0.5)
+            pygame.quit()
+            exit()
+        else:
+            text_value = "VICTORY!"
+            color = (0, 255, 0)
+            text = font.render(text_value, True, color)
+            text_rect = text.get_rect(center=(640, 360))
+            self.window.fill((0, 0, 0))
+            self.window.blit(text, text_rect)
+            pygame.display.update()
+            for character in self.player_team:
+                character.level_up(50)
+            sleep(0.5)
 
     def calculate_turn_order(self):
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)
@@ -196,33 +215,47 @@ class Battle:
                 self.space_key_released = False
                 self.enter_key_pressed = False
                 self.enter_key_released = True
+
+                skill = current_character_controller.actor.skills[
+                    self.skill_selection_index % len(current_character_controller.actor.skills)]
+
                 if current_character_controller.is_skill_selected:
-                    skill = current_character_controller.actor.skills[
-                        self.skill_selection_index % len(current_character_controller.actor.skills)]
                     if skill['type'] == 'attack':
                         current_character_controller.target = self.enemy_team_highlight[
                             self.selection_index % len(self.enemy_team_highlight)]
-                        if current_character_controller.actor.action_points >= skill['cost']:#TODO: draw some warning if not enough AP
+                        if current_character_controller.actor.action_points >= skill['cost']:
                             current_character_controller.attack_skill(skill, enemy_team=self.enemy_team)
+                            self.current_turn = (self.current_turn + 1) % len(self.turn_order)
+                        else:
+                            draw_message(self.window, "Not enough action points", (current_character_controller.x, current_character_controller.y))
+                            self.escape_key_pressed = True
                         current_character_controller.is_skill_selected = False
                     else:
-                        current_character_controller.target = self.player_team_highlight[
-                            self.selection_index % len(self.player_team_highlight)]
+                        if skill['targets'] == 'self':
+                            self.skill_selection_index = self.player_team_highlight.index(
+                                current_character_controller.actor)
+                            current_character_controller.target = current_character_controller.actor
+                        else:
+                            current_character_controller.target = self.player_team_highlight[
+                                self.selection_index % len(self.player_team_highlight)]
                         if current_character_controller.actor.action_points >= skill['cost']:
-                            current_character_controller.heal_skill(skill, player_team=self.player_team)
+                            current_character_controller.healing_skill(skill, player_team=self.player_team)
+                            self.current_turn = (self.current_turn + 1) % len(self.turn_order)
+                        else:
+                            draw_message(self.window, "Not enough action points", 2)
+                            self.escape_key_pressed = True
                         current_character_controller.is_skill_selected = False
                 else:
                     current_character_controller.target = self.enemy_team_highlight[
                         self.selection_index % len(self.enemy_team_highlight)]
                     current_character_controller.going_to_enemy = True
                     current_character_controller.in_action = True
-                self.current_turn += 1
-                self.current_turn %= len(self.turn_order)
+                    self.current_turn = (self.current_turn + 1) % len(self.turn_order)
 
                 if not self.first_cycle:
                     previous_character = self.turn_order[self.current_turn - 1]
                     current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
-                    self.calculate_turn_order()
+                    # self.calculate_turn_order()
                     self.current_turn = self.turn_order.index(previous_character) + 1
                     self.current_turn %= len(self.turn_order)
 
@@ -235,19 +268,27 @@ class Battle:
         elif current_character_controller.actor.is_enemy() and not previous_character.controller.in_action:
 
             if self.player_team_highlight:
-                current_character_controller.target = self.player_team_highlight[0]
-                current_character_controller.going_to_enemy = True
-                current_character_controller.in_action = True
+                current_character_controller.target = current_character_controller.enemy_to_attack(self.player_team_highlight)
+                if current_character_controller.is_skill_selected:
+                    current_character_controller.attack_skill(self.player_team_highlight)
+                else:
+                    current_character_controller.going_to_enemy = True
+                    current_character_controller.in_action = True
+                current_character_controller.is_skill_selected = False
                 self.current_turn += 1
                 self.current_turn %= len(self.turn_order)
+
 
             if not self.first_cycle:
                 previous_character = self.turn_order[self.current_turn - 1]
                 current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
-                self.calculate_turn_order()
+                # self.calculate_turn_order()
                 print(self.turn_order)
                 self.current_turn = self.turn_order.index(previous_character) + 1
                 self.current_turn %= len(self.turn_order)
+
+        for character in self.turn_order:
+            print("Character: ", character.name, character.immunity, character.weakness, character.element)
 
         if self.current_turn_ui == len(self.turn_order) - 1:
             self.first_cycle = False
@@ -263,6 +304,7 @@ class Battle:
 
     def draw(self):
         self.controler()
-# TODO: maybe move calculate_turn_order call to character death event
 # TODO: implement enemy AI to attack player characters
 # TODO: order calculation could be broken
+
+#TODO: immunities and weaknesses breaks after first cycle

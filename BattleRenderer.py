@@ -4,6 +4,16 @@ import pygame
 from turn_based_game.GameUI import GameUI as UI
 
 
+def draw_message(window, message, position, duration=1000):
+    if not isinstance(position, tuple):
+        raise TypeError("Position must be a tuple containing x and y coordinates")
+    font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 14)
+    text = font.render(message, True, (255, 0, 0))
+    window.blit(text, (position[0] + 50, position[1] - 25))
+    pygame.display.update()
+    pygame.time.delay(duration)
+
+
 class BattleRenderer:
 
     def __init__(self, window, level):
@@ -82,7 +92,7 @@ class BattleRenderer:
                 self.window.blit(skill_text, (55, 130 + 67 * i))
 
                 skill_text = font.render(str(skill['cost']), True, (255, 255, 0))
-                self.window.blit(skill_text, (180, 130 + 67 * i))
+                self.window.blit(skill_text, (225, 130 + 67 * i))
 
                 font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 12)
                 for j, line in enumerate(skill['description'].split('\n')):

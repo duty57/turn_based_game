@@ -18,7 +18,6 @@ def count_files_in_folder(folder_path):
 def resize_images(image_list, size):  # Resize all images in a list to a consistent size
     return [pygame.transform.scale(img, size) for img in image_list]
 
-#TODO create function to read animations from a json file
 def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = False, size: tuple = (0, 0)):
     character = Character('turn_based_game/config/config.json', character_name, x, y)
 

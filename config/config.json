@@ -11,28 +11,28 @@
     "characterClass": "Witch",
     "element": "ICE",
     "immunity": ["ICE", "LIGHT"],
-    "weakness": ["SLASH", "FIRE"],
+    "weakness": ["SLASH"],
     "skills": [
       {
         "name": "Heal",
         "type": "heal",
         "cost": 15,
-        "description": "Restore 30 health to an ally.",
+        "description": "Restore a small amount health to an ally.",
         "value": 30,
         "element": "MAGIC",
         "targets": "one",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 0
+        
       },
       {
-        "name": "Judgment",
-        "type": "attack",
-        "cost": 20,
-        "description": "Attempt to instantly kill one enemy with a 25% chance.",
-        "value": 0,
-        "element": "LIGHT",
+        "name": "Greater Heal",
+        "type": "heal",
+        "cost": 30,
+        "description": "Restore a large amount of health to an ally.",
+        "value": 100,
+        "element": "MAGIC",
         "targets": "one",
-        "instant_kill_chance": 25,
+        "instant_kill_chance": 0,
         "hp_cost": 0
       }
     ]
@@ -49,7 +49,7 @@
     "characterClass": "Wizard",
     "element": "FIRE",
     "immunity": ["FIRE"],
-    "weakness": ["PIERCE", "WIND"],
+    "weakness": ["WIND"],
     "skills": [
       {
         "name": "Fireball",
@@ -59,8 +59,8 @@
         "value": 15,
         "element": "FIRE",
         "targets": "all",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 0
+        
       },
       {
         "name": "Dark Pulse",
@@ -70,8 +70,7 @@
         "value": 15,
         "element": "DARK",
         "targets": "all",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 0
       }
     ]
   },
@@ -87,29 +86,29 @@
     "characterClass": "Warrior",
     "element": "SLASH",
     "immunity": ["SLASH", "ICE"],
-    "weakness": ["MAGIC", "PIERCE"],
+    "weakness": ["DARK", "PIERCE"],
     "skills": [
       {
-        "name": "Shield Bash",
+        "name": "Judgment",
         "type": "attack",
-        "cost": 10,
-        "description": "Deal 15 damage and stun the enemy for 1 turn.",
-        "value": 15,
-        "element": "SLASH",
+        "cost": 20,
+        "description": "Low chance to instantly kill an enemy.",
+        "value": 999999,
+        "element": "LIGHT",
         "targets": "one",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 25
+        
       },
       {
-        "name": "Berserk",
-        "type": "buff",
+        "name": "Berserk Recovery",
+        "type": "heal",
         "cost": 25,
-        "description": "Triple the damage of your next attack but lose 30 HP.",
-        "value": 3,
+        "description": "Restore 50 HP to yourself.",
+        "value": 50,
         "element": "NONE",
         "targets": "self",
-        "instant_kill_chance": 0,
-        "hp_cost": 30
+        "instant_kill_chance": 0
+        
       }
     ]
   },
@@ -135,8 +134,8 @@
         "value": 30,
         "element": "SLASH",
         "targets": "one",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 0
+        
       },
       {
         "name": "Gale Strike",
@@ -146,8 +145,8 @@
         "value": 30,
         "element": "WIND",
         "targets": "one",
-        "instant_kill_chance": 0,
-        "hp_cost": 0
+        "instant_kill_chance": 0
+        
       }
     ]
   }

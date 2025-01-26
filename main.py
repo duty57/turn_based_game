@@ -1,7 +1,3 @@
-import logging
-import os
-import sys
-
 import pygame
 
 from turn_based_game.Camera import Camera
@@ -12,6 +8,7 @@ from turn_based_game.World_Renderer import WorldRenderer
 
 
 pygame.init()
+pygame.mixer.init()
 game = Game()
 level = Level()
 camera = Camera(1280, 1000, 1280, 720)

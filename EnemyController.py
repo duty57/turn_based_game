@@ -4,6 +4,11 @@ from turn_based_game.Controller import Controller
 from turn_based_game.Enums import CharacterState
 
 
+def select_target(team: list):
+    team.sort(key=lambda enemy: enemy.health)
+    return team
+
+
 class EnemyController(Controller):
 
     def __init__(self, actor, x: int = 200, y: int = 100, main_character=None):
@@ -17,14 +22,20 @@ class EnemyController(Controller):
         self.trigger_time = None
         self.in_battle = False
 
+        self.is_skill_selected = False
+
+
     def set_main_character(self, main_character):
         self.main_character = main_character
 
     def trigger(self):
-        distance = abs(self.x - self.main_character.controller.x) ** 2 + abs(self.y - self.main_character.controller.y) ** 2
-        looking_at_main_character = (self.x < self.main_character.controller.x + 10) and self.moving_right_direction or (
-                self.x > self.main_character.controller.x - 10) and self.moving_left_direction
-        if abs(self.x - self.main_character.controller.x) ** 2 + abs(self.y - self.main_character.controller.y) ** 2 < 25 ** 2:
+        distance = abs(self.x - self.main_character.controller.x) ** 2 + abs(
+            self.y - self.main_character.controller.y) ** 2
+        looking_at_main_character = (
+                                            self.x < self.main_character.controller.x + 10) and self.moving_right_direction or (
+                                            self.x > self.main_character.controller.x - 10) and self.moving_left_direction
+        if abs(self.x - self.main_character.controller.x) ** 2 + abs(
+                self.y - self.main_character.controller.y) ** 2 < 25 ** 2:
             if self.trigger_time is None:
                 self.trigger_time = pygame.time.get_ticks()  # Record the time when the enemy is triggered
             elif pygame.time.get_ticks() - self.trigger_time > 1500:  # If 1 second has passed since the enemy was triggered
@@ -74,7 +85,7 @@ class EnemyController(Controller):
 
         self.draw(window, adjusted_rect)
 
-    def battle_start(self, i:int):
+    def battle_start(self, i: int):
         self.x = 1000
         self.y = 500 - 80 * i
         self.battle_x = 1000
@@ -83,5 +94,31 @@ class EnemyController(Controller):
         self.moving_right_direction = False
         self.moving_left_direction = True
         self.in_battle = True
-        self.attackFrameCount = 0
-        self.frameCount = 0
+        self.attack_frame_count = 0
+        self.frame_count = 0
+
+    def enemy_to_attack(self, enemy_team: list):
+        enemies_with_weaknesses = []
+        for enemy in enemy_team:  # look for enemies with weaknesses to the actor's element
+            if self.actor.element in enemy.weakness:
+                enemies_with_weaknesses.append(enemy)
+
+        if enemies_with_weaknesses:
+            return select_target(enemies_with_weaknesses)[0]
+
+        for skill in self.actor.skills:
+            for enemy in enemy_team:
+                if skill['element'] in enemy.weakness:
+                    enemies_with_weaknesses.append(enemy)
+
+            if enemies_with_weaknesses:
+                self.skill = skill
+                self.is_skill_selected = True
+                return select_target(enemies_with_weaknesses)[0]
+
+    def attack_skill(self, enemy_team):  # may need to refactor this
+        # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx
+        self.actor.action_points -= self.skill['cost']
+        self.going_to_enemy = True
+        self.in_action = True
+        self.enemy_team = enemy_team

@@ -15,13 +15,23 @@
     "skills": [
       {
         "name": "Slash",
+        "type": "attack",
         "cost": 10,
-        "description": "Deal 10 damage to an enemy."
+        "description": "Deal 10 damage to an enemy.",
+        "value": 10,
+        "element": "SLASH",
+        "targets": "one",
+        "instant_kill_chance": 0
       },
       {
-        "name": "Evade",
+        "name": "Evade Strike",
+        "type": "attack",
         "cost": 15,
-        "description": "Increase agility by 10 for 2 turns."
+        "description": "A quick strike that deals 15 damage to a single enemy.",
+        "value": 15,
+        "element": "PIERCE",
+        "targets": "one",
+        "instant_kill_chance": 0
       }
     ]
   },
@@ -40,14 +50,25 @@
     "weakness": ["LIGHT", "SLASH"],
     "skills": [
       {
-        "name": "Bone Throw",
-        "cost": 10,
-        "description": "Deal 15 damage to an enemy."
+        "name": "Bone Shatter",
+        "type": "attack",
+        "cost": 20,
+        "description": "Deal 20 dark damage to all enemies.",
+        "value": 20,
+        "element": "DARK",
+        "targets": "all",
+        "instant_kill_chance": 0,
+        "hp_cost": 0
       },
       {
-        "name": "Reassemble",
-        "cost": 20,
-        "description": "Restore 20 health."
+        "name": "Bone Throw",
+        "type": "attack",
+        "cost": 10,
+        "description": "Deal 15 damage to an enemy.",
+        "value": 15,
+        "element": "PIERCE",
+        "targets": "one",
+        "instant_kill_chance": 0
       }
     ]
   },
@@ -67,13 +88,23 @@
     "skills": [
       {
         "name": "Fire Breath",
+        "type": "attack",
         "cost": 20,
-        "description": "Deal 25 fire damage to all enemies."
+        "description": "Deal 25 fire damage to all enemies.",
+        "value": 25,
+        "element": "FIRE",
+        "targets": "all",
+        "instant_kill_chance": 0
       },
       {
         "name": "Wing Slash",
+        "type": "attack",
         "cost": 15,
-        "description": "Deal 20 damage to a single enemy."
+        "description": "Deal 20 damage to a single enemy.",
+        "value": 20,
+        "element": "SLASH",
+        "targets": "one",
+        "instant_kill_chance": 0
       }
     ]
   }

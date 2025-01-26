@@ -1,10 +1,15 @@
 import pygame
-
+import pygame.mixer
 from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.World_Renderer import WorldRenderer
 from turn_based_game.Battle import Battle
 
 from Enums import Initiative
+
+pygame.mixer.init()
+
+ambient_music = pygame.mixer.Sound('turn_based_game/audio/ambient_world.mp3')
+
 
 class Game:
 
@@ -44,9 +49,12 @@ class Game:
     def add_level(self, level):
         self.level = level
         self.renderer.set_level(level)
+
     def create_window(self, width, height, fullscreen=False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
+        # ambient_music.play(10)
+        # ambient_music.set_volume(0.1)
 
     def get_collision_rect(self):
         collision_rect = []
@@ -108,7 +116,8 @@ class Game:
                     running = False
 
             if not self.is_in_battle:
-                self.main_character.play(window=self.window, collisions=self.get_collision_rect())  # Character controller
+                self.main_character.play(window=self.window,
+                                         collisions=self.get_collision_rect())  # Character controller
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:
@@ -117,5 +126,6 @@ class Game:
                 self.renderer.draw(objects=self.objects)  # Draw objects
 
             else:
+                ambient_music.stop()
                 self.battle.draw()
         pygame.quit()

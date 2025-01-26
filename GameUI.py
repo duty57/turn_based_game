@@ -1,6 +1,17 @@
-
+import os
 from dataclasses import dataclass
 import pygame
+
+
+def count_files_in_folder(folder_path):
+    # List all items in the folder
+    items = os.listdir(folder_path)
+    # Filter the list to include only files
+    files = [item for item in items if os.path.isfile(os.path.join(folder_path, item))]
+    # Return the count of files
+    return len(files) + 1
+
+
 @dataclass
 class GameUI:
     # Load all images for the UI
@@ -12,7 +23,7 @@ class GameUI:
     profile_frame = pygame.transform.scale(profile_frame, (50, 50))
     death_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Dead_Frame.png')
     list_image = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Lists/list_long.png'),
-                                             (325, 522))
+                                        (325, 522))
     character_highlight = pygame.transform.scale(
         pygame.image.load('turn_based_game/assets/VFX/Highlights/Character_highlight.png'), (48, 12))
     enemy_highlight = pygame.transform.scale(
@@ -28,3 +39,15 @@ class GameUI:
     space_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/SPACE.png'), (64, 32))
 
     backpack = pygame.image.load('turn_based_game/assets/UI/Inventory/backpack_small.png')
+
+    chests = {
+        "common": pygame.image.load('turn_based_game/assets/Chests/CommonChest/Common_Chest_1.png'),
+        "equipment": pygame.image.load('turn_based_game/assets/Chests/EquipmentChest/Equipment_Chest_1.png'),
+        "legendary": pygame.image.load('turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_1.png'),
+    }
+
+    chest_animation = {
+        "common": [pygame.image.load(f'turn_based_game/assets/Chests/CommonChest/Common_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/CommonChest'))],
+        "equipment": [pygame.image.load(f'turn_based_game/assets/Chests/EquipmentChest/Equipment_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/EquipmentChest'))],
+        "legendary": [pygame.image.load(f'turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/LegendaryChest'))],
+    }
