@@ -106,12 +106,8 @@ class CharacterController(Controller):
         self.character_state = CharacterState.healing
 
     def end_of_battle(self):
-        print("END OF BATTLE")
-        print(self.x, self.y)
         self.x = self.world_x
         self.y = self.world_y
-        print("END OF BATTLE2")
-        print(self.x, self.y)
         self.in_battle = False
         self.finished_attack = False
         self.character_state = CharacterState.idle

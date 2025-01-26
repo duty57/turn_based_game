@@ -4,6 +4,7 @@ import pygame
 
 from turn_based_game.Enums import CharacterState, CharacterBattleState
 from turn_based_game.VFX import VFX
+from turn_based_game.GameUI import GameUI as UI
 
 pygame.mixer.init()
 character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
@@ -51,9 +52,6 @@ class Controller:
         self.y = y
 
         self.profile = None
-        self.health_bar = None
-        self.action_points_bar = None
-
         self.health_bar_width = None
         self.action_points_bar_height = None
 
@@ -70,12 +68,10 @@ class Controller:
         self.is_weak = False
 
     # Load UI for the character
-    def load_ui(self, profile: pygame.Surface, health_bar: pygame.Surface, action_points: pygame.Surface):
+    def load_ui(self, profile: pygame.Surface, ):
         self.profile = profile
-        self.health_bar = health_bar
-        self.action_points_bar = action_points
-        self.health_bar_width = self.health_bar.get_width()
-        self.action_points_bar_height = self.action_points_bar.get_height()
+        self.health_bar_width = UI.health_bar.get_width()
+        self.action_points_bar_height = UI.action_points_bar.get_height()
 
     def load_animations(self, animations: dict):
         self.idle = animations['idle']
@@ -85,9 +81,7 @@ class Controller:
         self.damage_taken = animations['hit']
 
     def heal(self, heal_amount):
-        self.actor.health += heal_amount
-        if self.actor.health > self.actor.max_health:
-            self.actor.health = self.actor.max_health
+        self.actor.health = min(self.actor.health + heal_amount, self.actor.max_health)
 
     def take_damage(self, damage, element, skill=None):
         self.collide()
@@ -280,28 +274,26 @@ class Controller:
         pygame.draw.rect(window, (255, 0, 0), self.actor.rect, 2)
 
     def draw_ui(self, window, profile_frame, death_frame, health_bar_frame, action_points_frame, offset):
-
         # calculate the health and action points percentage
-        health_percentage = self.actor.health / self.actor.max_health
-        action_points_percentage = self.actor.action_points / self.actor.max_action_points
+        health_percentage = max(0, self.actor.health) / self.actor.max_health
+        action_points_percentage = max(0, self.actor.action_points) / self.actor.max_action_points
 
-        self.health_bar = pygame.transform.scale(self.health_bar, (
-            int(self.health_bar_width * health_percentage), self.health_bar.get_height()))
-        self.action_points_bar = pygame.transform.scale(self.action_points_bar, (
-            self.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
+        # scale the health bar and action points bar
+        scaled_health_bar = pygame.transform.scale(UI.health_bar, (#change it to ui health bar
+            int(self.health_bar_width * health_percentage), UI.health_bar.get_height()))
+        scaled_action_points_bar = pygame.transform.scale(UI.action_points_bar, (
+            UI.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
 
-        adjust_action_points_bar = 0
+        # adjust the position of the action points bar
+        adjust_action_points_bar = max(0, self.action_points_bar_height - scaled_action_points_bar.get_height()) - 1
 
-        # adjust the action points bar
-        if (self.action_points_bar_height - self.action_points_bar.get_height()) > 0:
-            adjust_action_points_bar = (self.action_points_bar_height - self.action_points_bar.get_height()) - 1
-
+        # draw the UI elements
         window.blit(profile_frame, (offset, 0))  # profile frame
-        window.blit(self.profile, (offset + 5, 0 + 5))  # profile
-        window.blit(self.health_bar, (offset + 13, 50 + 3))  # health bar
+        window.blit(self.profile, (offset + 5, 5))  # profile
         window.blit(health_bar_frame, (offset + 10, 50))  # health bar frame
+        window.blit(scaled_health_bar, (offset + 13, 53))  # health bar
         window.blit(action_points_frame, (offset - 12, 5))  # action points frame
-        window.blit(self.action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
+        window.blit(scaled_action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
 
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 12)
 

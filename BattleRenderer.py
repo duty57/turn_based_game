@@ -36,7 +36,7 @@ class BattleRenderer:
     def draw_enemies(self, enemy_team):
         for i, enemy in enumerate(enemy_team):
             if enemy.name == "Flying Demon":
-                enemy_rect = pygame.Rect(enemy.controller.x - 40, enemy.controller.y - 40, 30, 40)
+                enemy_rect = pygame.Rect(enemy.controller.x - 20, enemy.controller.y - 40, 30, 40)
             else:
                 enemy_rect = pygame.Rect(enemy.controller.x - 10, enemy.controller.y - 20, 30, 40)
             enemy.play(self.window, enemy_rect)

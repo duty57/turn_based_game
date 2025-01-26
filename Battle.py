@@ -139,10 +139,14 @@ class Battle:
 
         elif previous_character.controller.battle_state.value == CharacterBattleState.back_in_position.value \
                 and previous_character.controller.previous_battle_state.value == CharacterBattleState.attacking.value:
-
+            was_anyone_killed = False
             for actor in self.turn_order:
                 if actor.controller.character_state.value >= CharacterState.dead.value:
+                    was_anyone_killed = True
                     self.turn_order.remove(actor)
+                    self.current_turn -= 1
+                    self.current_turn %= len(self.turn_order)
+
                     if actor in self.player_team_highlight:
                         self.player_team_highlight.remove(actor)
                     elif actor in self.enemy_team_highlight:
@@ -151,9 +155,14 @@ class Battle:
             previous_character.controller.previous_battle_state = self.turn_order[
                 (self.current_turn - 1) % len(self.turn_order)].controller.battle_state
             previous_character.controller.battle_state = CharacterBattleState.idle
-            self.current_turn_ui = self.current_turn
+            self.current_turn_ui = self.current_turn + 1 if was_anyone_killed else self.current_turn
             self.current_turn_ui %= len(self.turn_order)
 
+
+        print("TURN ORDER START")
+        for actor in self.turn_order:
+            print(actor.name)
+        print("TURN ORDER END")
         # send current character info via list
 
         if not previous_character.controller.in_action and not current_character_controller.actor.is_enemy():
@@ -249,7 +258,7 @@ class Battle:
                             current_character_controller.healing_skill(skill, player_team=self.player_team)
                             self.current_turn = (self.current_turn + 1) % len(self.turn_order)
                         else:
-                            draw_message(self.window, "Not enough action points", 2)
+                            draw_message(self.window, "Not enough action points", (current_character_controller.x, current_character_controller.y))
                             self.escape_key_pressed = True
                         current_character_controller.is_skill_selected = False
                 else:

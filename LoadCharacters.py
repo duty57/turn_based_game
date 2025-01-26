@@ -50,8 +50,6 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
         hit = resize_images(hit, size)
         dead = resize_images(dead, size)
 
-    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
-    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
     profile_picture = \
     resize_images([pygame.image.load(f'turn_based_game/assets/UI/Frames/Characters/{character_name}_Profile.png')],
                   (40, 43))[0]
@@ -65,7 +63,7 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
         'dead': dead
     }
     character.load_animations(animations_dict)
-    character.load_ui(profile_picture, health_bar, action_points_bar)
+    character.load_ui(profile_picture)
 
     return character
 
@@ -92,8 +90,6 @@ def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Charac
     hit = [pygame.image.load(img) for img in hit]
     dead = [pygame.image.load(img) for img in dead]
 
-    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
-    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
     profile_picture = \
     resize_images([pygame.image.load(f'turn_based_game/assets/UI/Frames/Enemies/{enemy_name}_Profile.png')], (40, 43))[0]
 
@@ -106,6 +102,6 @@ def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Charac
         'dead': dead
     }
     enemy.load_animations(animations_dict)
-    enemy.load_ui(profile_picture, health_bar, action_points_bar)
+    enemy.load_ui(profile_picture)
 
     return enemy

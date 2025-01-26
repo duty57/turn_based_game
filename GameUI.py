@@ -51,3 +51,6 @@ class GameUI:
         "equipment": [pygame.image.load(f'turn_based_game/assets/Chests/EquipmentChest/Equipment_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/EquipmentChest'))],
         "legendary": [pygame.image.load(f'turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/LegendaryChest'))],
     }
+
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')

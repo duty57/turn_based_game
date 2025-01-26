@@ -43,8 +43,8 @@ class Actor(pygame.sprite.Sprite):
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'
     # Load UI for the character
-    def load_ui(self, profile: pygame.Surface, health_bar: pygame.Surface, action_points: pygame.Surface):
-        self.controller.load_ui(profile, health_bar, action_points)
+    def load_ui(self, profile: pygame.Surface):
+        self.controller.load_ui(profile)
 
     def load_animations(self, animations: dict):
         self.controller.load_animations(animations)
