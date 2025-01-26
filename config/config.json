@@ -2,7 +2,7 @@
   "Witch": {
     "name": "Witch",
     "maxHealth": 120,
-    "strength": 10,
+    "strength": 11111,
     "intelligence": 20,
     "defense": 15,
     "speed": 10,
@@ -40,7 +40,7 @@
   "Wizard": {
     "name": "Wizard",
     "maxHealth": 100,
-    "strength": 8,
+    "strength": 11111,
     "intelligence": 25,
     "defense": 10,
     "speed": 10,
@@ -77,7 +77,7 @@
   "Warrior": {
     "name": "Warrior",
     "maxHealth": 200,
-    "strength": 25,
+    "strength": 1111,
     "intelligence": 5,
     "defense": 25,
     "speed": 10,
@@ -115,7 +115,7 @@
   "Archer": {
     "name": "Archer",
     "maxHealth": 150,
-    "strength": 15,
+    "strength": 1111,
     "intelligence": 10,
     "defense": 10,
     "speed": 10,

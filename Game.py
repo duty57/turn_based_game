@@ -115,9 +115,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
 
-            if not self.is_in_battle:
-                self.main_character.play(window=self.window,
-                                         collisions=self.get_collision_rect())  # Character controller
+            if not self.main_character.controller.in_battle:
+                # character_rect = pygame.Rect(self.main_character.controller.x - 15, self.main_character.controller.y - 20, 30, 40)
+                self.main_character.play(window=self.window, collisions=self.get_collision_rect())  # Character controller
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:

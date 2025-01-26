@@ -111,10 +111,13 @@ class EnemyController(Controller):
                 if skill['element'] in enemy.weakness:
                     enemies_with_weaknesses.append(enemy)
 
+
             if enemies_with_weaknesses:
                 self.skill = skill
                 self.is_skill_selected = True
                 return select_target(enemies_with_weaknesses)[0]
+
+        return enemy_team.index(min(enemy_team, key=lambda enemy: enemy.health))
 
     def attack_skill(self, enemy_team):  # may need to refactor this
         # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx

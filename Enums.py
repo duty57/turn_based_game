@@ -19,9 +19,9 @@ class CharacterState(Enum):
     moving = 2
     attacking = 3
     hit = 4
-    dead = 5
-    inactive = 6
-    healing = 7
+    healing = 5
+    dead = 6
+    inactive = 7
 
 class CharacterBattleState(Enum):
     init = 0

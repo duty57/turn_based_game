@@ -111,7 +111,8 @@ class Battle:
             self.window.blit(text, text_rect)
             pygame.display.update()
             for character in self.player_team:
-                character.level_up(50)
+                character.gain_experience(50)
+                character.controller.end_of_battle()
             sleep(0.5)
 
     def calculate_turn_order(self):
@@ -133,17 +134,17 @@ class Battle:
         elif previous_character.controller.battle_state.value == CharacterBattleState.back_in_position.value \
                 and previous_character.controller.previous_battle_state.value == CharacterBattleState.attacking.value:
 
-            if previous_character.controller.target.controller.character_state.value >= CharacterState.dead.value:
-                print(self.enemy_team)
-                self.turn_order.remove(previous_character.controller.target)
-                self.enemy_team_highlight.remove(
-                    previous_character.controller.target) if previous_character.controller.target.is_enemy() else self.player_team_highlight.remove(
-                    previous_character.controller.target)
+            for actor in self.turn_order:
+                if actor.controller.character_state.value >= CharacterState.dead.value:
+                    self.turn_order.remove(actor)
+                    if actor in self.player_team_highlight:
+                        self.player_team_highlight.remove(actor)
+                    elif actor in self.enemy_team_highlight:
+                        self.enemy_team_highlight.remove(actor)
 
             previous_character.controller.previous_battle_state = self.turn_order[
                 (self.current_turn - 1) % len(self.turn_order)].controller.battle_state
             previous_character.controller.battle_state = CharacterBattleState.idle
-            print("Character back in position")
             self.current_turn_ui = self.current_turn
             self.current_turn_ui %= len(self.turn_order)
 
@@ -224,7 +225,7 @@ class Battle:
                         current_character_controller.target = self.enemy_team_highlight[
                             self.selection_index % len(self.enemy_team_highlight)]
                         if current_character_controller.actor.action_points >= skill['cost']:
-                            current_character_controller.attack_skill(skill, enemy_team=self.enemy_team)
+                            current_character_controller.attack_skill(skill, enemy_team=self.enemy_team_highlight)
                             self.current_turn = (self.current_turn + 1) % len(self.turn_order)
                         else:
                             draw_message(self.window, "Not enough action points", (current_character_controller.x, current_character_controller.y))
@@ -283,12 +284,8 @@ class Battle:
                 previous_character = self.turn_order[self.current_turn - 1]
                 current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
                 # self.calculate_turn_order()
-                print(self.turn_order)
                 self.current_turn = self.turn_order.index(previous_character) + 1
                 self.current_turn %= len(self.turn_order)
-
-        for character in self.turn_order:
-            print("Character: ", character.name, character.immunity, character.weakness, character.element)
 
         if self.current_turn_ui == len(self.turn_order) - 1:
             self.first_cycle = False

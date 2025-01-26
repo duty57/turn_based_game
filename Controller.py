@@ -26,9 +26,11 @@ class Controller:
 
         # character state
         self.character_state = CharacterState.idle
-
         self.battle_x = 0
         self.battle_y = 0
+
+        self.world_x = 0
+        self.world_y = 0
 
         # battle states
         self.target = None
@@ -103,7 +105,7 @@ class Controller:
                 self.actor.damage = int(damage * 2)
                 self.actor.is_weak = True
             else:
-                self.actor.damage = int(damage)
+                self.actor.damage = max(0, damage - self.actor.defense)
                 self.actor.is_weak = False
 
             self.actor.health -= self.actor.damage
@@ -113,10 +115,10 @@ class Controller:
 
     def collide(self):
         if self.in_battle:
-            if self.actor.is_enemy():
-                enemy_hit_sound.play()
-            else:
-                character_hit_sound.play()
+            # if self.actor.is_enemy():
+            #     enemy_hit_sound.play()
+            # else:
+            #     character_hit_sound.play()
             self.character_state = CharacterState.hit
 
     def moveRight(self):
@@ -147,7 +149,7 @@ class Controller:
             else:
                 self.target.controller.take_damage(self.skill['value'], self.skill['element'], self.skill)
         else:
-            self.target.controller.take_damage(self.actor.damage, self.actor.element, self.skill)
+            self.target.controller.take_damage(self.actor.strength, self.actor.element, self.skill)
 
         self.skill = None
 
@@ -202,7 +204,6 @@ class Controller:
             self.skill = None
 
     def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
-
         if self.actor.__class__.__name__ == 'Enemy':
             if not self.in_battle:
                 adjusted_rect = adjusted_rect.move(10, 10)

@@ -12,6 +12,7 @@ class CharacterController(Controller):
 
     # Character controller
     def controller(self, window, adjusted_rect=None, collisions=None):
+
         keys = pygame.key.get_pressed()
         if collisions is None:
             collisions = []
@@ -55,6 +56,8 @@ class CharacterController(Controller):
 
                 self.x += move_x * 2
                 self.y += move_y * 2
+                self.world_x = self.x
+                self.world_y = self.y
                 self.actor.rect.center = (self.x, self.y)
                 return self.x, self.y
 
@@ -67,6 +70,7 @@ class CharacterController(Controller):
                 # change character position
                 self.actor.rect.center = (self.x, self.y)
         self.draw(window, adjusted_rect)
+
 
     def battle_start(self, i: int):
         self.x = 600
@@ -100,3 +104,16 @@ class CharacterController(Controller):
         self.in_action = True
         self.player_team = player_team
         self.character_state = CharacterState.healing
+
+    def end_of_battle(self):
+        print("END OF BATTLE")
+        print(self.x, self.y)
+        self.x = self.world_x
+        self.y = self.world_y
+        print("END OF BATTLE2")
+        print(self.x, self.y)
+        self.in_battle = False
+        self.finished_attack = False
+        self.character_state = CharacterState.idle
+        self.actor.rect.center = (self.x, self.y)
+        self.actor.health = 1 if self.actor.health == 0 else self.actor.health
