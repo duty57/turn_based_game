@@ -110,10 +110,16 @@ class Battle:
             self.window.fill((0, 0, 0))
             self.window.blit(text, text_rect)
             pygame.display.update()
+            level_up = []
             for character in self.player_team:
-                character.gain_experience(50)
+                level_up.append(character.gain_experience(50))
                 character.controller.end_of_battle()
             sleep(0.5)
+
+            if True in level_up:
+                self.battle_renderer.draw_level_up(self.player_team)
+                sleep(3)
+
 
     def calculate_turn_order(self):
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)

@@ -24,7 +24,6 @@ class EnemyController(Controller):
 
         self.is_skill_selected = False
 
-
     def set_main_character(self, main_character):
         self.main_character = main_character
 
@@ -110,7 +109,6 @@ class EnemyController(Controller):
             for enemy in enemy_team:
                 if skill['element'] in enemy.weakness:
                     enemies_with_weaknesses.append(enemy)
-
 
             if enemies_with_weaknesses:
                 self.skill = skill

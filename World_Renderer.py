@@ -35,7 +35,7 @@ class WorldRenderer:
                               UI.action_points_bar_frame,
                               85 * i + 25)
 
-    def draw(self, objects: list):
+    def draw(self, objects):
         self.window.fill((114, 117, 27))
         self.draw_level()
         self.draw_ui()

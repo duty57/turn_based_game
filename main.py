@@ -18,13 +18,10 @@ Healer = init_character('Witch', 200, 300)
 Wizard = init_character('Wizard', 200, 300, True, (40, 40))
 Archer = init_character('Archer', 200, 300)
 
-Skeleton = character_init_enemy('Skeleton', 0, 0, Warrior)
-Goblin = character_init_enemy('Goblin', 500, 360, Warrior)
+
 
 game.add_characters([Warrior, Healer, Wizard, Archer])
-enemy_objects = [Goblin]
 
-game.add_enemies(enemy_objects)
 game.add_camera(camera)
 game.add_level(level)
 

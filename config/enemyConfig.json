@@ -82,7 +82,7 @@
     "agility": 20,
     "actionPoints": 35,
     "characterClass": "Enemy",
-    "element": ["FIRE", "WIND"],
+    "element": "FIRE",
     "immunity": ["FIRE", "PIERCE", "DARK"],
     "weakness": ["ICE", "LIGHT"],
     "skills": [

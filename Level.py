@@ -1,6 +1,7 @@
 import pygame
+from turn_based_game.LoadCharacters import character_init_enemy
 
-
+enemy_list = ['Skeleton', 'Goblin', 'Flying_demon']
 
 class Level:
 
@@ -15,6 +16,7 @@ class Level:
         # 21-30 horizontal walls
         # 31-40 vertical walls
         # 41-50 background tiles
+        # 69 - enemy spawn point
         self.tiles = {
             10: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_1.png'),
             21: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Horizontal_1.png'),
@@ -30,6 +32,7 @@ class Level:
             13: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_7.png'),
             14: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_8.png'),
             40: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_6.png'),
+            69: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_5.png')
         }
         self.generate_world_map()
         self.generate_battle_map()
@@ -43,7 +46,7 @@ class Level:
 
             [31, 10, 10, 10, 10, 33, 21, 21, 21, 34, 10, 33, 21, 21, 21, 21, 21, 21, 21, 10],
             [31, 10, 10, 10, 10, 10, 10, 13, 10, 10, 10, 10, 10, 10, 10, 11, 10, 10, 10, 32],
-            [31, 10, 14, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 10, 10, 10, 13, 32],
+            [31, 10, 14, 10, 10, 10, 10, 69, 10, 10, 10, 10, 10, 10, 11, 10, 69, 10, 13, 32],
             [31, 10, 10, 10, 10, 36, 22, 22, 22, 35, 10, 10, 10, 10, 10, 12, 12, 12, 10, 32],
 
             [10, 22, 22, 22, 22, 10, 10, 10, 10, 31, 10, 10, 10, 10, 10, 10, 10, 10, 10, 32],
@@ -86,3 +89,11 @@ class Level:
             for x, tile_id in enumerate(row):
                 tile = self.tiles[tile_id]
                 window.blit(tile, (x * self.tile_width, y * self.tile_height))
+
+    def get_enemies(self):
+        enemies = []
+        for y, row in enumerate(self.tile_map_world):
+            for x, tile_id in enumerate(row):
+                if tile_id == 69:
+                    enemies.append(character_init_enemy(enemy_list[1], x * self.tile_width, y * self.tile_height, None))
+        return enemies
