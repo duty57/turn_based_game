@@ -1,3 +1,5 @@
+import time
+
 import pygame
 from turn_based_game.GameUI import GameUI as UI
 from turn_based_game.Level import Level
@@ -35,12 +37,26 @@ class WorldRenderer:
                               UI.action_points_bar_frame,
                               85 * i + 25)
 
-    def draw(self, objects):
+    def draw_item(self, item, spawn_time, x, y):
+        if item is not None and time.time() - spawn_time < 2:
+            #draw frame then item
+            resized_frame = pygame.transform.scale(UI.item_frame[item.rarity], (50, 50))
+            resized_item = pygame.transform.scale(item.image, (48, 48))
+            self.window.blit(resized_frame, (1180, 0))
+            self.window.blit(resized_item, (1182, 2))
+
+    def draw(self, objects, item, spawn_time, item_x, item_y):
         self.window.fill((114, 117, 27))
         self.draw_level()
         self.draw_ui()
+        self.draw_item(item, spawn_time, item_x, item_y)
 
         for obj in objects:
-            obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
-            obj.controller.draw(self.window, adjusted_rect=obj_rect)
+            if obj.name == "Chest":
+                obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
+                self.window.blit(obj.image, (obj_rect.x, obj_rect.y))  # Draw chest using the adjusted rect position
+                pygame.draw.rect(self.window, (255, 0, 0), obj_rect, 1)
+            else:
+                obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
+                obj.controller.draw(self.window, adjusted_rect=obj_rect)
         pygame.display.update()

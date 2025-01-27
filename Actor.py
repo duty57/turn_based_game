@@ -2,6 +2,7 @@ import json
 
 import pygame
 
+
 # TODO formula for enemy leveling: player_level + 1 * (player_level // 5)
 class Actor(pygame.sprite.Sprite):
     def __init__(self, config_file: str, character_name: str, x: int = 200, y: int = 100):
@@ -42,6 +43,7 @@ class Actor(pygame.sprite.Sprite):
 
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'
+
     # Load UI for the character
     def load_ui(self, profile: pygame.Surface):
         self.controller.load_ui(profile)

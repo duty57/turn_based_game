@@ -1,0 +1,146 @@
+{
+  "armor": {
+    "common": {
+      "Iron_Helmet": {
+        "item_type": "helmet",
+        "description": "A sturdy iron helmet offering decent protection.",
+        "defenseBonus": 10,
+        "HPBonus": 30,
+        "agilityBonus": 2,
+        "actionPointsBonus": 0
+      },
+      "Leather_Chestplate": {
+        "item_type": "chestplate",
+        "description": "A basic leather chestplate offering moderate defense.",
+        "defenseBonus": 10,
+        "HPBonus": 45,
+        "agilityBonus": 3,
+        "actionPointsBonus": 0
+      }
+    },
+    "rare": {
+      "Golden_Helmet": {
+        "item_type": "helmet",
+        "description": "A sturdy golden helmet offering good protection.",
+        "defenseBonus": 5,
+        "HPBonus": 25,
+        "agilityBonus": 5,
+        "actionPointsBonus": 15
+      },
+      "Steel_Chestplate": {
+        "item_type": "chestplate",
+        "description": "A heavy steel chestplate with excellent durability.",
+        "defenseBonus": 20,
+        "HPBonus": 100,
+        "agilityBonus": -1,
+        "actionPointsBonus": 0
+      },
+      "Brass_Helmet": {
+        "item_type": "helmet",
+        "description": "A brass helmet that offers decent defense and is lightweight.",
+        "defenseBonus": 8,
+        "HPBonus": 40,
+        "agilityBonus": 4,
+        "actionPointsBonus": 1
+      }
+    },
+    "legendary": {
+      "Dragon_Helm": {
+        "item_type": "helmet",
+        "description": "A helmet forged from dragon scales, offering exceptional durability.",
+        "defenseBonus": 25,
+        "HPBonus": 80,
+        "agilityBonus": 3,
+        "actionPointsBonus": 0
+      },
+      "Titan_Chestplate": {
+        "item_type": "chestplate",
+        "description": "A massive chestplate designed for the strongest warriors.",
+        "defenseBonus": 35,
+        "HPBonus": 150,
+        "agilityBonus": -3,
+        "actionPointsBonus": 0
+      },
+      "Celestial_Helmet": {
+        "item_type": "helmet",
+        "description": "A celestial helmet that grants immense protection against all attacks.",
+        "defenseBonus": 30,
+        "HPBonus": 100,
+        "agilityBonus": 1,
+        "actionPointsBonus": 0
+      },
+      "Aegis_Chestplate": {
+        "item_type": "chestplate",
+        "description": "A divine chestplate that is said to be blessed by the gods.",
+        "defenseBonus": 40,
+        "HPBonus": 200,
+        "agilityBonus": -4,
+        "actionPointsBonus": 0
+      }
+    }
+  },
+  "weapon": {
+    "common": {
+      "Iron_Sword": {
+        "item_type": "sword",
+        "description": "A reliable sword forged from iron.",
+        "damage": 20,
+        "HPBonus": 0,
+        "actionPointsBonus": 5
+      },
+      "Shadow_Dagger": {
+        "item_type": "dagger",
+        "description": "A lightweight dagger that strikes with precision.",
+        "damage": 15,
+        "HPBonus": 5,
+        "actionPointsBonus": 10
+      }
+    },
+    "rare": {
+      "Elven_Longbow": {
+        "item_type": "bow",
+        "description": "A finely crafted longbow of elven origin.",
+        "damage": 30,
+        "HPBonus": 10,
+        "actionPointsBonus": 8
+      },
+      "Arcane_Staff": {
+        "item_type": "staff",
+        "description": "A staff imbued with arcane energy that boosts magical power.",
+        "damage": 35,
+        "HPBonus": 20,
+        "actionPointsBonus": 12
+      }
+    },
+    "legendary": {
+      "Flame_Blade": {
+        "item_type": "blade",
+        "description": "A sword imbued with fiery energy.",
+        "damage": 50,
+        "HPBonus": 20,
+        "actionPointsBonus": 10
+      },
+      "Celestial_Staff": {
+        "item_type": "staff",
+        "description": "A divine staff that channels celestial energy for powerful spells.",
+        "damage": 55,
+        "HPBonus": 25,
+        "actionPointsBonus": 15
+      },
+      "Phoenix_Staff": {
+        "item_type": "staff",
+        "description": "A legendary staff infused with the flames of a phoenix.",
+        "damage": 60,
+        "HPBonus": 30,
+        "actionPointsBonus": 20
+      },
+      "Hunter's_Bow": {
+        "item_type": "bow",
+        "description": "A legendary bow crafted for the finest archers.",
+        "damage": 45,
+        "HPBonus": 15,
+        "actionPointsBonus": 10
+      }
+    }
+  }
+}

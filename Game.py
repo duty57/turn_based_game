@@ -2,6 +2,8 @@ import random
 
 import pygame
 import pygame.mixer
+import time
+
 from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.World_Renderer import WorldRenderer
 from turn_based_game.Battle import Battle
@@ -28,8 +30,12 @@ class Game:
         self.camera = None
         self.level = None
 
-        self.inventory = None
+        self.inventory = []
+        self.chests = []
         self.opponent = None
+
+        self.chest_opened_time = 0
+        self.dropped_item = None
 
     def add_objects(self, objects):
         self.objects.add(objects)
@@ -52,13 +58,17 @@ class Game:
     def add_level(self, level):#add level to the game
         self.level = level
         self.renderer.set_level(level)
-        self.add_enemies(level.get_enemies())
+        self.add_enemies(level.get_enemies())#get enemies from the level
+        self.chests = level.get_chests()#get chests from the level
+        self.add_objects(self.chests)
 
     def create_window(self, width, height, fullscreen=False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
         # ambient_music.play(10)
         # ambient_music.set_volume(0.1)
+    def add_to_inventory(self, item):
+        self.inventory.append(item)
 
     def get_collision_rect(self):
         collision_rect = []
@@ -73,7 +83,7 @@ class Game:
     def detect_collision(self, character):
         collided_objects = pygame.sprite.spritecollide(character, self.objects, False)
         for obj in collided_objects:
-            if obj != character and character.controller.finished_attack:
+            if obj != character and obj.name != "Chest" and character.controller.finished_attack:
                 self.enemies.append(obj)
                 obj.controller.collide()
                 self.start_battle(Initiative.player_initiative)
@@ -84,7 +94,15 @@ class Game:
                 self.start_battle(Initiative.enemy_initiative)
                 character.controller.is_hit = False
                 self.opponent = obj
-
+            elif obj.name == "Chest" and character.controller.finished_attack:
+                obj.open()
+                self.dropped_item = obj.get_item()
+                self.add_to_inventory(self.dropped_item)
+                self.objects.remove(obj)
+                self.chests.remove(obj)
+                self.chest_opened_time = time.time()
+                # self.inventory.append(obj.item)
+                # print(f"Inventory: {self.inventory}")
     def generate_enemy_team(self):
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
@@ -131,8 +149,7 @@ class Game:
                 for obj in self.objects:
                     if obj.is_enemy():
                         obj.play(window=self.window, adjusted_rect=pygame.Rect(0, 0, 1280, 720))
-                self.renderer.draw(objects=self.objects)  # Draw objects
-
+                self.renderer.draw(objects=self.objects, item=self.dropped_item, spawn_time=self.chest_opened_time, item_x=self.main_character.controller.x, item_y=self.main_character.controller.y)  # Draw objects
             else:
                 ambient_music.stop()
                 self.battle.draw()

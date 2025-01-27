@@ -15,7 +15,9 @@ def count_files_in_folder(folder_path):
 @dataclass
 class GameUI:
     # Load all images for the UI
+    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
     health_bar_frame = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Frame.png')
+    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
     action_points_bar_frame = pygame.image.load(
         'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
 
@@ -52,5 +54,8 @@ class GameUI:
         "legendary": [pygame.image.load(f'turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_{i}.png') for i in range(1, count_files_in_folder('turn_based_game/assets/Chests/LegendaryChest'))],
     }
 
-    health_bar = pygame.image.load('turn_based_game/assets/UI/HealthBar/HealthBar_Value.png')
-    action_points_bar = pygame.image.load('turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Value.png')
+    item_frame = {
+        "common": pygame.image.load('turn_based_game/assets/UI/Frames/Items/common_frame.png'),
+        "rare": pygame.image.load('turn_based_game/assets/UI/Frames/Items/rare_frame.png'),
+        "legendary": pygame.image.load('turn_based_game/assets/UI/Frames/Items/legendary_frame.png'),
+    }

@@ -1,3 +1,6 @@
+import pygame
+
+
 class Item:
     def __init__(self, name, quantity):
 
@@ -7,10 +10,9 @@ class Item:
         self.name = name
         self.description = None
         self.image = None
+        self.rect = None
 
-    def __str__(self):
-        return "{}\n=====\n{}\nValue: {}\n".format(self.name, self.description)
+    def set_image(self, path):
+        self.image = pygame.image.load(path)
 
-    def set_image(self, image):
-        self.image = image
 

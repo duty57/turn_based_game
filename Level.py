@@ -1,7 +1,9 @@
 import pygame
 from turn_based_game.LoadCharacters import character_init_enemy
+from turn_based_game.Items.Chest import Chest
 
 enemy_list = ['Skeleton', 'Goblin', 'Flying_demon']
+
 
 class Level:
 
@@ -32,6 +34,7 @@ class Level:
             13: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_7.png'),
             14: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_8.png'),
             40: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_6.png'),
+            57: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_4.png'),
             69: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_5.png')
         }
         self.generate_world_map()
@@ -40,13 +43,13 @@ class Level:
     def generate_world_map(self):
         self.tile_map_world = [
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 21, 21, 21, 21, 10, 10, 10, 10, 10, 10],
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 10, 10, 10, 10, 32, 10, 10, 10, 10, 10],
+            [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 10, 10, 10, 57, 32, 10, 10, 10, 10, 10],
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 11, 36, 22, 22, 10, 10, 10, 10, 10, 10],
             [10, 21, 21, 21, 21, 10, 10, 10, 10, 31, 10, 32, 10, 10, 10, 10, 10, 10, 10, 10],
 
             [31, 10, 10, 10, 10, 33, 21, 21, 21, 34, 10, 33, 21, 21, 21, 21, 21, 21, 21, 10],
             [31, 10, 10, 10, 10, 10, 10, 13, 10, 10, 10, 10, 10, 10, 10, 11, 10, 10, 10, 32],
-            [31, 10, 14, 10, 10, 10, 10, 69, 10, 10, 10, 10, 10, 10, 11, 10, 69, 10, 13, 32],
+            [31, 10, 14, 10, 10, 57, 10, 13, 10, 10, 10, 10, 10, 10, 11, 10, 69, 10, 13, 32],
             [31, 10, 10, 10, 10, 36, 22, 22, 22, 35, 10, 10, 10, 10, 10, 12, 12, 12, 10, 32],
 
             [10, 22, 22, 22, 22, 10, 10, 10, 10, 31, 10, 10, 10, 10, 10, 10, 10, 10, 10, 32],
@@ -82,7 +85,8 @@ class Level:
         for y, row in enumerate(self.tile_map_world):
             for x, tile_id in enumerate(row):
                 tile = self.tiles[tile_id]
-                window.blit(tile, (x * self.tile_width - camera.camera_rect.x, y * self.tile_height - camera.camera_rect.y))
+                window.blit(tile,
+                            (x * self.tile_width - camera.camera_rect.x, y * self.tile_height - camera.camera_rect.y))
 
     def draw_battle_level(self, window):
         for y, row in enumerate(self.tile_map_battle):
@@ -97,3 +101,11 @@ class Level:
                 if tile_id == 69:
                     enemies.append(character_init_enemy(enemy_list[1], x * self.tile_width, y * self.tile_height, None))
         return enemies
+
+    def get_chests(self):
+        chests = []
+        for y, row in enumerate(self.tile_map_world):
+            for x, tile_id in enumerate(row):
+                if tile_id == 57:
+                    chests.append(Chest(x * self.tile_width, y * self.tile_height))
+        return chests
