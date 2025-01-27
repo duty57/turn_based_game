@@ -149,8 +149,14 @@ class Game:
                 for obj in self.objects:
                     if obj.is_enemy():
                         obj.play(window=self.window, adjusted_rect=pygame.Rect(0, 0, 1280, 720))
-                self.renderer.draw(objects=self.objects, item=self.dropped_item, spawn_time=self.chest_opened_time, item_x=self.main_character.controller.x, item_y=self.main_character.controller.y)  # Draw objects
+                if self.main_character.controller.in_inventory:
+                    self.renderer.draw_inventory(self.inventory, self.main_character.controller.character_index, self.main_character.controller.selection_index)
+                else:
+                    self.renderer.draw(objects=self.objects, item=self.dropped_item, spawn_time=self.chest_opened_time)  # Draw objects
+
             else:
                 ambient_music.stop()
                 self.battle.draw()
         pygame.quit()
+
+#TODO: maybe create separate draw function for inventory and put if statement in the run function

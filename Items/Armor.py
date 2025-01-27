@@ -17,3 +17,6 @@ class Armor(Item):
             self.agilityBonus = data['armor'][rarity][name]['agilityBonus']
             self.actionPointsBonus = data['armor'][rarity][name]['actionPointsBonus']
             self.set_image(f'turn_based_game/assets/Items/Armor/{name}.png')
+
+    def get_stats(self):
+        return f"DEF: {self.defenseBonus} HP: {self.HPBonus}  AP: {self.actionPointsBonus}  AGI: {self.agilityBonus}"

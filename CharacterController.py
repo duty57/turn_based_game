@@ -9,6 +9,17 @@ class CharacterController(Controller):
         super().__init__(actor, x, y)
         # battle variables
         self.is_skill_selected = False
+        self.in_inventory = False
+
+        self.inventory_button_pressed = False
+        self.left_arrow_pressed = False
+        self.right_arrow_pressed = False
+        self.up_arrow_pressed = False
+        self.down_arrow_pressed = False
+
+
+        self.character_index = 0
+        self.selection_index = 0
 
     # Character controller
     def controller(self, window, adjusted_rect=None, collisions=None):
@@ -26,23 +37,62 @@ class CharacterController(Controller):
                 elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
                     self.character_state = CharacterState.idle
 
-                if keys[pygame.K_LEFT]:
-                    move_x = -1
-                    self.moving_left_direction = True
-                    self.moving_right_direction = False
-                    self.character_state = CharacterState.moving
-                elif keys[pygame.K_RIGHT]:
-                    move_x = 1
-                    self.moving_left_direction = False
-                    self.moving_right_direction = True
-                    self.character_state = CharacterState.moving
 
-                if keys[pygame.K_UP]:
-                    move_y = -1
-                    self.character_state = CharacterState.moving
-                elif keys[pygame.K_DOWN]:
-                    move_y = 1
-                    self.character_state = CharacterState.moving
+
+                if keys[pygame.K_i]:
+                    if not self.inventory_button_pressed:
+                        self.in_inventory = not self.in_inventory
+                        self.inventory_button_pressed = True
+                else:
+                    self.inventory_button_pressed = False
+
+                if self.in_inventory:
+                    if keys[pygame.K_LEFT] and not self.left_arrow_pressed:
+                        self.character_index -= 1
+                        self.left_arrow_pressed = True
+                    elif not keys[pygame.K_LEFT]:
+                        self.left_arrow_pressed = False
+
+                    if keys[pygame.K_RIGHT] and not self.right_arrow_pressed:
+                        self.character_index += 1
+                        self.right_arrow_pressed = True
+                    elif not keys[pygame.K_RIGHT]:
+                        self.right_arrow_pressed = False
+
+                    if keys[pygame.K_UP] and not self.up_arrow_pressed:
+                        self.selection_index -= 1
+                        self.up_arrow_pressed = True
+                    elif not keys[pygame.K_UP]:
+                        self.up_arrow_pressed = False
+
+                    if keys[pygame.K_DOWN] and not self.down_arrow_pressed:
+                        self.selection_index += 1
+                        self.down_arrow_pressed = True
+                    elif not keys[pygame.K_DOWN]:
+                        self.down_arrow_pressed = False
+
+                    if keys[pygame.K_ESCAPE]:
+                        self.in_inventory = False
+
+                else:
+                    if keys[pygame.K_LEFT]:
+                        move_x = -1
+                        self.moving_left_direction = True
+                        self.moving_right_direction = False
+                        self.character_state = CharacterState.moving
+                    elif keys[pygame.K_RIGHT]:
+                        move_x = 1
+                        self.moving_left_direction = False
+                        self.moving_right_direction = True
+                        self.character_state = CharacterState.moving
+
+                    if keys[pygame.K_UP]:
+                        move_y = -1
+                        self.character_state = CharacterState.moving
+                    elif keys[pygame.K_DOWN]:
+                        move_y = 1
+                        self.character_state = CharacterState.moving
+
 
                 for obj in collisions:
                     if obj.colliderect(self.actor.rect.move(move_x * 2, 0)):

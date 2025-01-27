@@ -67,3 +67,6 @@ class Actor(pygame.sprite.Sprite):
             self.health = self.max_health
             self.damage = self.strength
             self.action_points = self.max_action_points
+
+    def get_image(self):
+        return self.controller.profile

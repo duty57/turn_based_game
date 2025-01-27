@@ -13,3 +13,6 @@ class Weapon(Item):
             self.HPBonus = data['weapon'][rarity][name]['HPBonus']
             self.actionPointsBonus = data['weapon'][rarity][name]['actionPointsBonus']
             self.set_image(f'turn_based_game/assets/Items/Weapons/{name}.png')
+
+    def get_stats(self):
+        return f"DMG: {self.damage} HP: {self.HPBonus}  AP: {self.actionPointsBonus}"
