@@ -1,7 +1,7 @@
-import copy
-
 import pygame
-from turn_based_game.GameUI import GameUI as UI
+
+from turn_based_game.Enums import Initiative
+from turn_based_game.GameUI import GameUI as UI, draw_ui
 
 
 def draw_message(window, message, position, duration=1000):
@@ -13,12 +13,32 @@ def draw_message(window, message, position, duration=1000):
     pygame.display.update()
     pygame.time.delay(duration)
 
-
 class BattleRenderer:
 
     def __init__(self, window, level):
         self.window = window
         self.level = level
+
+    def start(self, initiative):
+        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
+        text_value = "Alies have the initiative!" if initiative.value == Initiative.player_initiative.value else "Enemies have the initiative!"
+        color = (0, 255, 0) if initiative.value == Initiative.player_initiative.value else (255, 0, 0)
+        text = font.render(text_value, True, color)
+        text_rect = text.get_rect(center=(640, 360))
+        self.window.fill((0, 0, 0))
+        self.window.blit(text, text_rect)
+        pygame.display.update()
+        # set up the battle elements
+        UI.enemy_highlight.set_alpha(128)
+        UI.character_highlight.set_alpha(128)
+
+    def end(self, text_value: str, color: tuple):
+        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
+        text = font.render(text_value, True, color)
+        text_rect = text.get_rect(center=(640, 360))
+        self.window.fill((0, 0, 0))
+        self.window.blit(text, text_rect)
+        pygame.display.update()
 
     def set_level(self, level):
         self.level = level
@@ -43,15 +63,11 @@ class BattleRenderer:
 
     def draw_characters_list(self, player_team):
         for i, character in enumerate(player_team):
-            character.controller.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
-                                         UI.action_points_bar_frame,
-                                         85 * i + 25)
+            draw_ui(self.window, character, 85 * i + 25)
 
     def draw_enemy_list(self, enemy_team):
         for i, enemy in enumerate(enemy_team):
-            enemy.controller.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
-                                     UI.action_points_bar_frame,
-                                     1220 - 85 * i)
+            draw_ui(self.window, enemy, 1220 - 85 * i)
 
     def draw_level_up(self, characters):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
@@ -75,12 +91,6 @@ class BattleRenderer:
             new_atk_text = font.render(f"ATK: {character.strength}", True, (255, 255, 0))
             new_def_text = font.render(f"DEF: {character.defense}", True, (255, 255, 0))
 
-            # prev_stats_text = font.render(
-            #     f"HP: {character.max_health - 10}   AP: {character.max_action_points-5}  ATK: {character.strength - 1}  DEF: {character.defense - 1}",
-            #     True, (255, 255, 255))
-            # new_stats_text = font.render(f"HP: {character.max_health}   AP: {character.max_action_points}  ATK: {character.strength }  DEF: {character.defense}",
-            #                              True, (255, 255, 255))
-
             self.window.blit(prev_hp_text, (100 + 300 * i, 500))
             self.window.blit(prev_ap_text, (100 + 300 * i, 530))
             self.window.blit(prev_atk_text, (100 + 300 * i, 560))
@@ -91,33 +101,20 @@ class BattleRenderer:
             self.window.blit(new_atk_text, (205 + 300 * i, 560))
             self.window.blit(new_def_text, (205 + 300 * i, 590))
 
-
         pygame.display.update()
 
     def draw_actions(self):
-
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
-
-        item_text = font.render("Items", True, (182, 182, 182))
         skill_text = font.render("Skills", True, (182, 182, 182))
         select_text = font.render("Select", True, (182, 182, 182))
         use_text = font.render("Use", True, (182, 182, 182))
 
-        self.window.blit(UI.a_key, (15, 685))
-        self.window.blit(item_text, (60, 690))
-        self.window.blit(UI.d_key, (165, 685))
-        self.window.blit(skill_text, (210, 690))
-        self.window.blit(UI.enter_key, (340, 685))
-        self.window.blit(select_text, (385, 690))
-        self.window.blit(UI.space_key, (510, 685))
-        self.window.blit(use_text, (590, 690))
-
-    def draw_item_list(self, a_key_pressed, item_selection_index=0):
-        if a_key_pressed:
-            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
-            self.window.blit(UI.list_image, (15, 100))
-            text = font.render("Items", True, (255, 255, 255))
-            self.window.blit(text, (140, 75))
+        self.window.blit(UI.d_key, (15, 685))
+        self.window.blit(skill_text, (60, 690))
+        self.window.blit(UI.enter_key, (190, 685))
+        self.window.blit(select_text, (235, 690))
+        self.window.blit(UI.space_key, (360, 685))
+        self.window.blit(use_text, (440, 690))
 
     def draw_skill_list(self, d_key_pressed, turn_order, current_turn, skill_selection_index=0):
         skill_selection_index %= len(turn_order[current_turn].skills)
@@ -143,8 +140,11 @@ class BattleRenderer:
                     skill_text = font.render(line, True, (255, 255, 255))
                     self.window.blit(skill_text, (55, 150 + 67 * i + 12 * j))
 
-    def draw_highlight(self, enter_key_pressed, enemy_team, enemy_team_highlight, player_team, player_team_highlight,
-                       selection_index, is_attack=True):
+    def draw_highlight(self, enter_key_pressed: bool, teams: dict, selection_index: int, is_attack: bool = True):
+        player_team = teams['player_team']
+        enemy_team = teams['enemy_team']
+        player_team_highlight = teams['player_team_highlight']
+        enemy_team_highlight = teams['enemy_team_highlight']
         if enter_key_pressed:
             if is_attack:
                 self.window.blit(UI.enemy_highlight, (1000 - 24, 500 + 5 - 80 * enemy_team.index(
@@ -155,7 +155,8 @@ class BattleRenderer:
                 self.window.blit(UI.character_highlight, (600 - 24, 500 + 8 - 80 * player_team.index(
                     player_team_highlight[selection_index % len(player_team_highlight)])))
                 self.window.blit(UI.character_frame_highlight, (
-                85 * player_team.index(player_team_highlight[selection_index % len(player_team_highlight)]) + 25, 0))
+                    85 * player_team.index(player_team_highlight[selection_index % len(player_team_highlight)]) + 25,
+                    0))
 
     def draw_turn_order(self, turn_order, current_turn_ui, player_team, enemy_team):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
@@ -176,10 +177,9 @@ class BattleRenderer:
             self.window.blit(text_next, (
                 28 + 85 * player_team.index(turn_order[(current_turn_ui + 1) % len(turn_order)]),
                 2))
+        pygame.display.update()
 
-    def draw(self, player_team, enemy_team, turn_order, current_turn_ui, a_key_pressed, d_key_pressed,
-             enter_key_pressed, enemy_team_highlight, player_team_highlight, selection_index, skill_selection_index,
-             item_selection_index, is_attack=True):
+    def draw(self, player_team, enemy_team):
         self.window.fill((255, 255, 255))
         self.draw_background()
         self.draw_characters_list(player_team)
@@ -187,9 +187,3 @@ class BattleRenderer:
         self.draw_enemies(enemy_team)
         self.draw_enemy_list(enemy_team)
         self.draw_actions()
-        self.draw_item_list(a_key_pressed, item_selection_index)
-        self.draw_skill_list(d_key_pressed, turn_order, current_turn_ui, skill_selection_index)
-        self.draw_highlight(enter_key_pressed, enemy_team, enemy_team_highlight, player_team, player_team_highlight,
-                            selection_index, is_attack)
-        self.draw_turn_order(turn_order, current_turn_ui, player_team, enemy_team)
-        pygame.display.update()

@@ -5,10 +5,11 @@ import pygame.mixer
 import time
 
 from turn_based_game.LoadCharacters import character_init_enemy
-from turn_based_game.World_Renderer import WorldRenderer
+from turn_based_game.WorldRenderer import WorldRenderer
 from turn_based_game.Battle import Battle
 from turn_based_game.Level import enemy_list
 from Enums import Initiative
+from turn_based_game.Character import equip_item, unequip_item
 
 pygame.mixer.init()
 
@@ -40,7 +41,7 @@ class Game:
     def add_objects(self, objects):
         self.objects.add(objects)
 
-    def add_enemies(self, enemies):#add enemies to the game(level)
+    def add_enemies(self, enemies):  # add enemies to the game(level)
         for enemy in enemies:
             enemy.controller.set_main_character(self.main_character)
         self.objects.add(enemies)
@@ -55,11 +56,11 @@ class Game:
         self.camera = camera
         self.renderer.set_camera(camera)
 
-    def add_level(self, level):#add level to the game
+    def add_level(self, level):  # add level to the game
         self.level = level
         self.renderer.set_level(level)
-        self.add_enemies(level.get_enemies())#get enemies from the level
-        self.chests = level.get_chests()#get chests from the level
+        self.add_enemies(level.get_enemies())  # get enemies from the level
+        self.chests = level.get_chests()  # get chests from the level
         self.add_objects(self.chests)
 
     def create_window(self, width, height, fullscreen=False):
@@ -67,6 +68,7 @@ class Game:
         self.renderer.create_window(self.window)
         # ambient_music.play(10)
         # ambient_music.set_volume(0.1)
+
     def add_to_inventory(self, item):
         self.inventory.append(item)
 
@@ -101,8 +103,7 @@ class Game:
                 self.objects.remove(obj)
                 self.chests.remove(obj)
                 self.chest_opened_time = time.time()
-                # self.inventory.append(obj.item)
-                # print(f"Inventory: {self.inventory}")
+
     def generate_enemy_team(self):
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
@@ -127,6 +128,28 @@ class Game:
         self.battle = Battle(self.window, self.characters, self.enemies, initiative, turn_order)
         self.battle.start()
 
+    def update_inventory(self):
+
+        main_character_controller = self.main_character.controller
+        character = self.characters[main_character_controller.character_index % len(self.characters)]
+        selection_index = main_character_controller.selection_index
+        is_equipped = main_character_controller.is_equipped
+        is_unequipped = main_character_controller.is_unequipped
+        self.renderer.draw_inventory(self.inventory, main_character_controller.character_index,
+                                     main_character_controller.selection_index,
+                                     is_equipped=main_character_controller.is_equipped,
+                                     is_unequipped=main_character_controller.is_unequipped)
+        if is_equipped and self.inventory:
+            item = self.inventory[selection_index % len(self.inventory)]
+            unequip_item(item)
+            item.owner = character
+            equip_item(item, character)
+
+        elif is_unequipped and self.inventory:
+            item = self.inventory[selection_index % len(self.inventory)]
+            unequip_item(item)
+            item.owner = None
+
     def run(self, width, height, fullscreen=False):
         self.create_window(width, height, fullscreen)
         running = True
@@ -137,26 +160,25 @@ class Game:
                     running = False
 
             if not self.main_character.controller.in_battle:
-                # character_rect = pygame.Rect(self.main_character.controller.x - 15, self.main_character.controller.y - 20, 30, 40)
-                if self.opponent: #clear defeated enemies
+                if self.opponent:  # clear defeated enemies
                     for enemy in self.enemies:
                         self.objects.remove(enemy)
                     self.enemies.clear()
 
-                self.main_character.play(window=self.window, collisions=self.get_collision_rect())  # Character controller
+                self.main_character.play(window=self.window,
+                                         collisions=self.get_collision_rect())  # Character controller
                 self.renderer.camera.update(self.main_character)  # Update camera position
                 self.detect_collision(self.main_character)  # Detect collision
                 for obj in self.objects:
                     if obj.is_enemy():
                         obj.play(window=self.window, adjusted_rect=pygame.Rect(0, 0, 1280, 720))
                 if self.main_character.controller.in_inventory:
-                    main_character_controller = self.main_character.controller
-                    self.renderer.draw_inventory(self.inventory, main_character_controller.character_index, main_character_controller.selection_index, is_equipped=main_character_controller.is_equipped, is_unequipped=main_character_controller.is_unequipped)
+                    self.update_inventory()
                 else:
-                    self.renderer.draw(objects=self.objects, item=self.dropped_item, spawn_time=self.chest_opened_time)  # Draw objects
+                    self.renderer.draw(objects=self.objects, item=self.dropped_item,
+                                       spawn_time=self.chest_opened_time)  # Draw objects
 
             else:
                 ambient_music.stop()
                 self.battle.draw()
         pygame.quit()
-

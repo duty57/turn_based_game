@@ -2,6 +2,27 @@ from turn_based_game.Actor import Actor
 from turn_based_game.CharacterController import CharacterController
 
 
+def unequip_item(item):
+    character = item.owner
+    if character:
+        if item.item_type == "weapon":
+            character.unequip_weapon()
+        elif item.item_type == "helmet":
+            character.unequip_helmet()
+        elif item.item_type == "chestplate":
+            character.unequip_chestplate()
+
+
+def equip_item(item, character):
+    if character:
+        if item.item_type == "weapon":
+            character.equip_weapon(item)
+        elif item.item_type == "helmet":
+            character.equip_helmet(item)
+        elif item.item_type == "chestplate":
+            character.equip_chestplate(item)
+
+
 class Character(Actor):
 
     def __init__(self, config_file: str, character_name: str, x: int = 200, y: int = 100):

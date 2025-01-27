@@ -1,31 +1,11 @@
 import time
 
 import pygame
-from turn_based_game.GameUI import GameUI as UI
+from turn_based_game.GameUI import GameUI as UI, draw_ui
 from turn_based_game.Level import Level
 
 
 # [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
-
-def unequip_item(item, character):
-    if character:
-        if item.item_type == "weapon":
-            character.unequip_weapon()
-        elif item.item_type == "helmet":
-            character.unequip_helmet()
-        elif item.item_type == "chestplate":
-            character.unequip_chestplate()
-
-
-
-def equip_item(item, character):
-    if character:
-        if item.item_type == "weapon":
-            character.equip_weapon(item)
-        elif item.item_type == "helmet":
-            character.equip_helmet(item)
-        elif item.item_type == "chestplate":
-            character.equip_chestplate(item)
 
 
 class WorldRenderer:
@@ -54,9 +34,22 @@ class WorldRenderer:
         self.window.blit(UI.profile_frame, (1230, 0))
         self.window.blit(UI.backpack, (1230, -7))
         for i, character in enumerate(self.characters):
-            character.controller.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
-                                         UI.action_points_bar_frame,
-                                         85 * i + 25)
+            draw_ui(self.window, character, 85 * i + 25)
+
+    def draw_inventory_list(self, inventory: list, selection_index: int):
+        for i, item in enumerate(inventory):
+            if i == selection_index % len(inventory):
+                pygame.draw.rect(self.window, (255, 0, 0), (960, 125 + 50 * i, 265, 50), 1)
+            self.window.blit(item.image, (960, 135 + 50 * i))
+            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 14)
+            item_name_text = font.render(item.name, True, (255, 255, 255))
+            item_stats_text = font.render(item.get_stats(), True, (255, 255, 0))
+            self.window.blit(item_name_text, (1015, 135 + 50 * i))
+            self.window.blit(item_stats_text, (1010, 160 + 50 * i))
+
+            if item.owner:
+                owner_picture = pygame.transform.scale(item.owner.get_image(), (24, 24))
+                self.window.blit(owner_picture, (1200, 125 + 50 * i))
 
     def draw_item(self, item, spawn_time):
         if item is not None and time.time() - spawn_time < 2:
@@ -86,31 +79,7 @@ class WorldRenderer:
         self.window.blit(character_text, (775, 75))
         character.controller.draw(self.window, adj_rect)
 
-        for i, item in enumerate(inventory):
-            if i == selection_index % len(inventory):
-                pygame.draw.rect(self.window, (255, 0, 0), (960, 125 + 50 * i, 265, 50), 1)
-            self.window.blit(item.image, (960, 135 + 50 * i))
-            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 14)
-            item_name_text = font.render(item.name, True, (255, 255, 255))
-            item_stats_text = font.render(item.get_stats(), True, (255, 255, 0))
-            self.window.blit(item_name_text, (1015, 135 + 50 * i))
-            self.window.blit(item_stats_text, (1010, 160 + 50 * i))
-
-            if item.owner:
-                owner_picture = pygame.transform.scale(item.owner.get_image(), (24, 24))
-                self.window.blit(owner_picture, (1200, 125 + 50 * i))
-
-        if is_equipped and inventory:
-            item = inventory[selection_index % len(inventory)]
-            unequip_item(item, item.owner)
-            item.owner = character
-            equip_item(item, character)
-
-        elif is_unequipped and inventory:
-            item = inventory[selection_index % len(inventory)]
-            item.owner = None
-            unequip_item(item, character)
-            # self.characters[character_index % len(self.characters)] = inventory[selection_index % len(inventory)]
+        self.draw_inventory_list(inventory, selection_index)
 
         print(f"Character {character.name}: {character.chestplate}  {character.helmet}  {character.weapon}")
 

@@ -9,6 +9,8 @@ class elements(Enum):
     WIND = 6
     LIGHT = 7
     DARK = 8
+
+
 class Initiative(Enum):
     player_initiative = 1
     enemy_initiative = 2
@@ -23,11 +25,13 @@ class CharacterState(Enum):
     dead = 6
     inactive = 7
 
+
 class CharacterBattleState(Enum):
     init = 0
     idle = 1
     attacking = 2
     back_in_position = 3
+
 
 class SelectionMode(Enum):
     enemy = 1

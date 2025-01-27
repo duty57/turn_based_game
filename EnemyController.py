@@ -30,9 +30,8 @@ class EnemyController(Controller):
     def trigger(self):
         distance = abs(self.x - self.main_character.controller.x) ** 2 + abs(
             self.y - self.main_character.controller.y) ** 2
-        looking_at_main_character = (
-                                            self.x < self.main_character.controller.x + 10) and self.moving_right_direction or (
-                                            self.x > self.main_character.controller.x - 10) and self.moving_left_direction
+        looking_at_main_character = ((self.x < self.main_character.controller.x + 10) and self.moving_right_direction or
+                                     (self.x > self.main_character.controller.x - 10) and self.moving_left_direction)
         if abs(self.x - self.main_character.controller.x) ** 2 + abs(
                 self.y - self.main_character.controller.y) ** 2 < 25 ** 2:
             if self.trigger_time is None:
@@ -57,18 +56,11 @@ class EnemyController(Controller):
                 if self.character_state != CharacterState.attacking:
                     if self.x < self.patrol_points[self.current_patrol_point][0]:
                         self.moveRight()
-                        if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
-                            self.moveDown()
-                        elif self.y - 25 > self.patrol_points[self.current_patrol_point][1]:
-                            self.moveUp()
-
+                        self.move_to_target()
 
                     elif self.x > self.patrol_points[self.current_patrol_point][0]:
                         self.moveLeft()
-                        if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
-                            self.moveDown()
-                        elif self.y - 25 > self.patrol_points[self.current_patrol_point][1]:
-                            self.moveUp()
+                        self.move_to_target()
                     else:
                         self.current_patrol_point = (self.current_patrol_point + 1) % (len(self.patrol_points) - 1)
                 self.actor.rect.center = (self.x, self.y)
@@ -83,6 +75,12 @@ class EnemyController(Controller):
                 self.actor.rect.center = (self.x, self.y)
 
         self.draw(window, adjusted_rect)
+
+    def move_to_target(self):
+        if self.y + 5 < self.patrol_points[self.current_patrol_point][1]:
+            self.moveDown()
+        elif self.y - 25 > self.patrol_points[self.current_patrol_point][1]:
+            self.moveUp()
 
     def battle_start(self, i: int):
         self.x = 1000
@@ -107,7 +105,7 @@ class EnemyController(Controller):
 
         for skill in self.actor.skills:
             for enemy in enemy_team:
-                if skill['element'] in enemy.weakness:
+                if skill['element'] in enemy.weakness and skill['cost'] <= self.actor.action_points:
                     enemies_with_weaknesses.append(enemy)
 
             if enemies_with_weaknesses:

@@ -1,6 +1,7 @@
 import json
 
 import pygame
+from turn_based_game.GameUI import GameUI as UI
 
 
 # TODO formula for enemy leveling: player_level + 1 * (player_level // 5)
@@ -41,12 +42,18 @@ class Actor(pygame.sprite.Sprite):
             self.nextLevel = 100.0
             self.damage = self.strength
 
+            self.profile = None
+            self.health_bar_width = None
+            self.action_points_bar_height = None
+
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'
 
     # Load UI for the character
     def load_ui(self, profile: pygame.Surface):
-        self.controller.load_ui(profile)
+        self.profile = profile
+        self.health_bar_width = UI.health_bar.get_width()
+        self.action_points_bar_height = UI.action_points_bar.get_height()
 
     def load_animations(self, animations: dict):
         self.controller.load_animations(animations)
@@ -69,4 +76,4 @@ class Actor(pygame.sprite.Sprite):
             self.action_points = self.max_action_points
 
     def get_image(self):
-        return self.controller.profile
+        return self.profile

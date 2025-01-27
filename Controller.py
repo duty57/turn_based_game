@@ -4,11 +4,11 @@ import pygame
 
 from turn_based_game.Enums import CharacterState, CharacterBattleState
 from turn_based_game.VFX import VFX
-from turn_based_game.GameUI import GameUI as UI
 
 pygame.mixer.init()
 character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
 enemy_hit_sound = pygame.mixer.Sound('turn_based_game/audio/enemy_hit_sound.mp3')
+
 
 def get_frame_index(frame_count, k, vfx_animation):
     return (frame_count // (len(vfx_animation) * k // len(vfx_animation))) % len(vfx_animation)
@@ -51,10 +51,6 @@ class Controller:
         self.x = x
         self.y = y
 
-        self.profile = None
-        self.health_bar_width = None
-        self.action_points_bar_height = None
-
         self.in_battle = False
         self.in_action = False
 
@@ -68,10 +64,6 @@ class Controller:
         self.is_weak = False
 
     # Load UI for the character
-    def load_ui(self, profile: pygame.Surface, ):
-        self.profile = profile
-        self.health_bar_width = UI.health_bar.get_width()
-        self.action_points_bar_height = UI.action_points_bar.get_height()
 
     def load_animations(self, animations: dict):
         self.idle = animations['idle']
@@ -86,7 +78,8 @@ class Controller:
     def take_damage(self, damage, element, skill=None):
         self.collide()
         chance = random.randint(1, 100)
-        instant_kill_chance = 100 - skill.get('instant_kill_chance', 0) if skill and skill.get('instant_kill_chance', 0) != 0 else 0
+        instant_kill_chance = 100 - skill.get('instant_kill_chance', 0) if skill and skill.get('instant_kill_chance',
+                                                                                               0) != 0 else 0
         if chance <= self.actor.agility + instant_kill_chance or chance <= self.actor.agility:
             self.actor.damage = -1
             return
@@ -134,6 +127,12 @@ class Controller:
     def moveDown(self):
         self.y += 1 if not self.in_battle else 5
         self.character_state = CharacterState.moving
+
+    def check_direction(self, window, frame_index, animation, adjusted_rect):
+        if self.moving_left_direction:
+            window.blit(pygame.transform.flip(animation[frame_index], True, False), adjusted_rect)
+        else:
+            window.blit(animation[frame_index], adjusted_rect)
 
     def perform_attack(self):
         if self.skill:
@@ -211,23 +210,14 @@ class Controller:
         match self.character_state.value:
             case CharacterState.idle.value:
                 frame_index = get_frame_index(self.frame_count, 4, self.idle)
-                if self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.idle[frame_index], True, False), adjusted_rect)
-                else:
-                    window.blit(self.idle[frame_index], adjusted_rect)
+                self.check_direction(window, frame_index, self.idle, adjusted_rect)
             case CharacterState.moving.value:
                 frame_index = get_frame_index(self.frame_count, 4, self.walkRight)
-                if self.moving_right_direction:
-                    window.blit(self.walkRight[frame_index], adjusted_rect)
-                elif self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.walkRight[frame_index], True, False), adjusted_rect)
+                self.check_direction(window, frame_index, self.walkRight, adjusted_rect)
             case CharacterState.attacking.value:
                 self.attack_vfx(window)
                 frame_index = get_frame_index(self.attack_frame_count, 2, self.attack)
-                if self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.attack[frame_index], True, False), adjusted_rect)
-                else:
-                    window.blit(self.attack[frame_index], adjusted_rect)
+                self.check_direction(window, frame_index, self.attack, adjusted_rect)
                 self.attack_frame_count += 1
                 if self.attack_frame_count >= len(self.attack) * (30 // len(self.attack)):
                     self.attack_frame_count = 0
@@ -240,10 +230,7 @@ class Controller:
             case CharacterState.hit.value:
                 frame_index = get_frame_index(self.hit_frame_count, 4, self.damage_taken)
                 self.draw_damage(window)
-                if self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.damage_taken[frame_index], True, False), adjusted_rect)
-                else:
-                    window.blit(self.damage_taken[frame_index], adjusted_rect)
+                self.check_direction(window, frame_index, self.damage_taken, adjusted_rect)
                 self.hit_frame_count += 1
                 if self.hit_frame_count >= len(self.damage_taken) * (30 // len(self.damage_taken)):
                     self.character_state = CharacterState.idle
@@ -251,10 +238,7 @@ class Controller:
                     self.finished_hit = True
             case CharacterState.dead.value:
                 frame_index = get_frame_index(self.death_frame_count, 4, self.death)
-                if self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.death[frame_index], True, False), adjusted_rect)
-                else:
-                    window.blit(self.death[frame_index], adjusted_rect)
+                self.check_direction(window, frame_index, self.death, adjusted_rect)
                 self.death_frame_count += 1
                 if self.death_frame_count >= len(self.death) * (
                         29 // len(self.death)):  # TODO goblin death animation is not working when 30 is used
@@ -264,49 +248,10 @@ class Controller:
                 self.draw_heal(window, self.skill['value'])
                 self.heal_vfx(window, self.skill['value'])
                 frame_index = get_frame_index(self.frame_count, 4, self.idle)
-                if self.moving_left_direction:
-                    window.blit(pygame.transform.flip(self.idle[frame_index], True, False), adjusted_rect)
-                else:
-                    window.blit(self.idle[frame_index], adjusted_rect)
-
+                self.check_direction(window, frame_index, self.idle, adjusted_rect)
 
         self.frame_count += 1
         pygame.draw.rect(window, (255, 0, 0), self.actor.rect, 2)
-
-    def draw_ui(self, window, profile_frame, death_frame, health_bar_frame, action_points_frame, offset):
-        # calculate the health and action points percentage
-        health_percentage = max(0, self.actor.health) / self.actor.max_health
-        action_points_percentage = max(0, self.actor.action_points) / self.actor.max_action_points
-
-        # scale the health bar and action points bar
-        scaled_health_bar = pygame.transform.scale(UI.health_bar, (#change it to ui health bar
-            int(self.health_bar_width * health_percentage), UI.health_bar.get_height()))
-        scaled_action_points_bar = pygame.transform.scale(UI.action_points_bar, (
-            UI.action_points_bar.get_width(), int(self.action_points_bar_height * action_points_percentage)))
-
-        # adjust the position of the action points bar
-        adjust_action_points_bar = max(0, self.action_points_bar_height - scaled_action_points_bar.get_height()) - 1
-
-        # draw the UI elements
-        window.blit(profile_frame, (offset, 0))  # profile frame
-        window.blit(self.profile, (offset + 5, 5))  # profile
-        window.blit(health_bar_frame, (offset + 10, 50))  # health bar frame
-        window.blit(scaled_health_bar, (offset + 13, 53))  # health bar
-        window.blit(action_points_frame, (offset - 12, 5))  # action points frame
-        window.blit(scaled_action_points_bar, (offset - 9, 5 + adjust_action_points_bar))  # action points bar
-
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 12)
-
-        # Health value
-        health_text = font.render(str(self.actor.health), True, (217, 15, 30))
-        window.blit(health_text, (offset - 15, 48))
-
-        # Action points value
-        action_points_text = font.render(str(self.actor.action_points), True, (255, 200, 37))
-        window.blit(action_points_text, (offset - 22, 35))
-
-        if self.character_state.value >= CharacterState.dead.value:
-            window.blit(death_frame, (offset, 0))
 
     def draw_damage(self, window):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
@@ -327,7 +272,6 @@ class Controller:
         window.blit(heal_text, (self.target.controller.x, self.target.controller.y - 50))
 
     def go_to_enemy(self, enemy):
-
         offset = 20
 
         if self.__class__.__name__ == "Enemy":
@@ -347,7 +291,6 @@ class Controller:
             self.character_state = CharacterState.attacking
 
     def go_back(self, position):
-
         if self.x < position[0]:
             self.moveRight()
         if self.y < position[1]:
@@ -365,4 +308,3 @@ class Controller:
             self.moving_left_direction = self.actor.is_enemy()
             self.previous_battle_state = self.battle_state
             self.battle_state = CharacterBattleState.back_in_position
-

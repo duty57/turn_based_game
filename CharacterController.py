@@ -24,6 +24,66 @@ class CharacterController(Controller):
         self.is_equipped = False
         self.is_unequipped = False
 
+    def inventory_controller(self, keys):
+        if keys[pygame.K_LEFT] and not self.left_arrow_pressed:
+            self.character_index -= 1
+            self.left_arrow_pressed = True
+        elif not keys[pygame.K_LEFT]:
+            self.left_arrow_pressed = False
+
+        if keys[pygame.K_RIGHT] and not self.right_arrow_pressed:
+            self.character_index += 1
+            self.right_arrow_pressed = True
+        elif not keys[pygame.K_RIGHT]:
+            self.right_arrow_pressed = False
+
+        if keys[pygame.K_UP] and not self.up_arrow_pressed:
+            self.selection_index -= 1
+            self.up_arrow_pressed = True
+        elif not keys[pygame.K_UP]:
+            self.up_arrow_pressed = False
+
+        if keys[pygame.K_DOWN] and not self.down_arrow_pressed:
+            self.selection_index += 1
+            self.down_arrow_pressed = True
+        elif not keys[pygame.K_DOWN]:
+            self.down_arrow_pressed = False
+
+        if keys[pygame.K_ESCAPE]:
+            self.in_inventory = False
+
+        if keys[pygame.K_RETURN]:
+            if not self.enter_pressed:
+                self.enter_pressed = True
+                self.is_equipped = True
+        else:
+            self.enter_pressed = False
+            self.is_equipped = False
+
+        if keys[pygame.K_u]:
+            if not self.is_unequipped:
+                self.unequipped_button_pressed = True
+                self.is_unequipped = True
+        else:
+            self.is_unequipped = False
+            self.unequipped_button_pressed = False
+
+    def perform_movement(self, move_x: int, move_y: int, collisions: list):
+        for obj in collisions:
+            if obj.colliderect(self.actor.rect.move(move_x * 2, 0)):
+                move_x = 0
+            if obj.colliderect(self.actor.rect.move(0, move_y * 2)):
+                move_y = 0
+
+        if move_x != 0 and move_y != 0:
+            move_x *= 0.7071  # 1/sqrt(2)
+            move_y *= 0.7071  # 1/sqrt(2)
+
+        self.x += move_x * 2
+        self.y += move_y * 2
+        self.world_x = self.x
+        self.world_y = self.y
+        self.actor.rect.center = (self.x, self.y)
     # Character controller
     def controller(self, window, adjusted_rect=None, collisions=None):
 
@@ -31,10 +91,7 @@ class CharacterController(Controller):
         if collisions is None:
             collisions = []
         if self.character_state != CharacterState.inactive:
-            move_x = 0
-            move_y = 0
             if not self.in_battle:
-
                 if keys[pygame.K_SPACE] and not self.character_state == CharacterState.hit:
                     self.character_state = CharacterState.attacking
                 elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
@@ -48,50 +105,12 @@ class CharacterController(Controller):
                     self.inventory_button_pressed = False
 
                 if self.in_inventory:
-                    if keys[pygame.K_LEFT] and not self.left_arrow_pressed:
-                        self.character_index -= 1
-                        self.left_arrow_pressed = True
-                    elif not keys[pygame.K_LEFT]:
-                        self.left_arrow_pressed = False
-
-                    if keys[pygame.K_RIGHT] and not self.right_arrow_pressed:
-                        self.character_index += 1
-                        self.right_arrow_pressed = True
-                    elif not keys[pygame.K_RIGHT]:
-                        self.right_arrow_pressed = False
-
-                    if keys[pygame.K_UP] and not self.up_arrow_pressed:
-                        self.selection_index -= 1
-                        self.up_arrow_pressed = True
-                    elif not keys[pygame.K_UP]:
-                        self.up_arrow_pressed = False
-
-                    if keys[pygame.K_DOWN] and not self.down_arrow_pressed:
-                        self.selection_index += 1
-                        self.down_arrow_pressed = True
-                    elif not keys[pygame.K_DOWN]:
-                        self.down_arrow_pressed = False
-
-                    if keys[pygame.K_ESCAPE]:
-                        self.in_inventory = False
-
-                    if keys[pygame.K_RETURN]:
-                        if not self.enter_pressed:
-                            self.enter_pressed = True
-                            self.is_equipped = True
-                    else:
-                        self.enter_pressed = False
-                        self.is_equipped = False
-
-                    if keys[pygame.K_u]:
-                        if not self.is_unequipped:
-                            self.unequipped_button_pressed = True
-                            self.is_unequipped = True
-                    else:
-                        self.is_unequipped = False
-                        self.unequipped_button_pressed = False
+                    self.inventory_controller(keys)
 
                 else:
+                    move_x = 0
+                    move_y = 0
+
                     if keys[pygame.K_LEFT]:
                         move_x = -1
                         self.moving_left_direction = True
@@ -109,22 +128,7 @@ class CharacterController(Controller):
                     elif keys[pygame.K_DOWN]:
                         move_y = 1
                         self.character_state = CharacterState.moving
-
-                for obj in collisions:
-                    if obj.colliderect(self.actor.rect.move(move_x * 2, 0)):
-                        move_x = 0
-                    if obj.colliderect(self.actor.rect.move(0, move_y * 2)):
-                        move_y = 0
-
-                if move_x != 0 and move_y != 0:
-                    move_x *= 0.7071  # 1/sqrt(2)
-                    move_y *= 0.7071  # 1/sqrt(2)
-
-                self.x += move_x * 2
-                self.y += move_y * 2
-                self.world_x = self.x
-                self.world_y = self.y
-                self.actor.rect.center = (self.x, self.y)
+                    self.perform_movement(move_x, move_y, collisions)
                 return self.x, self.y
 
             else:
@@ -146,14 +150,6 @@ class CharacterController(Controller):
         self.moving_right_direction = True
         self.moving_left_direction = False
         self.in_battle = True
-
-    # def perform_skill(self, skill, enemy_team, ally_team, selection_index):
-    #     if self.actor in ally_team:
-    #         self.target = ally_team[selection_index]
-    #         self.healing_skill(skill, ally_team)
-    #     else:
-    #         self.target = enemy_team[selection_index]
-    #         self.attack_skill(skill, enemy_team)
 
     def attack_skill(self, skill, enemy_team):  # may need to refactor this
         # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx
