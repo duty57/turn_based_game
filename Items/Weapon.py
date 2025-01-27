@@ -9,6 +9,7 @@ class Weapon(Item):
         with open('turn_based_game/config/itemStats.json') as file:
             data = json.load(file)
             self.damage = data['weapon'][rarity][name]['damage']
+            self.item_type = data['weapon'][rarity][name]['item_type']
             self.rarity = rarity
             self.HPBonus = data['weapon'][rarity][name]['HPBonus']
             self.actionPointsBonus = data['weapon'][rarity][name]['actionPointsBonus']

@@ -150,7 +150,8 @@ class Game:
                     if obj.is_enemy():
                         obj.play(window=self.window, adjusted_rect=pygame.Rect(0, 0, 1280, 720))
                 if self.main_character.controller.in_inventory:
-                    self.renderer.draw_inventory(self.inventory, self.main_character.controller.character_index, self.main_character.controller.selection_index)
+                    main_character_controller = self.main_character.controller
+                    self.renderer.draw_inventory(self.inventory, main_character_controller.character_index, main_character_controller.selection_index, is_equipped=main_character_controller.is_equipped, is_unequipped=main_character_controller.is_unequipped)
                 else:
                     self.renderer.draw(objects=self.objects, item=self.dropped_item, spawn_time=self.chest_opened_time)  # Draw objects
 
@@ -159,4 +160,3 @@ class Game:
                 self.battle.draw()
         pygame.quit()
 
-#TODO: maybe create separate draw function for inventory and put if statement in the run function

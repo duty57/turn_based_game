@@ -10,8 +10,7 @@ class Character(Actor):
         self.controller = CharacterController(self, x, y)
         self.weapon = None
         self.helmet = None
-        self.breastplate = None
-        self.boots = None
+        self.chestplate = None
 
     def level_up(self):
         self.level += 1
@@ -32,3 +31,54 @@ class Character(Actor):
 
     def play(self, window, adjusted_rect=None, collisions=None):
         self.controller.controller(window, adjusted_rect, collisions)
+
+    def equip_helmet(self, helmet):
+        self.helmet = helmet
+        self.defense += helmet.defenseBonus
+        self.max_health += helmet.HPBonus
+        self.agility += helmet.agilityBonus
+        self.max_action_points += helmet.actionPointsBonus
+
+    def equip_chestplate(self, chestplate):
+        self.chestplate = chestplate
+        self.defense += chestplate.defenseBonus
+        self.max_health += chestplate.HPBonus
+        self.agility += chestplate.agilityBonus
+        self.max_action_points += chestplate.actionPointsBonus
+
+    def equip_weapon(self, weapon):
+        self.weapon = weapon
+        self.strength += weapon.damage
+        self.max_health += weapon.HPBonus
+        self.max_action_points += weapon.actionPointsBonus
+
+
+    def unequip_helmet(self):
+        self.defense -= self.helmet.defenseBonus
+        self.max_health -= self.helmet.HPBonus
+        self.agility -= self.helmet.agilityBonus
+        self.max_action_points -= self.helmet.actionPointsBonus
+
+        self.reset_stats()
+        self.helmet = None
+
+    def unequip_chestplate(self):
+        self.defense -= self.chestplate.defenseBonus
+        self.max_health -= self.chestplate.HPBonus
+        self.agility -= self.chestplate.agilityBonus
+        self.max_action_points -= self.chestplate.actionPointsBonus
+
+        self.reset_stats()
+        self.chestplate = None
+
+    def unequip_weapon(self):
+        self.strength -= self.weapon.damage
+        self.max_health -= self.weapon.HPBonus
+        self.max_action_points -= self.weapon.actionPointsBonus
+
+        self.reset_stats()
+        self.weapon = None
+
+    def reset_stats(self):
+        self.health = min(self.health, self.max_health)
+        self.action_points = min(self.action_points, self.max_action_points)

@@ -7,6 +7,27 @@ from turn_based_game.Level import Level
 
 # [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
 
+def unequip_item(item, character):
+    if character:
+        if item.item_type == "weapon":
+            character.unequip_weapon()
+        elif item.item_type == "helmet":
+            character.unequip_helmet()
+        elif item.item_type == "chestplate":
+            character.unequip_chestplate()
+
+
+
+def equip_item(item, character):
+    if character:
+        if item.item_type == "weapon":
+            character.equip_weapon(item)
+        elif item.item_type == "helmet":
+            character.equip_helmet(item)
+        elif item.item_type == "chestplate":
+            character.equip_chestplate(item)
+
+
 class WorldRenderer:
 
     def __init__(self):
@@ -34,45 +55,64 @@ class WorldRenderer:
         self.window.blit(UI.backpack, (1230, -7))
         for i, character in enumerate(self.characters):
             character.controller.draw_ui(self.window, UI.profile_frame, UI.death_frame, UI.health_bar_frame,
-                              UI.action_points_bar_frame,
-                              85 * i + 25)
+                                         UI.action_points_bar_frame,
+                                         85 * i + 25)
 
     def draw_item(self, item, spawn_time):
         if item is not None and time.time() - spawn_time < 2:
-            #draw frame then item
+            # draw frame then item
             resized_frame = pygame.transform.scale(UI.item_frame[item.rarity], (50, 50))
             resized_item = pygame.transform.scale(item.image, (48, 48))
             self.window.blit(resized_frame, (1180, 0))
             self.window.blit(resized_item, (1182, 2))
 
-    def draw_inventory(self, inventory, character_index, selection_index):
+    def draw_inventory(self, inventory, character_index, selection_index, is_equipped, is_unequipped):
         self.window.fill((114, 117, 27))
         self.draw_level()
         self.draw_ui()
+        character = self.characters[character_index % len(self.characters)]
 
         alpha_surface = pygame.Surface(self.window.get_size(), pygame.SRCALPHA)
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
         inventory_text = font.render("Inventory", True, (255, 255, 255))
-        character_text = font.render(self.characters[character_index % len(self.characters)].name, True, (255, 255, 255))
+        character_text = font.render(character.name, True, (255, 255, 255))
 
-        alpha_surface.fill((0, 0, 0, 128)) # Fill the surface with a transparent black color
+        alpha_surface.fill((0, 0, 0, 128))  # Fill the surface with a transparent black color
         self.window.blit(alpha_surface, (0, 0))
 
         self.window.blit(inventory_text, (1030, 75))
         self.window.blit(UI.list_image, (930, 100))
         adj_rect = pygame.Rect(800, 125, 300, 500)
         self.window.blit(character_text, (775, 75))
-        self.characters[character_index % len(self.characters)].controller.draw(self.window, adj_rect)
+        character.controller.draw(self.window, adj_rect)
 
         for i, item in enumerate(inventory):
             if i == selection_index % len(inventory):
                 pygame.draw.rect(self.window, (255, 0, 0), (960, 125 + 50 * i, 265, 50), 1)
-            self.window.blit(item.image, (960, 125 + 50 * i))
-            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
+            self.window.blit(item.image, (960, 135 + 50 * i))
+            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 14)
             item_name_text = font.render(item.name, True, (255, 255, 255))
             item_stats_text = font.render(item.get_stats(), True, (255, 255, 0))
-            self.window.blit(item_name_text, (1015, 125 + 50 * i))
-            self.window.blit(item_stats_text, (1010, 150 + 50 * i))
+            self.window.blit(item_name_text, (1015, 135 + 50 * i))
+            self.window.blit(item_stats_text, (1010, 160 + 50 * i))
+
+            if item.owner:
+                owner_picture = pygame.transform.scale(item.owner.get_image(), (24, 24))
+                self.window.blit(owner_picture, (1200, 125 + 50 * i))
+
+        if is_equipped and inventory:
+            item = inventory[selection_index % len(inventory)]
+            unequip_item(item, item.owner)
+            item.owner = character
+            equip_item(item, character)
+
+        elif is_unequipped and inventory:
+            item = inventory[selection_index % len(inventory)]
+            item.owner = None
+            unequip_item(item, character)
+            # self.characters[character_index % len(self.characters)] = inventory[selection_index % len(inventory)]
+
+        print(f"Character {character.name}: {character.chestplate}  {character.helmet}  {character.weapon}")
 
         pygame.display.update()
 
@@ -92,3 +132,5 @@ class WorldRenderer:
                 obj.controller.draw(self.window, adjusted_rect=obj_rect)
 
         pygame.display.update()
+
+# TODO move logic to GAME.py from inventory method

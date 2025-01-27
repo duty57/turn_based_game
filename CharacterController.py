@@ -12,14 +12,17 @@ class CharacterController(Controller):
         self.in_inventory = False
 
         self.inventory_button_pressed = False
+        self.unequipped_button_pressed = False
         self.left_arrow_pressed = False
         self.right_arrow_pressed = False
         self.up_arrow_pressed = False
         self.down_arrow_pressed = False
-
+        self.enter_pressed = False
 
         self.character_index = 0
         self.selection_index = 0
+        self.is_equipped = False
+        self.is_unequipped = False
 
     # Character controller
     def controller(self, window, adjusted_rect=None, collisions=None):
@@ -36,8 +39,6 @@ class CharacterController(Controller):
                     self.character_state = CharacterState.attacking
                 elif self.character_state != CharacterState.attacking and self.character_state != CharacterState.hit:
                     self.character_state = CharacterState.idle
-
-
 
                 if keys[pygame.K_i]:
                     if not self.inventory_button_pressed:
@@ -74,6 +75,22 @@ class CharacterController(Controller):
                     if keys[pygame.K_ESCAPE]:
                         self.in_inventory = False
 
+                    if keys[pygame.K_RETURN]:
+                        if not self.enter_pressed:
+                            self.enter_pressed = True
+                            self.is_equipped = True
+                    else:
+                        self.enter_pressed = False
+                        self.is_equipped = False
+
+                    if keys[pygame.K_u]:
+                        if not self.is_unequipped:
+                            self.unequipped_button_pressed = True
+                            self.is_unequipped = True
+                    else:
+                        self.is_unequipped = False
+                        self.unequipped_button_pressed = False
+
                 else:
                     if keys[pygame.K_LEFT]:
                         move_x = -1
@@ -92,7 +109,6 @@ class CharacterController(Controller):
                     elif keys[pygame.K_DOWN]:
                         move_y = 1
                         self.character_state = CharacterState.moving
-
 
                 for obj in collisions:
                     if obj.colliderect(self.actor.rect.move(move_x * 2, 0)):
@@ -120,7 +136,6 @@ class CharacterController(Controller):
                 # change character position
                 self.actor.rect.center = (self.x, self.y)
         self.draw(window, adjusted_rect)
-
 
     def battle_start(self, i: int):
         self.x = 600
@@ -163,3 +178,5 @@ class CharacterController(Controller):
         self.character_state = CharacterState.idle
         self.actor.rect.center = (self.x, self.y)
         self.actor.health = 1 if self.actor.health == 0 else self.actor.health
+
+# TODO: Refactor controller function

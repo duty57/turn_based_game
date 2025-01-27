@@ -79,17 +79,17 @@
       }
     }
   },
-  "weapon": {
+"weapon": {
     "common": {
       "Iron_Sword": {
-        "item_type": "sword",
+        "item_type": "weapon",
         "description": "A reliable sword forged from iron.",
         "damage": 20,
         "HPBonus": 0,
         "actionPointsBonus": 5
       },
       "Shadow_Dagger": {
-        "item_type": "dagger",
+        "item_type": "weapon",
         "description": "A lightweight dagger that strikes with precision.",
         "damage": 15,
         "HPBonus": 5,
@@ -98,14 +98,14 @@
     },
     "rare": {
       "Elven_Longbow": {
-        "item_type": "bow",
+        "item_type": "weapon",
         "description": "A finely crafted longbow of elven origin.",
         "damage": 30,
         "HPBonus": 10,
         "actionPointsBonus": 8
       },
       "Arcane_Staff": {
-        "item_type": "staff",
+        "item_type": "weapon",
         "description": "A staff imbued with arcane energy that boosts magical power.",
         "damage": 35,
         "HPBonus": 20,
@@ -114,28 +114,28 @@
     },
     "legendary": {
       "Flame_Blade": {
-        "item_type": "blade",
+        "item_type": "weapon",
         "description": "A sword imbued with fiery energy.",
         "damage": 50,
         "HPBonus": 20,
         "actionPointsBonus": 10
       },
       "Celestial_Staff": {
-        "item_type": "staff",
+        "item_type": "weapon",
         "description": "A divine staff that channels celestial energy for powerful spells.",
         "damage": 55,
         "HPBonus": 25,
         "actionPointsBonus": 15
       },
       "Phoenix_Staff": {
-        "item_type": "staff",
+        "item_type": "weapon",
         "description": "A legendary staff infused with the flames of a phoenix.",
         "damage": 60,
         "HPBonus": 30,
         "actionPointsBonus": 20
       },
       "Hunter's_Bow": {
-        "item_type": "bow",
+        "item_type": "weapon",
         "description": "A legendary bow crafted for the finest archers.",
         "damage": 45,
         "HPBonus": 15,
