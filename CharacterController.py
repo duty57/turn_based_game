@@ -1,6 +1,9 @@
 import pygame
 from turn_based_game.Controller import Controller
 from turn_based_game.Enums import CharacterState
+pygame.mixer.init()
+
+character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
 
 
 class CharacterController(Controller):
@@ -24,6 +27,10 @@ class CharacterController(Controller):
         self.is_equipped = False
         self.is_unequipped = False
 
+    def collide(self):
+        if self.in_battle:
+            character_hit_sound.play()
+            self.character_state = CharacterState.hit
     def inventory_controller(self, keys):
         if keys[pygame.K_LEFT] and not self.left_arrow_pressed:
             self.character_index -= 1
@@ -133,7 +140,7 @@ class CharacterController(Controller):
 
             else:
                 if self.going_to_enemy:
-                    self.go_to_enemy(self.target)
+                    self.go_to_enemy(self.target, 20)
                 elif self.finished_attack:
                     self.go_back((self.battle_x, self.battle_y))
 
@@ -171,8 +178,12 @@ class CharacterController(Controller):
         self.y = self.world_y
         self.in_battle = False
         self.finished_attack = False
+        self.target = None
+        self.enemy_team = None
+        self.player_team = None
         self.character_state = CharacterState.idle
         self.actor.rect.center = (self.x, self.y)
         self.actor.health = 1 if self.actor.health == 0 else self.actor.health
 
-# TODO: Refactor controller function
+    def adjust_rect(self, rect):
+        return rect.move(-16, -10)

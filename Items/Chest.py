@@ -32,6 +32,9 @@ class Chest(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+    def __del__(self):
+        print("Chest deleted")
+
     def is_enemy(self):
         return False
 

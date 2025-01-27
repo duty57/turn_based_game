@@ -3,6 +3,9 @@ import pygame
 from turn_based_game.Controller import Controller
 from turn_based_game.Enums import CharacterState
 
+pygame.mixer.init()
+enemy_hit_sound = pygame.mixer.Sound('turn_based_game/audio/enemy_hit_sound.mp3')
+
 
 def select_target(team: list):
     team.sort(key=lambda enemy: enemy.health)
@@ -23,6 +26,11 @@ class EnemyController(Controller):
         self.in_battle = False
 
         self.is_skill_selected = False
+
+    def collide(self):
+        if self.in_battle:
+            enemy_hit_sound.play()
+            self.character_state = CharacterState.hit
 
     def set_main_character(self, main_character):
         self.main_character = main_character
@@ -67,7 +75,7 @@ class EnemyController(Controller):
                 self.trigger()
             else:
                 if self.going_to_enemy:
-                    self.go_to_enemy(self.target)
+                    self.go_to_enemy(self.target, 40)
                 elif self.finished_attack:
                     self.go_back((self.battle_x, self.battle_y))
 
@@ -91,8 +99,6 @@ class EnemyController(Controller):
         self.moving_right_direction = False
         self.moving_left_direction = True
         self.in_battle = True
-        self.attack_frame_count = 0
-        self.frame_count = 0
 
     def enemy_to_attack(self, enemy_team: list):
         enemies_with_weaknesses = []
@@ -121,3 +127,10 @@ class EnemyController(Controller):
         self.going_to_enemy = True
         self.in_action = True
         self.enemy_team = enemy_team
+
+    def adjust_rect(self, rect):
+        return rect.move(10, 10) if not self.in_battle else rect
+
+    def __del__(self):
+        print(f"Enemy controller has been defeated")
+        del self.actor

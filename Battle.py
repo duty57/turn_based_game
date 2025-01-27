@@ -16,13 +16,10 @@ class Battle:
     def __init__(self, window: pygame.Surface, player_team: list, enemy_team: list, initiative: Initiative,
                  turn_order: list = None):
 
-        if turn_order is None:
-            turn_order = []
-
         self.window = window
         self.player_team = player_team
         self.enemy_team = enemy_team
-        self.turn_order = turn_order
+        self.turn_order = turn_order if turn_order else []
         self.player_team_highlight = copy.copy(player_team)
         self.enemy_team_highlight = copy.copy(enemy_team)
         self.initiative = initiative  # player_initiative or enemy_initiative
@@ -45,7 +42,6 @@ class Battle:
         # Key release booleans
         self.d_key_released = None
         self.enter_key_released = True
-        self.escape_key_released = None
         self.space_key_released = None
 
         self.up_key_released = None
@@ -63,12 +59,9 @@ class Battle:
     def start(self):
         sleep(0.5)
         self.battle_renderer.start(self.initiative)
-        # set character positions
-        for i, character in enumerate(self.player_team):
+        for i, character in enumerate(self.player_team):  # set characters positions
             character.controller.battle_start(i)
-
-        # set enemy positions
-        for i, enemy in enumerate(self.enemy_team):
+        for i, enemy in enumerate(self.enemy_team):  # set enemy positions
             enemy.controller.battle_start(i)
         sleep(0.5)
         # ambient_music.play(10)
@@ -99,7 +92,7 @@ class Battle:
     # combat logic
     def attack(self, attacker, target):
         if self.space_key_pressed:
-            attacker.go_to_enemy(target)
+            attacker.go_to_enemy(target, 20 if attacker.actor.is_enemy() else 40)
 
     def skill_handler(self, skill, current_character_controller):
         if skill['type'] == 'attack':
@@ -148,6 +141,7 @@ class Battle:
 
         self.d_key_pressed = False
         self.enter_key_pressed = False
+
     def input_handler(self, current_character_controller):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d] and self.d_key_released:  # open skill list
@@ -193,7 +187,7 @@ class Battle:
         elif not keys[pygame.K_SPACE]:
             self.space_key_released = True
 
-    def check_game_finished(self, previous_character):
+    def check_game_finished(self, previous_character, current_character_controller):
         if not (self.enemy_team_highlight and self.player_team_highlight):  # if one of the teams is empty
             self.end()
 
@@ -202,11 +196,11 @@ class Battle:
             was_anyone_killed = False
             for actor in self.turn_order:
                 if actor.controller.character_state.value >= CharacterState.dead.value:
-                    was_anyone_killed = True
                     self.turn_order.remove(actor)
-                    self.current_turn -= 1
-                    self.current_turn %= len(self.turn_order)
-
+                    if current_character_controller.character_state.value >= CharacterState.dead.value:
+                        was_anyone_killed = True
+                        self.current_turn -= 1  # TODO error upon killing
+                        self.current_turn %= len(self.turn_order)
                     if actor in self.player_team_highlight:
                         self.player_team_highlight.remove(actor)
                     elif actor in self.enemy_team_highlight:
@@ -222,7 +216,7 @@ class Battle:
         previous_character = self.turn_order[(self.current_turn - 1) % len(self.turn_order)]
         current_character_controller = self.turn_order[self.current_turn % len(self.turn_order)].controller
 
-        self.check_game_finished(previous_character)
+        self.check_game_finished(previous_character, current_character_controller)
 
         if not previous_character.controller.in_action and not current_character_controller.actor.is_enemy():
             self.input_handler(current_character_controller)

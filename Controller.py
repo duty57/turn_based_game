@@ -1,13 +1,8 @@
 import random
-
 import pygame
-
 from turn_based_game.Enums import CharacterState, CharacterBattleState
 from turn_based_game.VFX import VFX
-
-pygame.mixer.init()
-character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
-enemy_hit_sound = pygame.mixer.Sound('turn_based_game/audio/enemy_hit_sound.mp3')
+from turn_based_game.ActorRenderer import ActorRenderer
 
 
 def get_frame_index(frame_count, k, vfx_animation):
@@ -15,24 +10,19 @@ def get_frame_index(frame_count, k, vfx_animation):
 
 
 class Controller:
-
     def __init__(self, actor, x: int = 200, y: int = 100):
         self.actor = actor
-
         # world states
         self.moving_right_direction = True
         self.moving_left_direction = False
         self.finished_attack = False
         self.finished_hit = False
-
         # character state
         self.character_state = CharacterState.idle
         self.battle_x = 0
         self.battle_y = 0
-
         self.world_x = 0
         self.world_y = 0
-
         # battle states
         self.target = None
         self.going_to_enemy = False
@@ -41,36 +31,16 @@ class Controller:
         self.skill = None
         self.enemy_team = None
         self.player_team = None
-
         # Movement
-        self.frame_count = 0
-        self.attack_frame_count = 0
-        self.hit_frame_count = 0
-        self.death_frame_count = 0
-        self.vfx_frame_count = 0
         self.x = x
         self.y = y
-
         self.in_battle = False
         self.in_action = False
-
-        # Character animations
-        self.idle = None
-        self.walkRight = None
-        self.attack = None
-        self.death = None
-        self.damage_taken = None
-
         self.is_weak = False
+        self.actor_renderer = ActorRenderer()
 
-    # Load UI for the character
-
-    def load_animations(self, animations: dict):
-        self.idle = animations['idle']
-        self.walkRight = animations['move_right']
-        self.attack = animations['attack']
-        self.death = animations['dead']
-        self.damage_taken = animations['hit']
+    def load_animations(self, animations: dict):#load animations for the character
+        self.actor_renderer.load_animations(animations)
 
     def heal(self, heal_amount):
         self.actor.health = min(self.actor.health + heal_amount, self.actor.max_health)
@@ -87,13 +57,13 @@ class Controller:
         if self.character_state.value != CharacterState.inactive.value:
             if element in self.actor.immunity:
                 self.actor.damage = 0
-                self.actor.is_weak = False
+                self.is_weak = False
             elif element in self.actor.weakness:
                 self.actor.damage = int(damage * 2)
-                self.actor.is_weak = True
+                self.is_weak = True
             else:
                 self.actor.damage = max(0, damage - self.actor.defense)
-                self.actor.is_weak = False
+                self.is_weak = False
 
             self.actor.health -= self.actor.damage
             if self.actor.health <= 0:
@@ -101,12 +71,7 @@ class Controller:
                 self.character_state = CharacterState.dead
 
     def collide(self):
-        if self.in_battle:
-            # if self.actor.is_enemy():
-            #     enemy_hit_sound.play()
-            # else:
-            #     character_hit_sound.play()
-            self.character_state = CharacterState.hit
+        pass
 
     def moveRight(self):
         self.x += 1 if not self.in_battle else 5
@@ -146,62 +111,11 @@ class Controller:
 
         self.skill = None
 
-    def attack_vfx(self, window):
-        if not self.in_action:
-            return
-
-        if self.skill:
-            element = self.skill['element']
-            vfx_animation = VFX.skills.get(element, [])
-            if self.skill['targets'] == 'all':
-                frame_index = get_frame_index(self.vfx_frame_count, 4, vfx_animation)
-                vfx_image = pygame.image.load(vfx_animation[frame_index])
-                for enemy in self.enemy_team:
-                    target_position = (enemy.rect.center[0] - 15, enemy.rect.center[1] - 20)
-                    window.blit(vfx_image, target_position)
-                self.vfx_frame_count += 1
-                if self.vfx_frame_count >= len(vfx_animation) * (30 // len(vfx_animation)):
-                    self.vfx_frame_count = 0
-            else:
-                self._draw_vfx_for_single_target(window, vfx_animation)
-        else:
-            vfx_animation = VFX.skills.get(self.actor.element, [])
-            self._draw_vfx_for_single_target(window, vfx_animation)
-
-    def _draw_vfx_for_single_target(self, window, vfx_animation):
-        if not vfx_animation:
-            return
-        frame_index = get_frame_index(self.vfx_frame_count, 4, vfx_animation)
-        vfx_image = pygame.image.load(vfx_animation[frame_index])
-        target_position = (self.target.rect.center[0] - 15, self.target.rect.center[1] - 20)
-        window.blit(vfx_image, target_position)
-        self.vfx_frame_count += 1
-        if self.vfx_frame_count >= len(vfx_animation) * (30 // len(vfx_animation)):
-            self.vfx_frame_count = 0
-
-    def heal_vfx(self, window, heal_value):
-        element = 'MAGIC'
-        vfx_animation = VFX.skills.get(element, [])
-        frame_index = get_frame_index(self.vfx_frame_count, 4, vfx_animation)
-        vfx_image = pygame.image.load(vfx_animation[frame_index])
-        target_position = (self.target.rect.center[0] - 15, self.target.rect.center[1] - 20)
-        window.blit(vfx_image, target_position)
-        self.vfx_frame_count += 1
-        if self.vfx_frame_count >= len(vfx_animation) * (30 // len(vfx_animation)):
-            self.vfx_frame_count = 0
-            self.target.controller.heal(heal_value)
-            self.in_action = False
-            self.previous_battle_state = CharacterBattleState.attacking
-            self.battle_state = CharacterBattleState.back_in_position
-            self.character_state = CharacterState.idle
-            self.skill = None
+    def adjust_rect(self, rect):
+        pass
 
     def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
-        if self.actor.__class__.__name__ == 'Enemy':
-            if not self.in_battle:
-                adjusted_rect = adjusted_rect.move(10, 10)
-        else:
-            adjusted_rect = adjusted_rect.move(-16, -10)
+        adjusted_rect = self.adjust_rect(adjusted_rect)
 
         if not self.in_battle and self.character_state != CharacterState.hit:
             self.finished_attack = False
@@ -209,86 +123,64 @@ class Controller:
 
         match self.character_state.value:
             case CharacterState.idle.value:
-                frame_index = get_frame_index(self.frame_count, 4, self.idle)
-                self.check_direction(window, frame_index, self.idle, adjusted_rect)
+                self.actor_renderer.manage_idle_animation(window, adjusted_rect, self.moving_left_direction)
             case CharacterState.moving.value:
-                frame_index = get_frame_index(self.frame_count, 4, self.walkRight)
-                self.check_direction(window, frame_index, self.walkRight, adjusted_rect)
+                self.actor_renderer.manage_move_animation(window, adjusted_rect, self.moving_left_direction)
             case CharacterState.attacking.value:
-                self.attack_vfx(window)
-                frame_index = get_frame_index(self.attack_frame_count, 2, self.attack)
-                self.check_direction(window, frame_index, self.attack, adjusted_rect)
-                self.attack_frame_count += 1
-                if self.attack_frame_count >= len(self.attack) * (30 // len(self.attack)):
-                    self.attack_frame_count = 0
-                    self.finished_attack = True
-                    self.character_state = CharacterState.idle
-                    if self.target:
-                        self.previous_battle_state = self.battle_state
-                        self.battle_state = CharacterBattleState.attacking
-                        self.perform_attack()
+                self.manage_attack_animation(window, adjusted_rect)
             case CharacterState.hit.value:
-                frame_index = get_frame_index(self.hit_frame_count, 4, self.damage_taken)
-                self.draw_damage(window)
-                self.check_direction(window, frame_index, self.damage_taken, adjusted_rect)
-                self.hit_frame_count += 1
-                if self.hit_frame_count >= len(self.damage_taken) * (30 // len(self.damage_taken)):
-                    self.character_state = CharacterState.idle
-                    self.hit_frame_count = 0
-                    self.finished_hit = True
+                self.manage_hit_animation(adjusted_rect, window)
             case CharacterState.dead.value:
-                frame_index = get_frame_index(self.death_frame_count, 4, self.death)
-                self.check_direction(window, frame_index, self.death, adjusted_rect)
-                self.death_frame_count += 1
-                if self.death_frame_count >= len(self.death) * (
-                        29 // len(self.death)):  # TODO goblin death animation is not working when 30 is used
-                    self.character_state = CharacterState.inactive
-                    self.death_frame_count = 0
+                self.manage_death_animation(adjusted_rect, window)
             case CharacterState.healing.value:
-                self.draw_heal(window, self.skill['value'])
-                self.heal_vfx(window, self.skill['value'])
-                frame_index = get_frame_index(self.frame_count, 4, self.idle)
-                self.check_direction(window, frame_index, self.idle, adjusted_rect)
+                self.manage_healing_animation(adjusted_rect, window)
 
-        self.frame_count += 1
         pygame.draw.rect(window, (255, 0, 0), self.actor.rect, 2)
 
-    def draw_damage(self, window):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
-        if self.actor.damage > 0:
-            damage_text = f"WEAK: {self.actor.damage}" if self.actor.is_weak else str(self.actor.damage)
-            self.is_weak = False
-            damage_text = font.render(damage_text, True, (255, 0, 0))
-        elif self.actor.damage < 0:
-            damage_text = font.render("Miss", True, (255, 255, 255))
-        else:
-            damage_text = font.render("Immune", True, (178, 178, 172))
+    def manage_attack_animation(self, window, adjusted_rect):
+        if self.in_action:
+            self.actor_renderer.attack_vfx(window, self.skill, self.enemy_team, self.target, self.actor)
+        self.actor_renderer.manage_attack_animation(window, adjusted_rect, self.moving_left_direction)
+        if self.actor_renderer.attack_frame_count >= len(self.actor_renderer.attack) * (
+                30 // len(self.actor_renderer.attack)):
+            self.actor_renderer.attack_frame_count = 0
+            self.finished_attack = True
+            self.character_state = CharacterState.idle
+            if self.target:
+                self.previous_battle_state = self.battle_state
+                self.battle_state = CharacterBattleState.attacking
+                self.perform_attack()
 
-        window.blit(damage_text, (self.x, self.y - 50))
+    def manage_hit_animation(self, adjusted_rect, window):
+        self.actor_renderer.draw_damage(window, self.actor, self.is_weak)
+        self.actor_renderer.manage_hit_animation(window, adjusted_rect, self.moving_left_direction)
+        if self.actor_renderer.hit_frame_count >= len(self.actor_renderer.damage_taken) * (
+                30 // len(self.actor_renderer.damage_taken)):
+            self.character_state = CharacterState.idle
+            self.actor_renderer.hit_frame_count = 0
+            self.finished_hit = True
 
-    def draw_heal(self, window, heal_value=0):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
-        heal_text = font.render(str(heal_value), True, (0, 255, 0))
-        window.blit(heal_text, (self.target.controller.x, self.target.controller.y - 50))
+    def manage_death_animation(self, adjusted_rect, window):
+        self.actor_renderer.manage_death_animation(window, adjusted_rect, self.moving_left_direction)
+        if self.actor_renderer.death_frame_count >= len(self.actor_renderer.death) * (
+                29 // len(self.actor_renderer.death)):
+            self.character_state = CharacterState.inactive
+            self.actor_renderer.death_frame_count = 0
 
-    def go_to_enemy(self, enemy):
-        offset = 20
-
-        if self.__class__.__name__ == "Enemy":
-            offset = 40
-
-        if self.x < enemy.rect.x - offset:
-            self.moveRight()
-        elif self.x > enemy.rect.x + offset:
-            self.moveLeft()
-        if self.y < enemy.rect.center[1]:
-            self.moveDown()
-        elif self.y > enemy.rect.center[1]:
-            self.moveUp()
-
-        if self.actor.rect.center == (self.x, self.y):  # check if the character is in the enemy position
-            self.going_to_enemy = False
-            self.character_state = CharacterState.attacking
+    def manage_healing_animation(self, adjusted_rect, window):
+        self.actor_renderer.manage_heal_animation(window, adjusted_rect, self.moving_left_direction)
+        self.actor_renderer.draw_heal(window, self.target, self.skill['value'])
+        self.actor_renderer.heal_vfx(window, self.target)
+        element = 'MAGIC'
+        vfx_animation = VFX.skills.get(element, [])
+        if self.actor_renderer.vfx_frame_count >= len(vfx_animation) * (30 // len(vfx_animation)):
+            self.actor_renderer.vfx_frame_count = 0
+            self.target.controller.heal(self.skill['value'])
+            self.in_action = False
+            self.previous_battle_state = CharacterBattleState.attacking
+            self.battle_state = CharacterBattleState.back_in_position
+            self.character_state = CharacterState.idle
+            self.skill = None
 
     def go_back(self, position):
         if self.x < position[0]:
@@ -308,3 +200,17 @@ class Controller:
             self.moving_left_direction = self.actor.is_enemy()
             self.previous_battle_state = self.battle_state
             self.battle_state = CharacterBattleState.back_in_position
+
+    def go_to_enemy(self, enemy, offset):
+        if self.x < enemy.rect.x - offset:
+            self.moveRight()
+        elif self.x > enemy.rect.x + offset:
+            self.moveLeft()
+        if self.y < enemy.rect.center[1]:
+            self.moveDown()
+        elif self.y > enemy.rect.center[1]:
+            self.moveUp()
+
+        if self.actor.rect.center == (self.x, self.y):  # check if the character is in the enemy position
+            self.going_to_enemy = False
+            self.character_state = CharacterState.attacking

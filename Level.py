@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.Items.Chest import Chest
@@ -99,7 +101,7 @@ class Level:
         for y, row in enumerate(self.tile_map_world):
             for x, tile_id in enumerate(row):
                 if tile_id == 69:
-                    enemies.append(character_init_enemy(enemy_list[1], x * self.tile_width, y * self.tile_height, None))
+                    enemies.append(character_init_enemy(enemy_list[random.randint(1,2)], x * self.tile_width, y * self.tile_height, None))
         return enemies
 
     def get_chests(self):

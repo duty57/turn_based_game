@@ -105,6 +105,7 @@ class Game:
                 self.chest_opened_time = time.time()
 
     def generate_enemy_team(self):
+        pass
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
 
@@ -162,7 +163,11 @@ class Game:
             if not self.main_character.controller.in_battle:
                 if self.opponent:  # clear defeated enemies
                     for enemy in self.enemies:
+                        controller = enemy.controller
                         self.objects.remove(enemy)
+                        enemy.controller = None#ensure that the enemy is removed from the game
+                        controller.actor = None#ensure that the enemy is removed from the game
+
                     self.enemies.clear()
 
                 self.main_character.play(window=self.window,

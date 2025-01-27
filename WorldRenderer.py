@@ -13,7 +13,7 @@ class WorldRenderer:
     def __init__(self):
         self.window = None
         self.camera = None  # Camera reference
-        self.characters = []  # 1) main character 2) wizard 3) healer 4) archer
+        self.characters = []  # 1) main character 2) healer 3) wizard 4) archer
         self.level = None
 
     def create_window(self, window):
@@ -95,11 +95,8 @@ class WorldRenderer:
             if obj.name == "Chest":
                 obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
                 self.window.blit(obj.image, (obj_rect.x, obj_rect.y))  # Draw chest using the adjusted rect position
-                pygame.draw.rect(self.window, (255, 0, 0), obj_rect, 1)
             else:
                 obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
                 obj.controller.draw(self.window, adjusted_rect=obj_rect)
 
         pygame.display.update()
-
-# TODO move logic to GAME.py from inventory method

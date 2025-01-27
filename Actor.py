@@ -46,6 +46,8 @@ class Actor(pygame.sprite.Sprite):
             self.health_bar_width = None
             self.action_points_bar_height = None
 
+    def __del__(self):
+        print(f"{self.name} has been deleted")
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'
 
