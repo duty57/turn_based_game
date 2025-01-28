@@ -60,22 +60,5 @@ class Actor(pygame.sprite.Sprite):
     def load_animations(self, animations: dict):
         self.controller.load_animations(animations)
 
-    def level_up(self, experience: int):
-        self.experience += experience
-        if self.experience >= self.nextLevel:#if the experience is greater than the next level
-            self.level += 1
-            self.experience = 0
-            self.nextLevel = self.level * 100
-            self.max_health += 5
-            self.strength += 1
-            self.intelligence += 1
-            self.defense += 1
-            self.speed += 1
-            self.agility += 1
-            self.max_action_points += 1
-            self.health = self.max_health
-            self.damage = self.strength
-            self.action_points = self.max_action_points
-
     def get_image(self):
         return self.profile

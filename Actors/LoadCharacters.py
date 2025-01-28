@@ -68,7 +68,7 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
     return character
 
 
-def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Character):
+def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Character | None):
     enemy = Enemy('turn_based_game/config/enemyConfig.json', enemy_name, x, y, main_character)
 
     size = (64, 64)  # Define a consistent size for all images
