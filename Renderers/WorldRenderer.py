@@ -1,7 +1,10 @@
 import time
 
 import pygame
+
+from turn_based_game.Camera import Camera
 from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
+from turn_based_game.Items.Item import Item
 from turn_based_game.Level import Level
 
 
@@ -16,11 +19,11 @@ class WorldRenderer:
         self.characters = []  # 1) main character 2) healer 3) wizard 4) archer
         self.level = None
 
-    def create_window(self, window):
+    def create_window(self, window: pygame.Surface):
         pygame.init()
         self.window = window
 
-    def set_camera(self, camera):
+    def set_camera(self, camera: Camera):
         """Set the camera to adjust rendering offsets."""
         self.camera = camera
 
@@ -51,7 +54,7 @@ class WorldRenderer:
                 owner_picture = pygame.transform.scale(item.owner.get_image(), (24, 24))
                 self.window.blit(owner_picture, (1200, 125 + 50 * i))
 
-    def draw_item(self, item, spawn_time):
+    def draw_item(self, item: Item, spawn_time: int):
         if item is not None and time.time() - spawn_time < 2:
             # draw frame then item
             resized_frame = pygame.transform.scale(UI.item_frame[item.rarity], (50, 50))
@@ -59,7 +62,7 @@ class WorldRenderer:
             self.window.blit(resized_frame, (1180, 0))
             self.window.blit(resized_item, (1182, 2))
 
-    def draw_inventory(self, inventory, character_index, selection_index, is_equipped, is_unequipped):
+    def draw_inventory(self, inventory: list, character_index: int, selection_index: int):
         self.window.fill((114, 117, 27))
         self.draw_level()
         self.draw_ui()
@@ -81,11 +84,9 @@ class WorldRenderer:
 
         self.draw_inventory_list(inventory, selection_index)
 
-        print(f"Character {character.name}: {character.chestplate}  {character.helmet}  {character.weapon}")
-
         pygame.display.update()
 
-    def draw(self, objects, item, spawn_time):
+    def draw(self, objects, item: Item, spawn_time: int):
         self.window.fill((114, 117, 27))
         self.draw_level()
         self.draw_ui()
@@ -97,6 +98,5 @@ class WorldRenderer:
             else:
                 obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
                 obj.controller.draw(self.window, adjusted_rect=obj_rect)
-
 
         pygame.display.update()

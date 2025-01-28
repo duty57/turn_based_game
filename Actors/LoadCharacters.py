@@ -6,7 +6,7 @@ from turn_based_game.Actors.Character import Character
 from turn_based_game.Actors.Enemy import Enemy
 
 
-def count_files_in_folder(folder_path):
+def count_files_in_folder(folder_path: str):
     # List all items in the folder
     items = os.listdir(folder_path)
     # Filter the list to include only files

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pygame
 
 
-def count_files_in_folder(folder_path):
+def count_files_in_folder(folder_path: str) -> int:
     # List all items in the folder
     items = os.listdir(folder_path)
     # Filter the list to include only files
@@ -14,6 +14,7 @@ def count_files_in_folder(folder_path):
 
 @dataclass
 class VFX:
+    # Dictionary of VFX animations for different skills
     skills = {
         'DARK': [f"turn_based_game/assets/VFX/Dark/Effect_3/Dark_Effect_{i}.png" for i in
                  range(1, count_files_in_folder("turn_based_game/assets/VFX/Dark/Effect_3"))],

@@ -5,7 +5,7 @@ import pygame
 from turn_based_game.Enums import CharacterState
 
 
-def count_files_in_folder(folder_path):
+def count_files_in_folder(folder_path: str) -> int:
     # List all items in the folder
     items = os.listdir(folder_path)
     # Filter the list to include only files
@@ -14,7 +14,7 @@ def count_files_in_folder(folder_path):
     return len(files) + 1
 
 
-def draw_ui(window, actor, offset):
+def draw_ui(window: pygame.Surface, actor, offset: int):# change it to ui health bar
     profile_frame = GameUI.profile_frame
     health_bar_frame = GameUI.health_bar_frame
     action_points_frame = GameUI.action_points_bar_frame
@@ -64,6 +64,7 @@ class GameUI:
     action_points_bar_frame = pygame.image.load(
         'turn_based_game/assets/UI/ActionPointsBar/ActionPointsBar_Frame.png')
 
+    #frames
     profile_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Frame.png')
     profile_frame = pygame.transform.scale(profile_frame, (50, 50))
     death_frame = pygame.image.load('turn_based_game/assets/UI/Frames/Dead_Frame.png')
@@ -78,19 +79,20 @@ class GameUI:
     enemy_frame_highlight = pygame.transform.scale(
         pygame.image.load('turn_based_game/assets/VFX/Highlights/Enemy_frame_highlight.png'), (50, 50))
 
+    #keys
     a_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/A.png'), (32, 32))
     d_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/D.png'), (32, 32))
     enter_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/ENTER.png'), (32, 32))
     space_key = pygame.transform.scale(pygame.image.load('turn_based_game/assets/UI/Keys/SPACE.png'), (64, 32))
 
     backpack = pygame.image.load('turn_based_game/assets/UI/Inventory/backpack_small.png')
-
+    # chest images
     chests = {
         "common": pygame.image.load('turn_based_game/assets/Chests/CommonChest/Common_Chest_1.png'),
         "equipment": pygame.image.load('turn_based_game/assets/Chests/EquipmentChest/Equipment_Chest_1.png'),
         "legendary": pygame.image.load('turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_1.png'),
     }
-
+    # chest animations
     chest_animation = {
         "common": [pygame.image.load(f'turn_based_game/assets/Chests/CommonChest/Common_Chest_{i}.png') for i in
                    range(1, count_files_in_folder('turn_based_game/assets/Chests/CommonChest'))],
@@ -99,12 +101,13 @@ class GameUI:
         "legendary": [pygame.image.load(f'turn_based_game/assets/Chests/LegendaryChest/Legendary_Chest_{i}.png') for i
                       in range(1, count_files_in_folder('turn_based_game/assets/Chests/LegendaryChest'))],
     }
-
+    # item frames
     item_frame = {
         "common": pygame.image.load('turn_based_game/assets/UI/Frames/Items/common_frame.png'),
         "rare": pygame.image.load('turn_based_game/assets/UI/Frames/Items/rare_frame.png'),
         "legendary": pygame.image.load('turn_based_game/assets/UI/Frames/Items/legendary_frame.png'),
     }
+    # item colors
     item_colors = {
         "common": (106, 166, 65),
         "rare": (11, 178, 191),

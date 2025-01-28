@@ -46,7 +46,7 @@ class Actor(pygame.sprite.Sprite):
             self.health_bar_width = None
             self.action_points_bar_height = None
 
-    def __del__(self):
+    def __del__(self):#destructor
         print(f"{self.name} has been deleted")
     def is_enemy(self):
         return self.__class__.__name__ == 'Enemy'
@@ -62,7 +62,7 @@ class Actor(pygame.sprite.Sprite):
 
     def level_up(self, experience: int):
         self.experience += experience
-        if self.experience >= self.nextLevel:
+        if self.experience >= self.nextLevel:#if the experience is greater than the next level
             self.level += 1
             self.experience = 0
             self.nextLevel = self.level * 100

@@ -1,6 +1,7 @@
 import pygame
 from turn_based_game.Controllers.Controller import Controller
 from turn_based_game.Enums import CharacterState
+
 pygame.mixer.init()
 
 character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
@@ -31,7 +32,9 @@ class CharacterController(Controller):
         if self.in_battle:
             character_hit_sound.play()
             self.character_state = CharacterState.hit
-    def inventory_controller(self, keys):
+
+    def inventory_controller(self):
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and not self.left_arrow_pressed:
             self.character_index -= 1
             self.left_arrow_pressed = True
@@ -91,8 +94,9 @@ class CharacterController(Controller):
         self.world_x = self.x
         self.world_y = self.y
         self.actor.rect.center = (self.x, self.y)
+
     # Character controller
-    def controller(self, window, adjusted_rect=None, collisions=None):
+    def controller(self, window: pygame.Surface, adjusted_rect: pygame.Rect = None, collisions: list = None):
 
         keys = pygame.key.get_pressed()
         if collisions is None:
@@ -112,7 +116,7 @@ class CharacterController(Controller):
                     self.inventory_button_pressed = False
 
                 if self.in_inventory:
-                    self.inventory_controller(keys)
+                    self.inventory_controller()
 
                 else:
                     move_x = 0
@@ -158,7 +162,7 @@ class CharacterController(Controller):
         self.moving_left_direction = False
         self.in_battle = True
 
-    def attack_skill(self, skill, enemy_team):  # may need to refactor this
+    def attack_skill(self, skill: dict, enemy_team: list):  # may need to refactor this
         # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx
         self.skill = skill
         self.actor.action_points -= skill['cost']
@@ -166,7 +170,7 @@ class CharacterController(Controller):
         self.in_action = True
         self.enemy_team = enemy_team
 
-    def healing_skill(self, skill, player_team):  # may need to refactor this
+    def healing_skill(self, skill: dict, player_team: list):  # may need to refactor this
         self.skill = skill
         self.actor.action_points -= skill['cost']
         self.in_action = True
@@ -185,5 +189,5 @@ class CharacterController(Controller):
         self.actor.rect.center = (self.x, self.y)
         self.actor.health = 1 if self.actor.health == 0 else self.actor.health
 
-    def adjust_rect(self, rect):
+    def adjust_rect(self, rect: pygame.Rect):
         return rect.move(-16, -10)

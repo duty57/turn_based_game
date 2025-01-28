@@ -4,8 +4,8 @@ from turn_based_game.Items.Item import Item
 
 
 class Weapon(Item):
-    def __init__(self, name, rarity, quantity):
-        super().__init__(name, quantity)
+    def __init__(self, name: str, rarity: str):
+        super().__init__(name)
         with open('turn_based_game/config/itemStats.json') as file:
             data = json.load(file)
             self.damage = data['weapon'][rarity][name]['damage']

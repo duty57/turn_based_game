@@ -5,9 +5,11 @@ import pygame.mixer
 import time
 
 from turn_based_game.Actors.LoadCharacters import character_init_enemy
+from turn_based_game.Camera import Camera
+from turn_based_game.Items.Item import Item
 from turn_based_game.Renderers.WorldRenderer import WorldRenderer
 from turn_based_game.Battle import Battle
-from turn_based_game.Level import enemy_list
+from turn_based_game.Level import enemy_list, Level
 from Enums import Initiative
 from turn_based_game.Actors.Character import equip_item, unequip_item
 
@@ -38,38 +40,38 @@ class Game:
         self.chest_opened_time = 0
         self.dropped_item = None
 
-    def add_objects(self, objects):
+    def add_objects(self, objects: list):
         self.objects.add(objects)
 
-    def add_enemies(self, enemies):  # add enemies to the game(level)
+    def add_enemies(self, enemies: list):  # add enemies to the game(level)
         for enemy in enemies:
             enemy.controller.set_main_character(self.main_character)
         self.objects.add(enemies)
 
-    def add_characters(self, characters):
+    def add_characters(self, characters: list):
         self.characters = characters
         self.main_character = characters[0]
         self.objects.add(self.main_character)
         self.renderer.characters = characters
 
-    def add_camera(self, camera):
+    def add_camera(self, camera: Camera):
         self.camera = camera
         self.renderer.set_camera(camera)
 
-    def add_level(self, level):  # add level to the game
+    def add_level(self, level: Level):  # add level to the game
         self.level = level
         self.renderer.set_level(level)
         self.add_enemies(level.get_enemies())  # get enemies from the level
         self.chests = level.get_chests()  # get chests from the level
         self.add_objects(self.chests)
 
-    def create_window(self, width, height, fullscreen=False):
+    def create_window(self, width: int, height: int, fullscreen: bool = False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
         # ambient_music.play(10)
         # ambient_music.set_volume(0.1)
 
-    def add_to_inventory(self, item):
+    def add_to_inventory(self, item: Item):
         self.inventory.append(item)
 
     def get_collision_rect(self):
@@ -137,9 +139,7 @@ class Game:
         is_equipped = main_character_controller.is_equipped
         is_unequipped = main_character_controller.is_unequipped
         self.renderer.draw_inventory(self.inventory, main_character_controller.character_index,
-                                     main_character_controller.selection_index,
-                                     is_equipped=main_character_controller.is_equipped,
-                                     is_unequipped=main_character_controller.is_unequipped)
+                                     main_character_controller.selection_index)
         if is_equipped and self.inventory:
             item = self.inventory[selection_index % len(self.inventory)]
             unequip_item(item)

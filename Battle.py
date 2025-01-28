@@ -3,6 +3,10 @@ from time import sleep
 import pygame
 from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
+
+from turn_based_game.Actors.Actor import Actor
+from turn_based_game.Controllers.CharacterController import CharacterController
+from turn_based_game.Controllers.Controller import Controller
 from turn_based_game.Level import Level
 from turn_based_game.Renderers.BattleRenderer import BattleRenderer
 from turn_based_game.Renderers.BattleRenderer import draw_message
@@ -90,11 +94,11 @@ class Battle:
         self.turn_order.sort(key=lambda x: x.speed, reverse=True)
 
     # combat logic
-    def attack(self, attacker, target):
+    def attack(self, attacker: Controller, target: Actor):
         if self.space_key_pressed:
             attacker.go_to_enemy(target, 20 if attacker.actor.is_enemy() else 40)
 
-    def skill_handler(self, skill, current_character_controller):
+    def skill_handler(self, skill: dict, current_character_controller: CharacterController):
         if skill['type'] == 'attack':
             current_character_controller.target = self.enemy_team_highlight[
                 self.selection_index % len(self.enemy_team_highlight)]
@@ -123,7 +127,7 @@ class Battle:
                 self.escape_key_pressed = True
             current_character_controller.is_skill_selected = False
 
-    def select(self, current_character_controller):
+    def select(self, current_character_controller: CharacterController):
         self.space_key_pressed = True
         self.space_key_released = False
         self.enter_key_pressed = False
@@ -142,7 +146,7 @@ class Battle:
         self.d_key_pressed = False
         self.enter_key_pressed = False
 
-    def input_handler(self, current_character_controller):
+    def input_handler(self, current_character_controller: CharacterController):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d] and self.d_key_released:  # open skill list
             self.d_key_pressed = not self.d_key_pressed
@@ -187,7 +191,7 @@ class Battle:
         elif not keys[pygame.K_SPACE]:
             self.space_key_released = True
 
-    def check_game_finished(self, previous_character, current_character_controller):
+    def check_game_finished(self, previous_character: Actor, current_character_controller: Controller):
         if not (self.enemy_team_highlight and self.player_team_highlight):  # if one of the teams is empty
             self.end()
 

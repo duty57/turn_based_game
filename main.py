@@ -23,7 +23,7 @@ def main():
     game.add_camera(camera)
     game.add_level(level)
 
-    game.run(1280, 720, False)
+    game.run(1280, 720, True)
 
     pygame.quit()
 

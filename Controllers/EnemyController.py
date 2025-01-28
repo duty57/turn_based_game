@@ -1,5 +1,6 @@
 import pygame
 
+from turn_based_game.Actors.Character import Character
 from turn_based_game.Controllers.Controller import Controller
 from turn_based_game.Enums import CharacterState
 
@@ -32,7 +33,7 @@ class EnemyController(Controller):
             enemy_hit_sound.play()
             self.character_state = CharacterState.hit
 
-    def set_main_character(self, main_character):
+    def set_main_character(self, main_character: Character):
         self.main_character = main_character
 
     def trigger(self):
@@ -56,7 +57,7 @@ class EnemyController(Controller):
             self.is_triggered = False
             self.current_patrol_point = 0
 
-    def controller(self, window, adjusted_rect=None):
+    def controller(self, window: pygame.Surface, adjusted_rect: pygame.Rect = None):
         # patrol the area
         if self.character_state.value != CharacterState.inactive.value:
             if not self.in_battle:
@@ -122,14 +123,14 @@ class EnemyController(Controller):
 
         return enemy_team[enemy_team.index(min(enemy_team, key=lambda enemy: enemy.health))[0]]
 
-    def attack_skill(self, enemy_team):  # may need to refactor this
+    def attack_skill(self, enemy_team: list):  # may need to refactor this
         # check how many targets the skill can hit, then go to the target, hit target with skill and create vfx
         self.actor.action_points -= self.skill['cost']
         self.going_to_enemy = True
         self.in_action = True
         self.enemy_team = enemy_team
 
-    def adjust_rect(self, rect):
+    def adjust_rect(self, rect: pygame.Rect):
         return rect.move(10, 10) if not self.in_battle else rect
 
     def __del__(self):

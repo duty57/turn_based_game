@@ -2,9 +2,10 @@ import pygame
 
 from turn_based_game.Enums import Initiative
 from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
+from turn_based_game.Level import Level
 
 
-def draw_message(window, message, position, duration=1000):
+def draw_message(window: pygame.Surface, message: str, position: tuple, duration: int = 1000):
     if not isinstance(position, tuple):
         raise TypeError("Position must be a tuple containing x and y coordinates")
     font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 14)
@@ -13,13 +14,14 @@ def draw_message(window, message, position, duration=1000):
     pygame.display.update()
     pygame.time.delay(duration)
 
+
 class BattleRenderer:
 
-    def __init__(self, window, level):
+    def __init__(self, window: pygame.Surface, level: Level):
         self.window = window
         self.level = level
 
-    def start(self, initiative):
+    def start(self, initiative: Initiative):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
         text_value = "Alies have the initiative!" if initiative.value == Initiative.player_initiative.value else "Enemies have the initiative!"
         color = (0, 255, 0) if initiative.value == Initiative.player_initiative.value else (255, 0, 0)
@@ -40,20 +42,20 @@ class BattleRenderer:
         self.window.blit(text, text_rect)
         pygame.display.update()
 
-    def set_level(self, level):
+    def set_level(self, level: Level):
         self.level = level
 
     # draw ui elements
     def draw_background(self):
         self.level.draw_battle_level(self.window)
 
-    def draw_characters(self, player_team):
+    def draw_characters(self, player_team: list):
         for i, character in enumerate(player_team):
             character_rect = pygame.Rect(character.controller.x - 15, character.controller.y - 20, 30,
                                          40)  # Adjust for camera
             character.play(self.window, character_rect)
 
-    def draw_enemies(self, enemy_team):
+    def draw_enemies(self, enemy_team: list):
         for i, enemy in enumerate(enemy_team):
             if enemy.name == "Flying Demon":
                 enemy_rect = pygame.Rect(enemy.controller.x - 20, enemy.controller.y - 40, 30, 40)
@@ -61,15 +63,15 @@ class BattleRenderer:
                 enemy_rect = pygame.Rect(enemy.controller.x - 10, enemy.controller.y - 20, 30, 40)
             enemy.play(self.window, enemy_rect)
 
-    def draw_characters_list(self, player_team):
+    def draw_characters_list(self, player_team: list):
         for i, character in enumerate(player_team):
             draw_ui(self.window, character, 85 * i + 25)
 
-    def draw_enemy_list(self, enemy_team):
+    def draw_enemy_list(self, enemy_team: list):
         for i, enemy in enumerate(enemy_team):
             draw_ui(self.window, enemy, 1220 - 85 * i)
 
-    def draw_level_up(self, characters):
+    def draw_level_up(self, characters: list):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
         text = font.render("LEVEL UP!", True, (255, 255, 0))
         text_rect = text.get_rect(center=(self.window.get_width() // 2, 50))
@@ -116,7 +118,7 @@ class BattleRenderer:
         self.window.blit(UI.space_key, (360, 685))
         self.window.blit(use_text, (440, 690))
 
-    def draw_skill_list(self, d_key_pressed, turn_order, current_turn, skill_selection_index=0):
+    def draw_skill_list(self, d_key_pressed: bool, turn_order: list, current_turn: int, skill_selection_index:int = 0):
         skill_selection_index %= len(turn_order[current_turn].skills)
         if d_key_pressed:
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
@@ -158,7 +160,7 @@ class BattleRenderer:
                     85 * player_team.index(player_team_highlight[selection_index % len(player_team_highlight)]) + 25,
                     0))
 
-    def draw_turn_order(self, turn_order, current_turn_ui, player_team, enemy_team):
+    def draw_turn_order(self, turn_order: list, current_turn_ui: int, player_team: list, enemy_team: list):
         font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
         text_now = font.render("Now", True, (255, 255, 0))
         text_next = font.render("Next", True, (255, 255, 0))
@@ -179,7 +181,7 @@ class BattleRenderer:
                 2))
         pygame.display.update()
 
-    def draw(self, player_team, enemy_team):
+    def draw(self, player_team: list, enemy_team: list):
         self.window.fill((255, 255, 255))
         self.draw_background()
         self.draw_characters_list(player_team)

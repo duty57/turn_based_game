@@ -42,9 +42,8 @@ class Chest(pygame.sprite.Sprite):
         return self.item
     def open(self):
         self.generate_item()
-        print(f"Opened {self.chest_type} chest and found {self.item}")
 
-    def generate_item(self):
+    def generate_item(self):# Generate item based on probabilities
         rarity_chance = random.randint(1, 100)
         category_chance = random.randint(1, 100)
         if rarity_chance <= self.probabilities[0]:
@@ -63,8 +62,7 @@ class Chest(pygame.sprite.Sprite):
             data = json.load(file)
             item_name = data[category][rarity]
             random_item = random.choice(list(item_name))
-            print(f"Generated {rarity} {category}: {random_item}")
             if category == "armor":
-                self.item = Armor(random_item, rarity, 1)
+                self.item = Armor(random_item, rarity)
             else:
-                self.item = Weapon(random_item, rarity, 1)
+                self.item = Weapon(random_item, rarity)

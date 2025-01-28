@@ -1,5 +1,6 @@
 import pygame
 from turn_based_game.Actors.LoadCharacters import character_init_enemy
+from turn_based_game.Camera import Camera
 from turn_based_game.Items.Chest import Chest
 
 enemy_list = ['Skeleton', 'Goblin', 'Flying_demon', 'Golden_Skeleton']
@@ -88,14 +89,14 @@ class Level:
             [10, 10, 10, 10, 10, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 12, 10, 10, 10]
         ]
 
-    def draw_world_level(self, window, camera):
+    def draw_world_level(self, window: pygame.Surface, camera: Camera):
         for y, row in enumerate(self.tile_map_world):
             for x, tile_id in enumerate(row):
                 tile = self.tiles[tile_id]
                 window.blit(tile,
                             (x * self.tile_width - camera.camera_rect.x, y * self.tile_height - camera.camera_rect.y))
 
-    def draw_battle_level(self, window):
+    def draw_battle_level(self, window: pygame.Surface):
         for y, row in enumerate(self.tile_map_battle):
             for x, tile_id in enumerate(row):
                 tile = self.tiles[tile_id]

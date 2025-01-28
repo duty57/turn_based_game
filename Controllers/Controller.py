@@ -1,12 +1,10 @@
 import random
 import pygame
+
+from turn_based_game.Actors.Actor import Actor
 from turn_based_game.Enums import CharacterState, CharacterBattleState
 from turn_based_game.Dataclasses.VFX import VFX
-from turn_based_game.Renderers.ActorRenderer import ActorRenderer
-
-
-def get_frame_index(frame_count, k, vfx_animation):
-    return (frame_count // (len(vfx_animation) * k // len(vfx_animation))) % len(vfx_animation)
+from turn_based_game.Renderers.ActorRenderer import ActorRenderer, draw_damage, draw_heal
 
 
 class Controller:
@@ -39,34 +37,34 @@ class Controller:
         self.is_weak = False
         self.actor_renderer = ActorRenderer()
 
-    def load_animations(self, animations: dict):#load animations for the character
+    def load_animations(self, animations: dict):  # load animations for the character
         self.actor_renderer.load_animations(animations)
 
-    def heal(self, heal_amount):
+    def heal(self, heal_amount: int):
         self.actor.health = min(self.actor.health + heal_amount, self.actor.max_health)
 
-    def take_damage(self, damage, element, skill=None):
+    def take_damage(self, damage: int, element: str, skill: dict = None):  # take damage from the enemy
         self.collide()
         chance = random.randint(1, 100)
         instant_kill_chance = 100 - skill.get('instant_kill_chance', 0) if skill and skill.get('instant_kill_chance',
                                                                                                0) != 0 else 0
-        if chance <= self.actor.agility + instant_kill_chance or chance <= self.actor.agility:
+        if chance <= self.actor.agility + instant_kill_chance or chance <= self.actor.agility:  # check if the character can dodge the attack
             self.actor.damage = -100
             return
 
-        if self.character_state.value != CharacterState.inactive.value:
-            if element in self.actor.immunity:
+        if self.character_state.value != CharacterState.inactive.value:  # check if the character is not dead
+            if element in self.actor.immunity:  # check if the character is immune to the element
                 self.actor.damage = -1
                 self.is_weak = False
-            elif element in self.actor.weakness:
+            elif element in self.actor.weakness:  # check if the character is weak to the element
                 self.actor.damage = int(damage * 2)
                 self.is_weak = True
-            else:
+            else:  # if the character is not immune or weak to the element
                 self.actor.damage = max(0, damage - self.actor.defense)
                 self.is_weak = False
 
             self.actor.health -= max(0, self.actor.damage)
-            if self.actor.health <= 0:
+            if self.actor.health <= 0:  # check if the character is dead
                 self.actor.health = 0
                 self.character_state = CharacterState.dead
 
@@ -93,13 +91,14 @@ class Controller:
         self.y += 1 if not self.in_battle else 5
         self.character_state = CharacterState.moving
 
-    def check_direction(self, window, frame_index, animation, adjusted_rect):
+    def check_direction(self, window: pygame.Surface, frame_index: int, animation: list,
+                        adjusted_rect: pygame.Rect):  # check the direction of the character
         if self.moving_left_direction:
             window.blit(pygame.transform.flip(animation[frame_index], True, False), adjusted_rect)
         else:
             window.blit(animation[frame_index], adjusted_rect)
 
-    def perform_attack(self):
+    def perform_attack(self):  # perform attack on the enemy
         if self.skill:
             if self.skill['targets'] == 'all':
                 for enemy in self.enemy_team:
@@ -111,10 +110,11 @@ class Controller:
 
         self.skill = None
 
-    def adjust_rect(self, rect):
+    def adjust_rect(self, rect: pygame.Rect):
         pass
 
-    def draw(self, window, adjusted_rect=pygame.Rect(0, 0, 1280, 720)):
+    def draw(self, window: pygame.Surface,
+             adjusted_rect: pygame.Rect = pygame.Rect(0, 0, 1280, 720)):  # draw the character
         adjusted_rect = self.adjust_rect(adjusted_rect)
 
         if not self.in_battle and self.character_state != CharacterState.hit:
@@ -134,7 +134,8 @@ class Controller:
                 self.manage_death_animation(adjusted_rect, window)
             case CharacterState.healing.value:
                 self.manage_healing_animation(adjusted_rect, window)
-    def manage_attack_animation(self, window, adjusted_rect):
+
+    def manage_attack_animation(self, window: pygame.Surface, adjusted_rect: pygame.Rect | None):
         if self.in_action:
             self.actor_renderer.attack_vfx(window, self.skill, self.enemy_team, self.target, self.actor)
         self.actor_renderer.manage_attack_animation(window, adjusted_rect, self.moving_left_direction)
@@ -148,8 +149,8 @@ class Controller:
                 self.battle_state = CharacterBattleState.attacking
                 self.perform_attack()
 
-    def manage_hit_animation(self, adjusted_rect, window):
-        self.actor_renderer.draw_damage(window, self.actor, self.is_weak)
+    def manage_hit_animation(self, adjusted_rect: pygame.Rect | None, window: pygame.Surface):
+        draw_damage(window, self.actor, self.is_weak)
         self.actor_renderer.manage_hit_animation(window, adjusted_rect, self.moving_left_direction)
         if self.actor_renderer.hit_frame_count >= len(self.actor_renderer.damage_taken) * (
                 30 // len(self.actor_renderer.damage_taken)):
@@ -157,16 +158,16 @@ class Controller:
             self.actor_renderer.hit_frame_count = 0
             self.finished_hit = True
 
-    def manage_death_animation(self, adjusted_rect, window):
+    def manage_death_animation(self, adjusted_rect: pygame.Rect | None, window: pygame.Surface):
         self.actor_renderer.manage_death_animation(window, adjusted_rect, self.moving_left_direction)
         if self.actor_renderer.death_frame_count >= len(self.actor_renderer.death) * (
                 29 // len(self.actor_renderer.death)):
             self.character_state = CharacterState.inactive
             self.actor_renderer.death_frame_count = 0
 
-    def manage_healing_animation(self, adjusted_rect, window):
+    def manage_healing_animation(self, adjusted_rect: pygame.Rect | None, window: pygame.Surface):
         self.actor_renderer.manage_heal_animation(window, adjusted_rect, self.moving_left_direction)
-        self.actor_renderer.draw_heal(window, self.target, self.skill['value'])
+        draw_heal(window, self.target, self.skill['value'])
         self.actor_renderer.heal_vfx(window, self.target)
         element = 'MAGIC'
         vfx_animation = VFX.skills.get(element, [])
@@ -179,7 +180,7 @@ class Controller:
             self.character_state = CharacterState.idle
             self.skill = None
 
-    def go_back(self, position):
+    def go_back(self, position: tuple[int, int]):
         if self.x < position[0]:
             self.moveRight()
         if self.y < position[1]:
@@ -198,7 +199,7 @@ class Controller:
             self.previous_battle_state = self.battle_state
             self.battle_state = CharacterBattleState.back_in_position
 
-    def go_to_enemy(self, enemy, offset):
+    def go_to_enemy(self, enemy: Actor, offset: int):
         if self.x < enemy.rect.x - offset:
             self.moveRight()
         elif self.x > enemy.rect.x + offset:

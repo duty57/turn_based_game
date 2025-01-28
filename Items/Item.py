@@ -2,11 +2,9 @@ import pygame
 
 
 class Item:
-    def __init__(self, name, quantity):
-
-        self.quantity = quantity
-
+    def __init__(self, name: str):
         self.item_type = None
+        self.rarity = None
         self.name = name
         self.description = None
         self.image = None
@@ -14,7 +12,5 @@ class Item:
         self.owner = None
         self.is_equipped = False
 
-    def set_image(self, path):
+    def set_image(self, path: str):
         self.image = pygame.image.load(path)
-
-
