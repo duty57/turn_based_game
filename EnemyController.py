@@ -44,7 +44,7 @@ class EnemyController(Controller):
                 self.y - self.main_character.controller.y) ** 2 < 25 ** 2:
             if self.trigger_time is None:
                 self.trigger_time = pygame.time.get_ticks()  # Record the time when the enemy is triggered
-            elif pygame.time.get_ticks() - self.trigger_time > 1500:  # If 1 second has passed since the enemy was triggered
+            elif pygame.time.get_ticks() - self.trigger_time > 750:  # If 1 second has passed since the enemy was triggered
                 self.character_state = CharacterState.attacking
                 self.main_character.controller.collide()
                 self.trigger_time = None

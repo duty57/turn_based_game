@@ -4,7 +4,7 @@ import pygame
 from turn_based_game.LoadCharacters import character_init_enemy
 from turn_based_game.Items.Chest import Chest
 
-enemy_list = ['Skeleton', 'Goblin', 'Flying_demon']
+enemy_list = ['Skeleton', 'Goblin', 'Flying_demon', 'Golden_Skeleton']
 
 
 class Level:
@@ -49,10 +49,10 @@ class Level:
             [10, 10, 10, 10, 10, 10, 10, 10, 10, 31, 11, 36, 22, 22, 10, 10, 10, 10, 10, 10],
             [10, 21, 21, 21, 21, 10, 10, 10, 10, 31, 10, 32, 10, 10, 10, 10, 10, 10, 10, 10],
 
-            [31, 10, 10, 10, 10, 33, 21, 21, 21, 34, 10, 33, 21, 21, 21, 21, 21, 21, 21, 10],
+            [31, 10, 10, 10, 57, 33, 21, 21, 21, 34, 10, 33, 21, 21, 21, 21, 21, 21, 21, 10],
             [31, 10, 10, 10, 10, 10, 10, 13, 10, 10, 10, 10, 10, 10, 10, 11, 10, 10, 10, 32],
-            [31, 10, 14, 10, 10, 69, 10, 13, 10, 10, 10, 10, 10, 10, 11, 10, 69, 10, 13, 32],
-            [31, 10, 10, 10, 10, 36, 22, 22, 22, 35, 10, 10, 10, 10, 10, 12, 12, 12, 10, 32],
+            [31, 10, 14, 10, 10, 11, 12, 13, 10, 69, 10, 10, 10, 10, 11, 10, 69, 10, 13, 32],
+            [31, 10, 10, 10, 57, 36, 22, 22, 22, 35, 10, 10, 10, 10, 10, 12, 12, 12, 10, 32],
 
             [10, 22, 22, 22, 22, 10, 10, 10, 10, 31, 10, 10, 10, 10, 10, 10, 10, 10, 10, 32],
             [11, 10, 10, 10, 10, 10, 10, 10, 10, 31, 10, 12, 10, 10, 10, 10, 10, 10, 10, 32],
@@ -101,7 +101,7 @@ class Level:
         for y, row in enumerate(self.tile_map_world):
             for x, tile_id in enumerate(row):
                 if tile_id == 69:
-                    enemies.append(character_init_enemy(enemy_list[random.randint(1,2)], x * self.tile_width, y * self.tile_height, None))
+                    enemies.append(character_init_enemy(enemy_list[1], x * self.tile_width, y * self.tile_height, None))
         return enemies
 
     def get_chests(self):

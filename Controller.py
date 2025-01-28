@@ -51,12 +51,12 @@ class Controller:
         instant_kill_chance = 100 - skill.get('instant_kill_chance', 0) if skill and skill.get('instant_kill_chance',
                                                                                                0) != 0 else 0
         if chance <= self.actor.agility + instant_kill_chance or chance <= self.actor.agility:
-            self.actor.damage = -1
+            self.actor.damage = -100
             return
 
         if self.character_state.value != CharacterState.inactive.value:
             if element in self.actor.immunity:
-                self.actor.damage = 0
+                self.actor.damage = -1
                 self.is_weak = False
             elif element in self.actor.weakness:
                 self.actor.damage = int(damage * 2)
@@ -65,7 +65,7 @@ class Controller:
                 self.actor.damage = max(0, damage - self.actor.defense)
                 self.is_weak = False
 
-            self.actor.health -= self.actor.damage
+            self.actor.health -= max(0, self.actor.damage)
             if self.actor.health <= 0:
                 self.actor.health = 0
                 self.character_state = CharacterState.dead

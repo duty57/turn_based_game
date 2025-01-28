@@ -46,10 +46,12 @@ class ActorRenderer:
         if actor.damage > 0:
             damage_text = f"WEAK: {actor.damage}" if is_weak else str(actor.damage)
             damage_text = font.render(damage_text, True, (255, 0, 0))
-        elif actor.damage < 0:
+        elif actor.damage == -100:
             damage_text = font.render("Miss", True, (255, 255, 255))
-        else:
+        elif actor.damage == -1:
             damage_text = font.render("Immune", True, (178, 178, 172))
+        else:
+            damage_text = font.render("Blocked", True, (178, 178, 172))
 
         window.blit(damage_text, (actor.controller.x, actor.controller.y - 50))
 

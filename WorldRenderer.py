@@ -42,7 +42,7 @@ class WorldRenderer:
                 pygame.draw.rect(self.window, (255, 0, 0), (960, 125 + 50 * i, 265, 50), 1)
             self.window.blit(item.image, (960, 135 + 50 * i))
             font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 14)
-            item_name_text = font.render(item.name, True, (255, 255, 255))
+            item_name_text = font.render(item.name, True, UI.item_colors[item.rarity])
             item_stats_text = font.render(item.get_stats(), True, (255, 255, 0))
             self.window.blit(item_name_text, (1015, 135 + 50 * i))
             self.window.blit(item_stats_text, (1010, 160 + 50 * i))

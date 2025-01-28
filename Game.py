@@ -106,7 +106,7 @@ class Game:
 
     def generate_enemy_team(self):
         pass
-        self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
+        self.enemies.append(character_init_enemy(enemy_list[3], 0, 0, self.main_character))
         self.enemies.append(character_init_enemy(random.choice(enemy_list), 0, 0, self.main_character))
 
     def start_battle(self, initiative=Initiative.player_initiative):

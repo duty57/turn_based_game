@@ -105,3 +105,8 @@ class GameUI:
         "rare": pygame.image.load('turn_based_game/assets/UI/Frames/Items/rare_frame.png'),
         "legendary": pygame.image.load('turn_based_game/assets/UI/Frames/Items/legendary_frame.png'),
     }
+    item_colors = {
+        "common": (106, 166, 65),
+        "rare": (11, 178, 191),
+        "legendary": (236, 106, 14)
+    }

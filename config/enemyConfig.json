@@ -107,5 +107,41 @@
         "instant_kill_chance": 0
       }
     ]
+  },
+  "Golden_Skeleton": {
+    "name": "Golden Skeleton",
+    "maxHealth": 90,
+    "strength": 30,
+    "intelligence": 15,
+    "defense": 10,
+    "speed": 15,
+    "agility": 10,
+    "actionPoints": 25,
+    "characterClass": "Enemy",
+    "element": "LIGHT",
+    "immunity": ["PIERCE", "SLASH"],
+    "weakness": ["DARK", "WIND"],
+    "skills": [
+      {
+        "name": "Golden Strike",
+        "type": "attack",
+        "cost": 25,
+        "description": "A powerful strike dealing 40 damage to a single enemy.",
+        "value": 40,
+        "element": "PIERCE",
+        "targets": "one",
+        "instant_kill_chance": 0
+      },
+      {
+        "name": "Shining Barrage",
+        "type": "attack",
+        "cost": 30,
+        "description": "Unleash a barrage of light, dealing 35 damage to all enemies.",
+        "value": 35,
+        "element": "LIGHT",
+        "targets": "all",
+        "instant_kill_chance": 0
+      }
+    ]
   }
 }
