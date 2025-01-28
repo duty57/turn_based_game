@@ -11,7 +11,7 @@ def main():
     pygame.mixer.init()
     game = Game()
     level = Level()
-    camera = Camera(1280, 1000, 1280, 720)
+    camera = Camera(1280, 1250, 1280, 720)
 
     Warrior = init_character('Warrior', 200, 300, True, (64, 48))
     Healer = init_character('Witch', 200, 300)

@@ -134,9 +134,6 @@ class Controller:
                 self.manage_death_animation(adjusted_rect, window)
             case CharacterState.healing.value:
                 self.manage_healing_animation(adjusted_rect, window)
-
-        pygame.draw.rect(window, (255, 0, 0), self.actor.rect, 2)
-
     def manage_attack_animation(self, window, adjusted_rect):
         if self.in_action:
             self.actor_renderer.attack_vfx(window, self.skill, self.enemy_team, self.target, self.actor)

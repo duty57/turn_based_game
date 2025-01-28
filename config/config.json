@@ -48,8 +48,8 @@
     "actionPoints": 40,
     "characterClass": "Wizard",
     "element": "FIRE",
-    "immunity": ["FIRE"],
-    "weakness": ["WIND"],
+    "immunity": ["FIRE", "DARK"],
+    "weakness": ["LIGHT"],
     "skills": [
       {
         "name": "Fireball",

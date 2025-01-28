@@ -90,7 +90,6 @@ class WorldRenderer:
         self.draw_level()
         self.draw_ui()
         self.draw_item(item, spawn_time)
-
         for obj in objects:
             if obj.name == "Chest":
                 obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
@@ -98,5 +97,6 @@ class WorldRenderer:
             else:
                 obj_rect = obj.rect.move(-self.camera.camera_rect.x, -self.camera.camera_rect.y)  # Adjust for camera
                 obj.controller.draw(self.window, adjusted_rect=obj_rect)
+
 
         pygame.display.update()
