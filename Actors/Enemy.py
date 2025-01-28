@@ -1,5 +1,5 @@
-from turn_based_game.Actor import Actor
-from turn_based_game.EnemyController import EnemyController
+from turn_based_game.Actors.Actor import Actor
+from turn_based_game.Controllers.EnemyController import EnemyController
 
 
 class Enemy(Actor):

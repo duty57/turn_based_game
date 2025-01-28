@@ -4,8 +4,8 @@ import pygame
 from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
 from turn_based_game.Level import Level
-from turn_based_game.BattleRenderer import BattleRenderer
-from turn_based_game.BattleRenderer import draw_message
+from turn_based_game.Renderers.BattleRenderer import BattleRenderer
+from turn_based_game.Renderers.BattleRenderer import draw_message
 
 pygame.mixer.init()
 ambient_music = pygame.mixer.Sound('turn_based_game/audio/ambient_battle.mp3')

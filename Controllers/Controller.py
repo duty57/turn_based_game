@@ -1,8 +1,8 @@
 import random
 import pygame
 from turn_based_game.Enums import CharacterState, CharacterBattleState
-from turn_based_game.VFX import VFX
-from turn_based_game.ActorRenderer import ActorRenderer
+from turn_based_game.Dataclasses.VFX import VFX
+from turn_based_game.Renderers.ActorRenderer import ActorRenderer
 
 
 def get_frame_index(frame_count, k, vfx_animation):

@@ -1,7 +1,7 @@
 import time
 
 import pygame
-from turn_based_game.GameUI import GameUI as UI, draw_ui
+from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
 from turn_based_game.Level import Level
 
 

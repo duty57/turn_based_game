@@ -3,7 +3,7 @@ import random
 
 import pygame
 
-from turn_based_game.GameUI import GameUI as UI
+from turn_based_game.Dataclasses.GameUI import GameUI as UI
 from turn_based_game.Items.Armor import Armor
 from turn_based_game.Items.Weapon import Weapon
 

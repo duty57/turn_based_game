@@ -1,7 +1,7 @@
 import pygame
 
 from turn_based_game.Enums import Initiative
-from turn_based_game.GameUI import GameUI as UI, draw_ui
+from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
 
 
 def draw_message(window, message, position, duration=1000):

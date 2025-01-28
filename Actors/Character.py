@@ -1,5 +1,5 @@
-from turn_based_game.Actor import Actor
-from turn_based_game.CharacterController import CharacterController
+from turn_based_game.Actors.Actor import Actor
+from turn_based_game.Controllers.CharacterController import CharacterController
 
 
 def unequip_item(item):

@@ -2,8 +2,8 @@ import os
 
 import pygame
 
-from turn_based_game.Character import Character
-from turn_based_game.Enemy import Enemy
+from turn_based_game.Actors.Character import Character
+from turn_based_game.Actors.Enemy import Enemy
 
 
 def count_files_in_folder(folder_path):

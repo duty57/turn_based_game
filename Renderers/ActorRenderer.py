@@ -1,6 +1,6 @@
 import pygame
 
-from turn_based_game.VFX import VFX
+from turn_based_game.Dataclasses.VFX import VFX
 
 
 def get_frame_index(frame_count, k, vfx_animation):

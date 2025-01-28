@@ -1,5 +1,5 @@
 import pygame
-from turn_based_game.Controller import Controller
+from turn_based_game.Controllers.Controller import Controller
 from turn_based_game.Enums import CharacterState
 pygame.mixer.init()
 

@@ -4,12 +4,12 @@ import pygame
 import pygame.mixer
 import time
 
-from turn_based_game.LoadCharacters import character_init_enemy
-from turn_based_game.WorldRenderer import WorldRenderer
+from turn_based_game.Actors.LoadCharacters import character_init_enemy
+from turn_based_game.Renderers.WorldRenderer import WorldRenderer
 from turn_based_game.Battle import Battle
 from turn_based_game.Level import enemy_list
 from Enums import Initiative
-from turn_based_game.Character import equip_item, unequip_item
+from turn_based_game.Actors.Character import equip_item, unequip_item
 
 pygame.mixer.init()
 

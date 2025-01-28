@@ -1,7 +1,5 @@
-import random
-
 import pygame
-from turn_based_game.LoadCharacters import character_init_enemy
+from turn_based_game.Actors.LoadCharacters import character_init_enemy
 from turn_based_game.Items.Chest import Chest
 
 enemy_list = ['Skeleton', 'Goblin', 'Flying_demon', 'Golden_Skeleton']
