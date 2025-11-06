@@ -4,18 +4,18 @@ import pygame
 import pygame.mixer
 import time
 
-from turn_based_game.Actors.LoadCharacters import character_init_enemy
-from turn_based_game.Camera import Camera
-from turn_based_game.Items.Item import Item
-from turn_based_game.Renderers.WorldRenderer import WorldRenderer
-from turn_based_game.Battle import Battle
-from turn_based_game.Level import enemy_list, Level
+from Actors.LoadCharacters import character_init_enemy
+from Camera import Camera
+from Items.Item import Item
+from Renderers.WorldRenderer import WorldRenderer
+from Battle import Battle
+from Level import enemy_list, Level
 from Enums import Initiative
-from turn_based_game.Actors.Character import equip_item, unequip_item
+from Actors.Character import equip_item, unequip_item
 
 pygame.mixer.init()
 
-ambient_music = pygame.mixer.Sound('turn_based_game/audio/ambient_world.mp3')
+ambient_music = pygame.mixer.Sound('audio/ambient_world.mp3')
 
 class Game:
 

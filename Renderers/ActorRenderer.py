@@ -1,7 +1,7 @@
 import pygame
 
-from turn_based_game.Actors.Actor import Actor
-from turn_based_game.Dataclasses.VFX import VFX
+from Actors.Actor import Actor
+from Dataclasses.VFX import VFX
 
 
 def get_frame_index(frame_count: int, k: int, vfx_animation: list):
@@ -17,13 +17,13 @@ def check_direction(moving_left_direction: bool, window: pygame.Surface, frame_i
 
 
 def draw_heal(window: pygame.Surface, target: Actor, heal_value: int = 0):
-    font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
+    font = pygame.font.Font('assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
     heal_text = font.render(str(heal_value), True, (0, 255, 0))
     window.blit(heal_text, (target.controller.x, target.controller.y - 50))
 
 
 def draw_damage(window: pygame.Surface, actor: Actor, is_weak: bool):
-    font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
+    font = pygame.font.Font('assets/UI/Fonts/Raleway-MediumItalic.ttf', 16)
     if actor.damage > 0:
         damage_text = f"WEAK: {actor.damage}" if is_weak else str(actor.damage)
         damage_text = font.render(damage_text, True, (255, 0, 0))

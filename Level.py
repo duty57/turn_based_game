@@ -1,7 +1,7 @@
 import pygame
-from turn_based_game.Actors.LoadCharacters import character_init_enemy
-from turn_based_game.Camera import Camera
-from turn_based_game.Items.Chest import Chest
+from Actors.LoadCharacters import character_init_enemy
+from Camera import Camera
+from Items.Chest import Chest
 
 enemy_list = ['Skeleton', 'Goblin', 'Flying_demon', 'Golden_Skeleton']
 
@@ -21,24 +21,24 @@ class Level:
         # 41-50 background tiles
         # 69 - enemy spawn point
         self.tiles = {
-            10: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_1.png'),
-            21: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Horizontal_1.png'),
-            22: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Horizontal_2.png'),
-            31: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Vertical_1.png'),
-            32: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Vertical_2.png'),
-            33: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Corner_Outside_1.png'),
-            34: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Corner_Outside_2.png'),
-            35: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Corner_Outside_3.png'),
-            36: pygame.image.load('turn_based_game/assets/Map/Walls/Wall_Corner_Outside_4.png'),
-            11: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_2.png'),
-            12: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_3.png'),
-            13: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_7.png'),
-            14: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_8.png'),
-            40: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_13.png'),
-            41: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_14.png'),
-            42: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_12.png'),
-            57: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_4.png'),
-            69: pygame.image.load('turn_based_game/assets/Map/Tiles/Map_Tile_5.png')
+            10: pygame.image.load('assets/Map/Tiles/Map_Tile_1.png'),
+            21: pygame.image.load('assets/Map/Walls/Wall_Horizontal_1.png'),
+            22: pygame.image.load('assets/Map/Walls/Wall_Horizontal_2.png'),
+            31: pygame.image.load('assets/Map/Walls/Wall_Vertical_1.png'),
+            32: pygame.image.load('assets/Map/Walls/Wall_Vertical_2.png'),
+            33: pygame.image.load('assets/Map/Walls/Wall_Corner_Outside_1.png'),
+            34: pygame.image.load('assets/Map/Walls/Wall_Corner_Outside_2.png'),
+            35: pygame.image.load('assets/Map/Walls/Wall_Corner_Outside_3.png'),
+            36: pygame.image.load('assets/Map/Walls/Wall_Corner_Outside_4.png'),
+            11: pygame.image.load('assets/Map/Tiles/Map_Tile_2.png'),
+            12: pygame.image.load('assets/Map/Tiles/Map_Tile_3.png'),
+            13: pygame.image.load('assets/Map/Tiles/Map_Tile_7.png'),
+            14: pygame.image.load('assets/Map/Tiles/Map_Tile_8.png'),
+            40: pygame.image.load('assets/Map/Tiles/Map_Tile_13.png'),
+            41: pygame.image.load('assets/Map/Tiles/Map_Tile_14.png'),
+            42: pygame.image.load('assets/Map/Tiles/Map_Tile_12.png'),
+            57: pygame.image.load('assets/Map/Tiles/Map_Tile_4.png'),
+            69: pygame.image.load('assets/Map/Tiles/Map_Tile_5.png')
         }
         self.generate_world_map()
         self.generate_battle_map()

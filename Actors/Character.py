@@ -1,10 +1,10 @@
 import pygame
 
-from turn_based_game.Actors.Actor import Actor
-from turn_based_game.Controllers.CharacterController import CharacterController
-from turn_based_game.Items.Item import Item
-from turn_based_game.Items.Armor import Armor
-from turn_based_game.Items.Weapon import Weapon
+from Actors.Actor import Actor
+from Controllers.CharacterController import CharacterController
+from Items.Item import Item
+from Items.Armor import Armor
+from Items.Weapon import Weapon
 
 
 def unequip_item(item: Item):

@@ -1,9 +1,9 @@
 import pygame
 
-from turn_based_game.Camera import Camera
-from turn_based_game.Game import Game
-from turn_based_game.Level import Level
-from turn_based_game.Actors.LoadCharacters import init_character
+from Camera import Camera
+from Game import Game
+from Level import Level
+from Actors.LoadCharacters import init_character
 
 
 def main():

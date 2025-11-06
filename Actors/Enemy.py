@@ -1,8 +1,8 @@
 import pygame
 
-from turn_based_game.Actors.Actor import Actor
-from turn_based_game.Controllers.EnemyController import EnemyController
-from turn_based_game.Actors.Character import Character
+from Actors.Actor import Actor
+from Controllers.EnemyController import EnemyController
+from Actors.Character import Character
 
 
 class Enemy(Actor):

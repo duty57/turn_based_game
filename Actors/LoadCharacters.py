@@ -2,8 +2,8 @@ import os
 
 import pygame
 
-from turn_based_game.Actors.Character import Character
-from turn_based_game.Actors.Enemy import Enemy
+from Actors.Character import Character
+from Actors.Enemy import Enemy
 
 
 def count_files_in_folder(folder_path: str):
@@ -19,23 +19,23 @@ def resize_images(image_list, size):  # Resize all images in a list to a consist
     return [pygame.transform.scale(img, size) for img in image_list]
 
 def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = False, size: tuple = (0, 0)):
-    character = Character('turn_based_game/config/config.json', character_name, x, y)
+    character = Character('config/config.json', character_name, x, y)
 
     move_right = [
-        f'turn_based_game/assets/Characters/{character_name}/Run/{character_name}_Run_{i}.png' for
-        i in range(1, count_files_in_folder(f'turn_based_game/assets/Characters/{character_name}/Run/'))]
+        f'assets/Characters/{character_name}/Run/{character_name}_Run_{i}.png' for
+        i in range(1, count_files_in_folder(f'assets/Characters/{character_name}/Run/'))]
     idle = [
-        f'turn_based_game/assets/Characters/{character_name}/Idle/{character_name}_Idle_{i}.png' for
-        i in range(1, count_files_in_folder(f'turn_based_game/assets/Characters/{character_name}/Idle/'))]
+        f'assets/Characters/{character_name}/Idle/{character_name}_Idle_{i}.png' for
+        i in range(1, count_files_in_folder(f'assets/Characters/{character_name}/Idle/'))]
     attack = [
-        f'turn_based_game/assets/Characters/{character_name}/Attack/{character_name}_Attack_{i}.png' for
-        i in range(1, count_files_in_folder(f'turn_based_game/assets/Characters/{character_name}/Attack/'))]
+        f'assets/Characters/{character_name}/Attack/{character_name}_Attack_{i}.png' for
+        i in range(1, count_files_in_folder(f'assets/Characters/{character_name}/Attack/'))]
     hit = [
-        f'turn_based_game/assets/Characters/{character_name}/Hit/{character_name}_Hit_{i}.png' for
-        i in range(1, count_files_in_folder(f'turn_based_game/assets/Characters/{character_name}/Hit/'))]
+        f'assets/Characters/{character_name}/Hit/{character_name}_Hit_{i}.png' for
+        i in range(1, count_files_in_folder(f'assets/Characters/{character_name}/Hit/'))]
     dead = [
-        f'turn_based_game/assets/Characters/{character_name}/Dead/{character_name}_Dead_{i}.png' for
-        i in range(1, count_files_in_folder(f'turn_based_game/assets/Characters/{character_name}/Dead/'))]
+        f'assets/Characters/{character_name}/Dead/{character_name}_Dead_{i}.png' for
+        i in range(1, count_files_in_folder(f'assets/Characters/{character_name}/Dead/'))]
 
     move_right = [pygame.image.load(img) for img in move_right]
     idle = [pygame.image.load(img) for img in idle]
@@ -51,7 +51,7 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
         dead = resize_images(dead, size)
 
     profile_picture = \
-    resize_images([pygame.image.load(f'turn_based_game/assets/UI/Frames/Characters/{character_name}_Profile.png')],
+    resize_images([pygame.image.load(f'assets/UI/Frames/Characters/{character_name}_Profile.png')],
                   (40, 43))[0]
 
     animations_dict = {
@@ -69,20 +69,20 @@ def init_character(character_name: str, x: int = 0, y: int = 0, resize: bool = F
 
 
 def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Character | None):
-    enemy = Enemy('turn_based_game/config/enemyConfig.json', enemy_name, x, y, main_character)
+    enemy = Enemy('config/enemyConfig.json', enemy_name, x, y, main_character)
 
     size = (64, 64)  # Define a consistent size for all images
 
-    move_right = [f'turn_based_game/assets/Enemies/{enemy_name}/Run/{enemy_name}_Run_{str(i)}.png' for
-                  i in range(1, count_files_in_folder(f'turn_based_game/assets/Enemies/{enemy_name}/Run/'))]
-    idle = [f'turn_based_game/assets/Enemies/{enemy_name}/Idle/{enemy_name}_Idle_{str(i)}.png' for
-                  i in range(1, count_files_in_folder(f'turn_based_game/assets/Enemies/{enemy_name}/Idle/'))]
-    attack = [f'turn_based_game/assets/Enemies/{enemy_name}/Attack/{enemy_name}_Attack_{i}.png'
-              for i in range(1, count_files_in_folder(f'turn_based_game/assets/Enemies/{enemy_name}/Attack/'))]
-    hit = [f'turn_based_game/assets/Enemies/{enemy_name}/Hit/{enemy_name}_Hit_{i}.png'
-           for i in range(1, count_files_in_folder(f'turn_based_game/assets/Enemies/{enemy_name}/Hit/'))]
-    dead = [f'turn_based_game/assets/Enemies/{enemy_name}/Dead/{enemy_name}_Dead_{i}.png'
-            for i in range(1, count_files_in_folder(f'turn_based_game/assets/Enemies/{enemy_name}/Dead/'))]
+    move_right = [f'assets/Enemies/{enemy_name}/Run/{enemy_name}_Run_{str(i)}.png' for
+                  i in range(1, count_files_in_folder(f'assets/Enemies/{enemy_name}/Run/'))]
+    idle = [f'assets/Enemies/{enemy_name}/Idle/{enemy_name}_Idle_{str(i)}.png' for
+                  i in range(1, count_files_in_folder(f'assets/Enemies/{enemy_name}/Idle/'))]
+    attack = [f'assets/Enemies/{enemy_name}/Attack/{enemy_name}_Attack_{i}.png'
+              for i in range(1, count_files_in_folder(f'assets/Enemies/{enemy_name}/Attack/'))]
+    hit = [f'assets/Enemies/{enemy_name}/Hit/{enemy_name}_Hit_{i}.png'
+           for i in range(1, count_files_in_folder(f'assets/Enemies/{enemy_name}/Hit/'))]
+    dead = [f'assets/Enemies/{enemy_name}/Dead/{enemy_name}_Dead_{i}.png'
+            for i in range(1, count_files_in_folder(f'assets/Enemies/{enemy_name}/Dead/'))]
 
     move_right = [pygame.image.load(img) for img in move_right]
     idle = [pygame.image.load(img) for img in idle]
@@ -91,7 +91,7 @@ def character_init_enemy(enemy_name: str, x: int, y: int, main_character: Charac
     dead = [pygame.image.load(img) for img in dead]
 
     profile_picture = \
-    resize_images([pygame.image.load(f'turn_based_game/assets/UI/Frames/Enemies/{enemy_name}_Profile.png')], (40, 43))[0]
+    resize_images([pygame.image.load(f'assets/UI/Frames/Enemies/{enemy_name}_Profile.png')], (40, 43))[0]
 
     animations_dict = {
         'move_right': move_right,

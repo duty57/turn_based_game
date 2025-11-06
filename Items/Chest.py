@@ -3,9 +3,9 @@ import random
 
 import pygame
 
-from turn_based_game.Dataclasses.GameUI import GameUI as UI
-from turn_based_game.Items.Armor import Armor
-from turn_based_game.Items.Weapon import Weapon
+from Dataclasses.GameUI import GameUI as UI
+from Items.Armor import Armor
+from Items.Weapon import Weapon
 
 chest_types = ["common", "equipment", "legendary"]
 
@@ -58,7 +58,7 @@ class Chest(pygame.sprite.Sprite):
         else:
             category = "weapon"
 
-        with open('turn_based_game/config/itemStats.json') as file:
+        with open('config/itemStats.json') as file:
             data = json.load(file)
             item_name = data[category][rarity]
             random_item = random.choice(list(item_name))

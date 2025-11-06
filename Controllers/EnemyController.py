@@ -1,11 +1,11 @@
 import pygame
 
-from turn_based_game.Actors.Character import Character
-from turn_based_game.Controllers.Controller import Controller
-from turn_based_game.Enums import CharacterState
+from Actors.Character import Character
+from Controllers.Controller import Controller
+from Enums import CharacterState
 
 pygame.mixer.init()
-enemy_hit_sound = pygame.mixer.Sound('turn_based_game/audio/enemy_hit_sound.mp3')
+enemy_hit_sound = pygame.mixer.Sound('audio/enemy_hit_sound.mp3')
 
 
 def select_target(team: list):

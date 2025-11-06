@@ -1,10 +1,10 @@
 import random
 import pygame
 
-from turn_based_game.Actors.Actor import Actor
-from turn_based_game.Enums import CharacterState, CharacterBattleState
-from turn_based_game.Dataclasses.VFX import VFX
-from turn_based_game.Renderers.ActorRenderer import ActorRenderer, draw_damage, draw_heal
+from Actors.Actor import Actor
+from Enums import CharacterState, CharacterBattleState
+from Dataclasses.VFX import VFX
+from Renderers.ActorRenderer import ActorRenderer, draw_damage, draw_heal
 
 
 class Controller:

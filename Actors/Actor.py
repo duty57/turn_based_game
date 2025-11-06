@@ -1,7 +1,7 @@
 import json
 
 import pygame
-from turn_based_game.Dataclasses.GameUI import GameUI as UI
+from Dataclasses.GameUI import GameUI as UI
 
 
 # TODO formula for enemy leveling: player_level + 1 * (player_level // 5)

@@ -1,10 +1,10 @@
 import pygame
-from turn_based_game.Controllers.Controller import Controller
-from turn_based_game.Enums import CharacterState
+from Controllers.Controller import Controller
+from Enums import CharacterState
 
 pygame.mixer.init()
 
-character_hit_sound = pygame.mixer.Sound('turn_based_game/audio/character_hit_sound.mp3')
+character_hit_sound = pygame.mixer.Sound('audio/character_hit_sound.mp3')
 
 
 class CharacterController(Controller):

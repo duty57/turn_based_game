@@ -1,14 +1,14 @@
 import pygame
 
-from turn_based_game.Enums import Initiative
-from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
-from turn_based_game.Level import Level
+from Enums import Initiative
+from Dataclasses.GameUI import GameUI as UI, draw_ui
+from Level import Level
 
 
 def draw_message(window: pygame.Surface, message: str, position: tuple, duration: int = 1000):
     if not isinstance(position, tuple):
         raise TypeError("Position must be a tuple containing x and y coordinates")
-    font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Raleway-MediumItalic.ttf', 14)
+    font = pygame.font.Font('assets/UI/Fonts/Raleway-MediumItalic.ttf', 14)
     text = font.render(message, True, (255, 0, 0))
     window.blit(text, (position[0] + 50, position[1] - 25))
     pygame.display.update()
@@ -22,7 +22,7 @@ class BattleRenderer:
         self.level = level
 
     def start(self, initiative: Initiative):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 48)
         text_value = "Alies have the initiative!" if initiative.value == Initiative.player_initiative.value else "Enemies have the initiative!"
         color = (0, 255, 0) if initiative.value == Initiative.player_initiative.value else (255, 0, 0)
         text = font.render(text_value, True, color)
@@ -35,7 +35,7 @@ class BattleRenderer:
         UI.character_highlight.set_alpha(128)
 
     def end(self, text_value: str, color: tuple):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 48)
         text = font.render(text_value, True, color)
         text_rect = text.get_rect(center=(640, 360))
         self.window.fill((0, 0, 0))
@@ -72,13 +72,13 @@ class BattleRenderer:
             draw_ui(self.window, enemy, 1220 - 85 * i)
 
     def draw_level_up(self, characters: list):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 48)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 48)
         text = font.render("LEVEL UP!", True, (255, 255, 0))
         text_rect = text.get_rect(center=(self.window.get_width() // 2, 50))
         self.window.fill((0, 0, 0))
         self.window.blit(text, text_rect)
 
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 24)
         for i, character in enumerate(characters):
             name_text = font.render(character.name, True, (255, 255, 255))
             self.window.blit(name_text, (150 + 300 * i, 450))
@@ -106,7 +106,7 @@ class BattleRenderer:
         pygame.display.update()
 
     def draw_actions(self):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 24)
         skill_text = font.render("Skills", True, (182, 182, 182))
         select_text = font.render("Select", True, (182, 182, 182))
         use_text = font.render("Use", True, (182, 182, 182))
@@ -121,12 +121,12 @@ class BattleRenderer:
     def draw_skill_list(self, d_key_pressed: bool, turn_order: list, current_turn: int, skill_selection_index:int = 0):
         skill_selection_index %= len(turn_order[current_turn].skills)
         if d_key_pressed:
-            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
+            font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 24)
             self.window.blit(UI.list_image, (15, 100))
             text = font.render("Skills", True, (255, 255, 255))
             self.window.blit(text, (140, 75))
             for i, skill in enumerate(turn_order[current_turn].skills):
-                font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
+                font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 16)
                 rect = pygame.Rect(50, 125 + 67 * i, 255, 65)
                 if i == skill_selection_index:
                     pygame.draw.rect(self.window, (255, 0, 0), rect, 2)
@@ -137,7 +137,7 @@ class BattleRenderer:
                 skill_text = font.render(str(skill['cost']), True, (255, 255, 0))
                 self.window.blit(skill_text, (225, 130 + 67 * i))
 
-                font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 12)
+                font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 12)
                 for j, line in enumerate(skill['description'].split('\n')):
                     skill_text = font.render(line, True, (255, 255, 255))
                     self.window.blit(skill_text, (55, 150 + 67 * i + 12 * j))
@@ -161,7 +161,7 @@ class BattleRenderer:
                     0))
 
     def draw_turn_order(self, turn_order: list, current_turn_ui: int, player_team: list, enemy_team: list):
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 16)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 16)
         text_now = font.render("Now", True, (255, 255, 0))
         text_next = font.render("Next", True, (255, 255, 0))
         if turn_order[current_turn_ui % len(turn_order)].is_enemy():

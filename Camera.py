@@ -1,6 +1,6 @@
 import pygame
 
-from turn_based_game.Actors.Actor import Actor
+from Actors.Actor import Actor
 
 
 class Camera:

@@ -4,15 +4,15 @@ import pygame
 from Enums import Initiative, CharacterBattleState, CharacterState, SelectionMode
 import copy
 
-from turn_based_game.Actors.Actor import Actor
-from turn_based_game.Controllers.CharacterController import CharacterController
-from turn_based_game.Controllers.Controller import Controller
-from turn_based_game.Level import Level
-from turn_based_game.Renderers.BattleRenderer import BattleRenderer
-from turn_based_game.Renderers.BattleRenderer import draw_message
+from Actors.Actor import Actor
+from Controllers.CharacterController import CharacterController
+from Controllers.Controller import Controller
+from Level import Level
+from Renderers.BattleRenderer import BattleRenderer
+from Renderers.BattleRenderer import draw_message
 
 pygame.mixer.init()
-ambient_music = pygame.mixer.Sound('turn_based_game/audio/ambient_battle.mp3')
+ambient_music = pygame.mixer.Sound('audio/ambient_battle.mp3')
 
 
 class Battle:

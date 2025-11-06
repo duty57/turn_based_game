@@ -2,10 +2,10 @@ import time
 
 import pygame
 
-from turn_based_game.Camera import Camera
-from turn_based_game.Dataclasses.GameUI import GameUI as UI, draw_ui
-from turn_based_game.Items.Item import Item
-from turn_based_game.Level import Level
+from Camera import Camera
+from Dataclasses.GameUI import GameUI as UI, draw_ui
+from Items.Item import Item
+from Level import Level
 
 
 # [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
@@ -44,7 +44,7 @@ class WorldRenderer:
             if i == selection_index % len(inventory):
                 pygame.draw.rect(self.window, (255, 0, 0), (960, 125 + 50 * i, 265, 50), 1)
             self.window.blit(item.image, (960, 135 + 50 * i))
-            font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 14)
+            font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 14)
             item_name_text = font.render(item.name, True, UI.item_colors[item.rarity])
             item_stats_text = font.render(item.get_stats(), True, (255, 255, 0))
             self.window.blit(item_name_text, (1015, 135 + 50 * i))
@@ -69,7 +69,7 @@ class WorldRenderer:
         character = self.characters[character_index % len(self.characters)]
 
         alpha_surface = pygame.Surface(self.window.get_size(), pygame.SRCALPHA)
-        font = pygame.font.Font('turn_based_game/assets/UI/Fonts/Plaguard.otf', 24)
+        font = pygame.font.Font('assets/UI/Fonts/Plaguard.otf', 24)
         inventory_text = font.render("Inventory", True, (255, 255, 255))
         character_text = font.render(character.name, True, (255, 255, 255))
 

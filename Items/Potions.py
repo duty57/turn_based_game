@@ -1,4 +1,4 @@
-from turn_based_game.Items.Item import Item
+from Items.Item import Item
 
 
 class Potion(Item):
