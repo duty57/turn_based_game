@@ -12,7 +12,7 @@ chest_types = ["common", "equipment", "legendary"]
 probabilities = {
     "common": [75, 20, 5],
     "equipment": [25, 65, 10],
-    "legendary": [15, 55, 40]
+    "legendary": [15, 45, 40]
 }
 
 

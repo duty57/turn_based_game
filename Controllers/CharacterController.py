@@ -4,7 +4,6 @@ from Enums import CharacterState
 
 pygame.mixer.init()
 
-character_hit_sound = pygame.mixer.Sound('audio/character_hit_sound.mp3')
 
 
 class CharacterController(Controller):
@@ -30,7 +29,6 @@ class CharacterController(Controller):
 
     def collide(self):
         if self.in_battle:
-            character_hit_sound.play()
             self.character_state = CharacterState.hit
 
     def inventory_controller(self):

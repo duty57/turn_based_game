@@ -12,7 +12,6 @@ from Renderers.BattleRenderer import BattleRenderer
 from Renderers.BattleRenderer import draw_message
 
 pygame.mixer.init()
-ambient_music = pygame.mixer.Sound('audio/ambient_battle.mp3')
 
 
 class Battle:
@@ -68,8 +67,6 @@ class Battle:
         for i, enemy in enumerate(self.enemy_team):  # set enemy positions
             enemy.controller.battle_start(i)
         sleep(0.5)
-        # ambient_music.play(10)
-        # ambient_music.set_volume(0.1)
 
     def end(self):
         sleep(0.5)

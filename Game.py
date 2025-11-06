@@ -15,7 +15,6 @@ from Actors.Character import equip_item, unequip_item
 
 pygame.mixer.init()
 
-ambient_music = pygame.mixer.Sound('audio/ambient_world.mp3')
 
 class Game:
 
@@ -68,8 +67,6 @@ class Game:
     def create_window(self, width: int, height: int, fullscreen: bool = False):
         self.window = pygame.display.set_mode((width, height), pygame.FULLSCREEN if fullscreen else 0, pygame.DOUBLEBUF)
         self.renderer.create_window(self.window)
-        # ambient_music.play(10)
-        # ambient_music.set_volume(0.1)
 
     def add_to_inventory(self, item: Item):
         self.inventory.append(item)
@@ -184,6 +181,5 @@ class Game:
                                        spawn_time=self.chest_opened_time)  # Draw objects
 
             else:
-                ambient_music.stop()
                 self.battle.draw()
         pygame.quit()

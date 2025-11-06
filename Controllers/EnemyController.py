@@ -5,7 +5,6 @@ from Controllers.Controller import Controller
 from Enums import CharacterState
 
 pygame.mixer.init()
-enemy_hit_sound = pygame.mixer.Sound('audio/enemy_hit_sound.mp3')
 
 
 def select_target(team: list):
@@ -30,7 +29,6 @@ class EnemyController(Controller):
 
     def collide(self):
         if self.in_battle:
-            enemy_hit_sound.play()
             self.character_state = CharacterState.hit
 
     def set_main_character(self, main_character: Character):
