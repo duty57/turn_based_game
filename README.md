@@ -1,5 +1,4 @@
-
-https://github.com/user-attachments/assets/b758c2a0-fadf-4997-95a2-6dc5d5eec4a5
+## Valebound
 Valebound is a small, incomplete prototype inspired by classic turn-based strategy/adventure games. This repository contains a playable demo focused on core mechanics: overworld movement, enemy encounters, one combat flow and basic equipment/inventory visuals.
 
 ## Table of Contents
